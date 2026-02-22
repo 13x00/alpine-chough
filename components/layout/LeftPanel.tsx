@@ -34,8 +34,6 @@ export function LeftPanel({
   imageItems,
   projectItems,
 }: LeftPanelProps) {
-  const currentItems = currentTab === 'images' ? imageItems : projectItems
-
   return (
     <div className="relative flex flex-col h-screen overflow-hidden bg-layer-bg">
 
@@ -55,9 +53,23 @@ export function LeftPanel({
         <ContentTabs currentTab={currentTab} onTabChange={onTabChange} />
       </div>
 
-      {/* Card Carousel */}
-      <div className="flex-1 px-5 pt-0 overflow-hidden">
-        <NavCardCarousel items={currentItems} />
+      {/* Card Carousel — one strip (paper): Images left, Projects right; shove left to show Projects */}
+      <div className="flex-1 min-h-0 px-5 pt-0">
+        <div className="h-full w-full overflow-hidden">
+          <div
+            className="flex h-full w-[200%] transition-transform duration-300 ease-out"
+            style={{
+              transform: currentTab === 'projects' ? 'translateX(-50%)' : 'translateX(0)',
+            }}
+          >
+            <div className="w-1/2 h-full flex-shrink-0 overflow-hidden">
+              <NavCardCarousel items={imageItems} />
+            </div>
+            <div className="w-1/2 h-full flex-shrink-0 overflow-hidden">
+              <NavCardCarousel items={projectItems} />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Footer contact */}

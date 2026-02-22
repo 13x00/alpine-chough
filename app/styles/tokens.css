@@ -112,37 +112,33 @@
 }
 
 /* ─── Dark Mode ─────────────────────────────────────────────────────────────
-   Explicit opt-in. Left panel darkest, detail card lightest.
+   User background = darkest. Left and right panel both use the darkest tone.
 ─────────────────────────────────────────────────────────────────────────── */
 [data-theme="dark"] {
-  --layer-bg:      15 6% 9%;   /* Warm gray 100 — left panel */
-  --layer-1:       15 5% 12%;
+  --layer-bg:      15 6% 9%;   /* Darkest — left panel, body, right panel base */
+  --layer-1:       15 6% 9%;   /* Same as bg so main content area is darkest */
   --layer-2:       15 5% 15%;  /* Warm gray 90 */
   --layer-3:       15 5% 20%;
   --layer-4:       15 4% 30%;
   --layer-5:       15 4% 38%;
   --layer-6:       15 3% 50%;
-  --layer-7:       15 3% 62%;
+  --layer-7:       15 3% 55%;  /* Body text on dark surface */
   --layer-8:       15 3% 72%;  /* Brightest foreground / primary text */
-  --layer-surface: 15 3% 62%;  /* Detail card */
+  --layer-surface: 15 5% 18%;  /* Detail card — slightly lighter surface */
 }
 
 /* ─── Light Mode ────────────────────────────────────────────────────────────
-   Same principle: further back = darker, but the whole palette is light.
-   Left panel (layer-bg) is slightly darker warm gray.
-   Right panel (layer-1) is near-white.
-   Text (layer-8) is near-black for readability.
-   Detail card (layer-surface) is the lightest white.
+   Same pattern as dark: main at extreme (lightest), detail section one step in.
 ─────────────────────────────────────────────────────────────────────────── */
 [data-theme="light"] {
-  --layer-bg:      15 5% 89%;  /* Warm gray 20 — left panel */
-  --layer-1:       15 8% 96%;  /* Warm gray 10 — right panel / near-white */
-  --layer-2:       15 8% 96%;  /* Warm gray 10 — elevated cards on left */
+  --layer-bg:      15 8% 96%;  /* Lightest — left panel, body */
+  --layer-1:       15 8% 96%;  /* Same as bg so main content area is lightest */
+  --layer-2:       15 8% 96%;  /* Elevated cards on left */
   --layer-3:       15 4% 78%;  /* Warm gray 30 — borders */
   --layer-4:       15 3% 66%;  /* Warm gray 40 — subtle dividers */
   --layer-5:       15 3% 55%;  /* Warm gray 50 — muted text */
   --layer-6:       15 3% 44%;  /* Warm gray 60 — secondary text */
   --layer-7:       15 4% 33%;  /* Warm gray 70 — body text */
   --layer-8:       15 6% 9%;   /* Warm gray 100 — primary text */
-  --layer-surface: 15 8% 96%;  /* Warm gray 10 — detail card (lightest) */
+  --layer-surface: 15 5% 89%;  /* Detail card — one step darker than main (like dark mode’s one step lighter) */
 }

@@ -8,10 +8,13 @@ import { PhotographyDetail } from '@/components/content/PhotographyDetail'
 import { BackButton } from '@/components/content/BackButton'
 import { ViewType, Project, Article, Photography } from '@/types/content'
 
+const SLIDE_IN_DELAY_MS = 300
+
 interface RightPanelProps {
   currentView: ViewType
   selectedItem: Project | Article | Photography | null
   onBack: () => void
+  onCloseAnimationComplete?: () => void
   className?: string
 }
 
@@ -19,6 +22,7 @@ export function RightPanel({
   currentView,
   selectedItem,
   onBack,
+  onCloseAnimationComplete,
   className,
 }: RightPanelProps) {
   const [showDetail, setShowDetail] = useState(false)
@@ -45,7 +49,7 @@ export function RightPanel({
           setIsExpanded(true)
         }, 300) // Wait for slide animation to complete
         return () => clearTimeout(expandTimer)
-      }, 10)
+      }, SLIDE_IN_DELAY_MS)
       return () => clearTimeout(slideTimer)
     } else if (!hasDetail && displayItem) {
       // Animate out: first shrink to card, then slide out
@@ -54,12 +58,13 @@ export function RightPanel({
         setShowDetail(false)
         const slideTimer = setTimeout(() => {
           setDisplayItem(null)
+          onCloseAnimationComplete?.()
         }, 300) // Wait for slide animation
         return () => clearTimeout(slideTimer)
       }, 300) // Wait for shrink animation
       return () => clearTimeout(shrinkTimer)
     }
-  }, [hasDetail, selectedItem, displayItem])
+  }, [hasDetail, selectedItem, displayItem, onCloseAnimationComplete])
 
   // Escape key handler
   useEffect(() => {

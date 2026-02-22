@@ -10,6 +10,8 @@ interface SplitLayoutProps {
   selectedItem: Project | Article | Photography | null
   onTabChange: (tab: ContentType) => void
   onHomeClick: () => void
+  useNarrowLayout?: boolean
+  onDetailCloseComplete?: () => void
   imageItems: Array<{
     id: string
     title: string
@@ -32,15 +34,19 @@ export function SplitLayout({
   selectedItem,
   onTabChange,
   onHomeClick,
+  useNarrowLayout = false,
+  onDetailCloseComplete,
   imageItems,
   projectItems,
 }: SplitLayoutProps) {
-  const hasDetailOpen = selectedItem !== null && currentView !== 'portrait'
+  const leftWidth = useNarrowLayout ? 'md:w-1/3' : 'md:w-1/2'
+  const rightWidth = useNarrowLayout ? 'md:w-2/3' : 'md:w-1/2'
+  const transitionClass = 'transition-[width] duration-300 ease-out'
 
   return (
     <div className="flex h-screen overflow-hidden relative">
       {/* Left Panel - Darkest (furthest back) */}
-      <div className="w-full md:w-1/2 flex-shrink-0 relative z-10">
+      <div className={`w-full ${leftWidth} flex-shrink-0 relative z-10 ${transitionClass}`}>
         <LeftPanel
           currentTab={currentTab}
           onTabChange={onTabChange}
@@ -49,19 +55,13 @@ export function SplitLayout({
           projectItems={projectItems}
         />
       </div>
-      {/* Overlay: darkens left panel when detail is open so detail reads as on top */}
-      {hasDetailOpen && (
-        <div
-          className="absolute left-0 top-0 bottom-0 w-full md:w-1/2 z-[15] bg-layer-bg/70 pointer-events-none transition-opacity duration-300"
-          aria-hidden
-        />
-      )}
       {/* Right Panel - Detail surface is lightest (on top) */}
-      <div className="hidden md:flex md:w-1/2 relative z-20">
+      <div className={`hidden md:flex ${rightWidth} relative z-20 ${transitionClass}`}>
         <RightPanel
           currentView={currentView}
           selectedItem={selectedItem}
           onBack={onHomeClick}
+          onCloseAnimationComplete={onDetailCloseComplete}
         />
       </div>
     </div>

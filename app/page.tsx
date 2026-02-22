@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { SplitLayout } from '@/components/layout/SplitLayout'
 import { useContent } from '@/hooks/useContent'
 import { Project, Photography } from '@/types/content'
@@ -94,6 +95,15 @@ const mockImages: Photography[] = [
 
 export default function Home() {
   const { currentTab, currentView, selectedItem, setTab, setView, goHome } = useContent()
+  const [isDetailClosing, setIsDetailClosing] = useState(false)
+
+  const hasDetailOpen = selectedItem !== null && currentView !== 'portrait'
+  const useNarrowLayout = hasDetailOpen || isDetailClosing
+
+  const handleHomeClick = () => {
+    if (hasDetailOpen) setIsDetailClosing(true)
+    goHome()
+  }
 
   const imageItems = mockImages.map((item) => ({
     id: item.id,
@@ -117,7 +127,9 @@ export default function Home() {
       currentView={currentView}
       selectedItem={selectedItem}
       onTabChange={setTab}
-      onHomeClick={goHome}
+      onHomeClick={handleHomeClick}
+      useNarrowLayout={useNarrowLayout}
+      onDetailCloseComplete={() => setIsDetailClosing(false)}
       imageItems={imageItems}
       projectItems={projectItems}
     />
