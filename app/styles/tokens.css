@@ -1,0 +1,148 @@
+:root {
+  /* Colors - Primary Palette */
+  --color-primary: 15 6% 9%;   /* Warm gray 100 */
+  --color-secondary: 15 8% 96%; /* Warm gray 10 */
+
+  /* Colors - Warm Gray Scale */
+  --color-neutral-50: 15 8% 96%;  /* Warm gray 10 - #f7f3f2 */
+  --color-neutral-100: 15 5% 89%; /* Warm gray 20 - #e5e0df */
+  --color-neutral-200: 15 4% 78%; /* Warm gray 30 - #cac5c4 */
+  --color-neutral-300: 15 3% 66%; /* Warm gray 40 - #ada8a8 */
+  --color-neutral-400: 15 3% 55%; /* Warm gray 50 - #8f8b8b */
+  --color-neutral-500: 15 3% 44%; /* Warm gray 60 - #726e6e */
+  --color-neutral-600: 15 4% 33%; /* Warm gray 70 - #565151 */
+  --color-neutral-700: 15 5% 23%; /* Warm gray 80 - #3c3838 */
+  --color-neutral-800: 15 5% 15%; /* Warm gray 90 - #272525 */
+  --color-neutral-900: 15 6% 9%;  /* Warm gray 100 - #171414 */
+
+  /* Colors - Blue Scale */
+  --color-blue-10: #edf5ff;
+  --color-blue-20: #d0e2ff;
+  --color-blue-30: #a6c8ff;
+  --color-blue-40: #78a9ff;
+  --color-blue-50: #4589ff;
+  --color-blue-60: #0f62fe;
+  --color-blue-70: #0043ce;
+  --color-blue-80: #002d9c;
+  --color-blue-90: #001d6c;
+  --color-blue-100: #001141;
+
+  /* ─── Default (dark) layer system ─────────────────────────────────────────
+     "Further back = darker". Left panel uses layer-bg (darkest).
+     Detail card uses layer-surface (lightest).
+  ───────────────────────────────────────────────────────────────────────── */
+  --layer-bg:      15 6% 9%;   /* Warm gray 100 — left panel */
+  --layer-1:       15 5% 12%;
+  --layer-2:       15 5% 15%;  /* Warm gray 90 */
+  --layer-3:       15 5% 20%;
+  --layer-4:       15 4% 30%;
+  --layer-5:       15 4% 38%;
+  --layer-6:       15 3% 50%;  /* Warm gray 50 */
+  --layer-7:       15 3% 62%;
+  --layer-8:       15 3% 72%;  /* Brightest foreground */
+  --layer-surface: 15 3% 62%;  /* Detail card — lightest surface */
+
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas,
+    'Courier New', monospace;
+
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;   /* 12px */
+  --font-size-sm: 0.875rem;  /* 14px */
+  --font-size-base: 1rem;    /* 16px */
+  --font-size-lg: 1.125rem;  /* 18px */
+  --font-size-xl: 1.25rem;   /* 20px */
+  --font-size-2xl: 1.5rem;   /* 24px */
+  --font-size-3xl: 1.875rem; /* 30px */
+  --font-size-4xl: 2.25rem;  /* 36px */
+  --font-size-5xl: 3rem;     /* 48px */
+
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Spacing Scale */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;  /* 4px */
+  --spacing-2: 0.5rem;   /* 8px */
+  --spacing-3: 0.75rem;  /* 12px */
+  --spacing-4: 1rem;     /* 16px */
+  --spacing-5: 1.25rem;  /* 20px */
+  --spacing-6: 1.5rem;   /* 24px */
+  --spacing-8: 2rem;     /* 32px */
+  --spacing-10: 2.5rem;  /* 40px */
+  --spacing-12: 3rem;    /* 48px */
+  --spacing-16: 4rem;    /* 64px */
+  --spacing-20: 5rem;    /* 80px */
+  --spacing-24: 6rem;    /* 96px */
+
+  /* Accent */
+  --color-accent: 255 69 0; /* orange-red */
+
+  /* Border Radius */
+  --radius-sm: 0.125rem; /* 2px */
+  --radius-md: 0.375rem; /* 6px */
+  --radius-lg: 0.75rem;  /* 12px */
+  --radius-xl: 1rem;     /* 16px */
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* Transitions */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+
+  --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  --easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* ─── Dark Mode ─────────────────────────────────────────────────────────────
+   Explicit opt-in. Left panel darkest, detail card lightest.
+─────────────────────────────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --layer-bg:      15 6% 9%;   /* Warm gray 100 — left panel */
+  --layer-1:       15 5% 12%;
+  --layer-2:       15 5% 15%;  /* Warm gray 90 */
+  --layer-3:       15 5% 20%;
+  --layer-4:       15 4% 30%;
+  --layer-5:       15 4% 38%;
+  --layer-6:       15 3% 50%;
+  --layer-7:       15 3% 62%;
+  --layer-8:       15 3% 72%;  /* Brightest foreground / primary text */
+  --layer-surface: 15 3% 62%;  /* Detail card */
+}
+
+/* ─── Light Mode ────────────────────────────────────────────────────────────
+   Same principle: further back = darker, but the whole palette is light.
+   Left panel (layer-bg) is slightly darker warm gray.
+   Right panel (layer-1) is near-white.
+   Text (layer-8) is near-black for readability.
+   Detail card (layer-surface) is the lightest white.
+─────────────────────────────────────────────────────────────────────────── */
+[data-theme="light"] {
+  --layer-bg:      15 5% 89%;  /* Warm gray 20 — left panel */
+  --layer-1:       15 8% 96%;  /* Warm gray 10 — right panel / near-white */
+  --layer-2:       15 8% 96%;  /* Warm gray 10 — elevated cards on left */
+  --layer-3:       15 4% 78%;  /* Warm gray 30 — borders */
+  --layer-4:       15 3% 66%;  /* Warm gray 40 — subtle dividers */
+  --layer-5:       15 3% 55%;  /* Warm gray 50 — muted text */
+  --layer-6:       15 3% 44%;  /* Warm gray 60 — secondary text */
+  --layer-7:       15 4% 33%;  /* Warm gray 70 — body text */
+  --layer-8:       15 6% 9%;   /* Warm gray 100 — primary text */
+  --layer-surface: 15 8% 96%;  /* Warm gray 10 — detail card (lightest) */
+}

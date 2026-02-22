@@ -1,0 +1,96 @@
+@import './styles/tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-neutral-200;
+  }
+
+  body {
+    background-color: hsl(var(--layer-bg));
+    color: hsl(var(--layer-8));
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Focus styles */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Logo: starts one colour, smooth gradient in the middle, ends one colour. */
+  [data-theme="light"] .group:hover .logo-gradient-text {
+    /* Light: gradient reversed (100 at top, 30 at bottom) so position 100%→0% gives start 30, end 100; sweep moves downward */
+    background: linear-gradient(
+      180deg,
+      var(--color-blue-100) 0%,
+      var(--color-blue-100) 25%,
+      var(--color-blue-30) 75%,
+      var(--color-blue-30) 100%
+    );
+    background-size: 100% 400%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: logo-gradient-run-down 1.4s ease-out 1 forwards;
+  }
+
+  [data-theme="dark"] .group:hover .logo-gradient-text {
+    /* Dark: start blue-100, end blue-30; sweep downward (position 0%→100%) */
+    background: linear-gradient(
+      180deg,
+      var(--color-blue-100) 0%,
+      var(--color-blue-100) 25%,
+      var(--color-blue-30) 75%,
+      var(--color-blue-30) 100%
+    );
+    background-size: 100% 400%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: logo-gradient-run 1.4s ease-out 1 forwards;
+  }
+
+  /* Dark: scroll from top to bottom of gradient (sweep downward) */
+  @keyframes logo-gradient-run {
+    0% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: 0% 100%;
+    }
+  }
+
+  /* Light: scroll from bottom to top of gradient so the visible sweep moves downward */
+  @keyframes logo-gradient-run-down {
+    0% {
+      background-position: 0% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
+  }
+}
