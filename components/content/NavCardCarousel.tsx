@@ -15,19 +15,39 @@ interface NavCardCarouselProps {
     image: string
     onClick: () => void
   }>
+  pauseAutoScroll?: boolean
+  /** When false, auto-scroll is paused and scroll position is not updated (e.g. when tab is hidden) */
+  isActive?: boolean
   className?: string
   autoScrollSpeed?: number // milliseconds between scrolls
 }
 
 export function NavCardCarousel({
   items,
+  pauseAutoScroll = false,
+  isActive = true,
   className,
   autoScrollSpeed = 2000,
 }: NavCardCarouselProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
+  // When this carousel becomes active (tab selected), scroll to top
   useEffect(() => {
+    if (isActive && containerRef.current) {
+      containerRef.current.scrollTo({ top: 0, behavior: 'auto' })
+    }
+  }, [isActive])
+
+  useEffect(() => {
+    const shouldPause = pauseAutoScroll || !isActive
+    if (shouldPause) {
+      if (scrollIntervalRef.current) {
+        clearInterval(scrollIntervalRef.current)
+        scrollIntervalRef.current = null
+      }
+      return
+    }
     const container = containerRef.current
     if (!container || items.length === 0) return
 
@@ -60,7 +80,7 @@ export function NavCardCarousel({
         clearInterval(scrollIntervalRef.current)
       }
     }
-  }, [items.length, autoScrollSpeed])
+  }, [items.length, autoScrollSpeed, pauseAutoScroll, isActive])
 
   const handleMouseEnter = () => {
     if (scrollIntervalRef.current) {
@@ -69,6 +89,7 @@ export function NavCardCarousel({
   }
 
   const handleMouseLeave = () => {
+    if (pauseAutoScroll || !isActive) return
     const container = containerRef.current
     if (!container || items.length === 0) return
 

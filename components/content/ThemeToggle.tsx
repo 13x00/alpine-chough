@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { Sun, Moon } from '@carbon/icons-react'
 import { cn } from '@/lib/utils'
 
 export function ThemeToggle() {
@@ -29,12 +30,16 @@ export function ThemeToggle() {
       onClick={toggleTheme}
       className={cn(
         'min-w-[48px] min-h-[48px] flex items-center justify-center',
-        'text-xs text-layer-6 hover:text-layer-8 transition-colors',
+        'text-layer-6 hover:text-layer-8 transition-colors',
         'focus:outline-none focus:ring-2 focus:ring-layer-8 focus:ring-offset-2 rounded'
       )}
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
     >
-      {theme === 'dark' ? 'Light' : 'Dark'}
+      {theme === 'dark' ? (
+        <Sun size={20} className="text-current" />
+      ) : (
+        <Moon size={20} className="text-current" />
+      )}
     </button>
   )
 }

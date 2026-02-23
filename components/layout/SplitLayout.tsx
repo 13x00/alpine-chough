@@ -2,16 +2,17 @@
 
 import { LeftPanel } from './LeftPanel'
 import { RightPanel } from './RightPanel'
-import { ContentType, ViewType, Project, Article, Photography } from '@/types/content'
+import { ContentType, ViewType, DetailItem } from '@/types/content'
 
 interface SplitLayoutProps {
   currentTab: ContentType
   currentView: ViewType
-  selectedItem: Project | Article | Photography | null
+  selectedItem: DetailItem | null
   onTabChange: (tab: ContentType) => void
   onHomeClick: () => void
   useNarrowLayout?: boolean
   onDetailCloseComplete?: () => void
+  detailDirection?: 'forward' | 'backward'
   imageItems: Array<{
     id: string
     title: string
@@ -36,9 +37,11 @@ export function SplitLayout({
   onHomeClick,
   useNarrowLayout = false,
   onDetailCloseComplete,
+  detailDirection,
   imageItems,
   projectItems,
 }: SplitLayoutProps) {
+  const hasDetailOpen = selectedItem !== null && currentView !== 'portrait'
   const leftWidth = useNarrowLayout ? 'md:w-1/3' : 'md:w-1/2'
   const rightWidth = useNarrowLayout ? 'md:w-2/3' : 'md:w-1/2'
   const transitionClass = 'transition-[width] duration-300 ease-out'
@@ -51,6 +54,7 @@ export function SplitLayout({
           currentTab={currentTab}
           onTabChange={onTabChange}
           onHomeClick={onHomeClick}
+          isDetailOpen={hasDetailOpen}
           imageItems={imageItems}
           projectItems={projectItems}
         />
@@ -62,6 +66,7 @@ export function SplitLayout({
           selectedItem={selectedItem}
           onBack={onHomeClick}
           onCloseAnimationComplete={onDetailCloseComplete}
+          direction={detailDirection}
         />
       </div>
     </div>

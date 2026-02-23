@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { SplitLayout } from '@/components/layout/SplitLayout'
 import { useContent } from '@/hooks/useContent'
-import { Project, Photography } from '@/types/content'
+import { Project, Photography, ImageCollection } from '@/types/content'
+import imageCollection01 from '@/content/collections/image-collection-01/collection.json'
 
 const mockProjects: Project[] = [
   {
@@ -96,6 +97,7 @@ const mockImages: Photography[] = [
 export default function Home() {
   const { currentTab, currentView, selectedItem, setTab, setView, goHome } = useContent()
   const [isDetailClosing, setIsDetailClosing] = useState(false)
+  const [detailDirection, setDetailDirection] = useState<'forward' | 'backward'>('forward')
 
   const hasDetailOpen = selectedItem !== null && currentView !== 'portrait'
   const useNarrowLayout = hasDetailOpen || isDetailClosing
@@ -105,12 +107,48 @@ export default function Home() {
     goHome()
   }
 
-  const imageItems = mockImages.map((item) => ({
-    id: item.id,
-    title: item.title,
-    category: 'Photography',
-    image: item.image,
-    onClick: () => setView('photography', item),
+  const collection = imageCollection01 as ImageCollection
+
+  // Combined list: collection first, then single photography items (for slide order)
+  const allImageEntries: Array<
+    { id: string; title: string; category: string; image: string; view: 'collection' | 'photography'; item: ImageCollection | Photography }
+  > = [
+    {
+      id: collection.id,
+      title: collection.title,
+      category: 'Collection',
+      image: collection.coverImage,
+      view: 'collection',
+      item: collection,
+    },
+    ...mockImages.map((p) => ({
+      id: p.id,
+      title: p.title,
+      category: 'Photography',
+      image: p.image,
+      view: 'photography' as const,
+      item: p,
+    })),
+  ]
+
+  const imageItems = allImageEntries.map((entry, nextIndex) => ({
+    id: entry.id,
+    title: entry.title,
+    category: entry.category,
+    image: entry.image,
+    onClick: () => {
+      if ((currentView === 'photography' || currentView === 'collection') && selectedItem) {
+        const currentIndex = allImageEntries.findIndex((e) => e.id === selectedItem.id)
+        if (currentIndex !== -1 && nextIndex !== currentIndex) {
+          setDetailDirection(nextIndex > currentIndex ? 'forward' : 'backward')
+        } else {
+          setDetailDirection('forward')
+        }
+      } else {
+        setDetailDirection('forward')
+      }
+      setView(entry.view, entry.item)
+    },
   }))
 
   const projectItems = mockProjects.map((item) => ({
@@ -118,7 +156,22 @@ export default function Home() {
     title: item.title,
     category: item.category,
     image: item.image,
-    onClick: () => setView('project', item),
+    onClick: () => {
+      // Determine slide direction within the project list
+      if (currentView === 'project' && selectedItem) {
+        const currentIndex = mockProjects.findIndex((p) => p.id === selectedItem.id)
+        const nextIndex = mockProjects.findIndex((p) => p.id === item.id)
+        if (currentIndex !== -1 && nextIndex !== -1 && nextIndex !== currentIndex) {
+          setDetailDirection(nextIndex > currentIndex ? 'forward' : 'backward')
+        } else {
+          setDetailDirection('forward')
+        }
+      } else {
+        // First open into projects
+        setDetailDirection('forward')
+      }
+      setView('project', item)
+    },
   }))
 
   return (
@@ -130,6 +183,7 @@ export default function Home() {
       onHomeClick={handleHomeClick}
       useNarrowLayout={useNarrowLayout}
       onDetailCloseComplete={() => setIsDetailClosing(false)}
+      detailDirection={detailDirection}
       imageItems={imageItems}
       projectItems={projectItems}
     />

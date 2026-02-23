@@ -14,6 +14,7 @@ interface NavCardProps {
 export function NavCard({ title, category, image, onClick, className }: NavCardProps) {
   return (
     <div
+      data-nav-card
       onClick={onClick}
       className={cn(
         'w-full aspect-[2/1] overflow-hidden rounded-xl cursor-pointer group',

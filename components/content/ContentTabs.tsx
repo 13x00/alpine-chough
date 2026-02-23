@@ -18,13 +18,13 @@ export function ContentTabs({ currentTab, onTabChange, className }: ContentTabsP
         active={currentTab === 'images'}
         onClick={() => onTabChange('images')}
       >
-        Images
+        Photography
       </TabButton>
       <TabButton
         active={currentTab === 'projects'}
         onClick={() => onTabChange('projects')}
       >
-        Projects
+        Design
       </TabButton>
       {/* Sliding indicator — matches paper strip timing (300ms ease-out) */}
       <div
