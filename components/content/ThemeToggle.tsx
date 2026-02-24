@@ -28,10 +28,11 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
+      data-ignore-outside="true"
       className={cn(
         'min-w-[48px] min-h-[48px] flex items-center justify-center',
         'text-layer-6 hover:text-layer-8 transition-colors',
-        'focus:outline-none focus:ring-2 focus:ring-layer-8 focus:ring-offset-2 rounded'
+        'rounded'
       )}
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
     >

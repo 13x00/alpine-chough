@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import Image from 'next/image'
 import { PortraitView } from '@/components/content/PortraitView'
 import { ProjectDetail } from '@/components/content/ProjectDetail'
 import { ArticleDetail } from '@/components/content/ArticleDetail'
@@ -120,6 +121,8 @@ export function RightPanel({
         const target = e.target as Node
         // Don't close when clicking a nav card — let that click open the other project/image
         if ((target as Element).closest?.('[data-nav-card]')) return
+        // Don't close when clicking UI chrome like the theme toggle
+        if ((target as Element).closest?.('[data-ignore-outside]')) return
         // Close if click is outside the right panel container (e.g., on left panel background)
         if (!containerRef.current.contains(target)) {
           e.stopPropagation()
@@ -169,7 +172,7 @@ export function RightPanel({
         >
           <div className="w-full h-full bg-layer-surface overflow-y-auto shadow-lg">
             {currentView === 'project' && (
-              <ProjectDetail project={outgoingItem as Project} onBack={onBack} />
+              <ProjectProjectFrame project={outgoingItem as Project} onBack={onBack} />
             )}
             {currentView === 'article' && (
               <ArticleDetail article={outgoingItem as Article} onBack={onBack} />
@@ -208,7 +211,7 @@ export function RightPanel({
             }`}
           >
             {currentView === 'project' && displayItem && (
-              <ProjectDetail project={displayItem as Project} onBack={onBack} />
+              <ProjectProjectFrame project={displayItem as Project} onBack={onBack} />
             )}
             {currentView === 'article' && displayItem && (
               <ArticleDetail article={displayItem as Article} onBack={onBack} />
@@ -227,6 +230,55 @@ export function RightPanel({
       <div className="absolute bottom-3 right-3 z-30 flex items-center gap-1.5 px-2.5 py-1 rounded-lg">
         <span className="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-blue-40" />
         <span className="text-xs text-layer-6 whitespace-nowrap">Currently working at Open Studio</span>
+      </div>
+    </div>
+  )
+}
+
+interface ProjectProjectFrameProps {
+  project: Project
+  onBack: () => void
+}
+
+function ProjectProjectFrame({ project, onBack }: ProjectProjectFrameProps) {
+  return (
+    <div className="flex h-full flex-col">
+      {/* Top bar with back arrow, matching Figma-inspired layout */}
+      <div className="flex h-12 items-center justify-end border-b border-layer-3 bg-layer-2 px-0">
+        <button
+          type="button"
+          onClick={onBack}
+          aria-label="Go back"
+          className="flex h-12 w-12 items-center justify-center rounded-none text-layer-7 hover:text-layer-8 hover:bg-layer-3 transition-colors"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+          >
+            <path
+              d="M12.5 15L7.5 10L12.5 5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
+
+      {/* Full-bleed project image */}
+      <div className="relative flex-1">
+        <Image
+          src={project.image}
+          alt={project.title}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, 50vw"
+        />
       </div>
     </div>
   )
