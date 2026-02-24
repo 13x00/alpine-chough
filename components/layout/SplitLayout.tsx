@@ -47,7 +47,7 @@ export function SplitLayout({
   return (
     <div className="flex h-screen flex-col bg-layer-bg">
       {/* Top bar — logo + theme toggle, shared across layout */}
-      <div className="px-4 pt-4">
+      <div className="px-2 pt-2">
         <div
           className="flex items-center justify-between rounded-lg bg-layer-2 border border-layer-3 px-1 py-1"
           style={{ height: 'fit-content' }}
@@ -58,8 +58,8 @@ export function SplitLayout({
       </div>
 
       {/* Main content row */}
-      <div className="flex-1 px-4 pb-4 pt-4">
-        <div className="flex h-full gap-4 overflow-hidden relative">
+      <div className="flex-1 px-2 pb-2 pt-2">
+        <div className="flex h-full gap-2 overflow-hidden relative">
           {/* Left column — about, project list, contact */}
           <div className={`w-full ${leftWidth} flex-shrink-0 relative z-10 ${transitionClass}`}>
             <LeftPanel projectItems={projectItems} />

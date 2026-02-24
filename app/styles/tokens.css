@@ -1,19 +1,19 @@
 :root {
-  /* Colors - Primary Palette */
-  --color-primary: 15 6% 9%;   /* Warm gray 100 */
-  --color-secondary: 15 8% 96%; /* Warm gray 10 */
+  /* Colors - Primary Palette (IBM Warm Gray endpoints) */
+  --color-primary: #171414;  /* Warm Gray 100 */
+  --color-secondary: #f7f3f2; /* Warm Gray 10 */
 
-  /* Colors - Warm Gray Scale */
-  --color-neutral-50: 15 8% 96%;  /* Warm gray 10 - #f7f3f2 */
-  --color-neutral-100: 15 5% 89%; /* Warm gray 20 - #e5e0df */
-  --color-neutral-200: 15 4% 78%; /* Warm gray 30 - #cac5c4 */
-  --color-neutral-300: 15 3% 66%; /* Warm gray 40 - #ada8a8 */
-  --color-neutral-400: 15 3% 55%; /* Warm gray 50 - #8f8b8b */
-  --color-neutral-500: 15 3% 44%; /* Warm gray 60 - #726e6e */
-  --color-neutral-600: 15 4% 33%; /* Warm gray 70 - #565151 */
-  --color-neutral-700: 15 5% 23%; /* Warm gray 80 - #3c3838 */
-  --color-neutral-800: 15 5% 15%; /* Warm gray 90 - #272525 */
-  --color-neutral-900: 15 6% 9%;  /* Warm gray 100 - #171414 */
+  /* Colors - Warm Gray Scale (IBM Default/Warm Gray) */
+  --color-neutral-50: #f7f3f2;  /* Warm Gray 10 */
+  --color-neutral-100: #e5e0df; /* Warm Gray 20 */
+  --color-neutral-200: #cac5c4; /* Warm Gray 30 */
+  --color-neutral-300: #ada8a8; /* Warm Gray 40 */
+  --color-neutral-400: #8f8b8b; /* Warm Gray 50 */
+  --color-neutral-500: #726e6e; /* Warm Gray 60 */
+  --color-neutral-600: #565151; /* Warm Gray 70 */
+  --color-neutral-700: #3c3838; /* Warm Gray 80 */
+  --color-neutral-800: #272525; /* Warm Gray 90 */
+  --color-neutral-900: #171414; /* Warm Gray 100 */
 
   /* Colors - Blue Scale */
   --color-blue-10: #edf5ff;

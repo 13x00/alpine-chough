@@ -14,14 +14,14 @@ interface LeftPanelProps {
 
 export function LeftPanel({ projectItems }: LeftPanelProps) {
   return (
-    <div className="relative flex h-full flex-col gap-4">
+    <div className="relative flex h-full flex-col gap-2">
       {/* About card */}
       <section className="flex-1 min-h-[180px] rounded-lg bg-layer-2 border border-layer-3 px-6 py-6 overflow-hidden">
         <AboutSection />
       </section>
 
       {/* Project list card */}
-      <section className="flex-1 min-h-[220px] rounded-lg bg-layer-2 border border-layer-3 overflow-hidden">
+      <section className="flex-1 min-h-[220px] rounded-lg bg-layer-2 border border-layer-3 overflow-y-auto">
         <ul className="flex flex-col divide-y divide-layer-3">
           {projectItems.map((item, index) => {
             const rowNumber = String(index + 1).padStart(2, '0')
@@ -33,7 +33,7 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
                   type="button"
                   onClick={item.onClick}
                   className={`flex h-12 w-full items-center justify-between px-6 text-left text-xs md:text-sm transition-colors ${
-                    isStriped ? 'bg-layer-1/70 hover:bg-layer-1' : 'hover:bg-layer-2/60'
+                    isStriped ? 'bg-layer-surface/80 hover:bg-layer-surface' : 'hover:bg-layer-surface/60'
                   }`}
                 >
                   <div className="flex items-center gap-6 text-layer-6">
@@ -79,8 +79,8 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
           </ul>
         </div>
 
-        <div className="inline-flex items-center gap-2 rounded-full border border-layer-4 bg-layer-bg px-4 py-1.5 text-[11px] text-layer-7">
-          <span className="text-layer-6">//</span>
+        <div className="inline-flex items-center gap-2 rounded-full border border-[#684e00] bg-[#302400] px-4 py-2 text-[13px] text-[#fccd27]">
+          <span className="text-[#fccd27]">//</span>
           <span>Alpine-Chough</span>
         </div>
       </footer>

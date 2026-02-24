@@ -226,11 +226,6 @@ export function RightPanel({
         </div>
       )}
 
-      {/* Status pill — floating bottom-right */}
-      <div className="absolute bottom-3 right-3 z-30 flex items-center gap-1.5 px-2.5 py-1 rounded-lg">
-        <span className="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-blue-40" />
-        <span className="text-xs text-layer-6 whitespace-nowrap">Currently working at Open Studio</span>
-      </div>
     </div>
   )
 }
