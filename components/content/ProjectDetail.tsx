@@ -13,10 +13,10 @@ interface ProjectDetailProps {
 
 export function ProjectDetail({ project, onBack, className }: ProjectDetailProps) {
   return (
-    <div className={`relative space-y-6 p-6 md:p-8 overflow-y-auto h-full ${className || ''}`}>
+    <div className={`relative space-y-6 p-4 md:p-4 overflow-y-auto h-full ${className || ''}`}>
       <BackButton onClick={onBack} />
       
-      <div className="relative w-full aspect-video overflow-hidden rounded-lg">
+      <div className="relative w-full aspect-video overflow-hidden rounded-lg" style={{ marginTop: 0 }}>
         <Image
           src={project.image}
           alt={project.title}

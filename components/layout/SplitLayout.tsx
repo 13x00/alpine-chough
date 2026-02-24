@@ -2,13 +2,13 @@
 
 import { LeftPanel } from './LeftPanel'
 import { RightPanel } from './RightPanel'
-import { ContentType, ViewType, DetailItem } from '@/types/content'
+import { Logo } from '@/components/content/Logo'
+import { ThemeToggle } from '@/components/content/ThemeToggle'
+import { ViewType, DetailItem } from '@/types/content'
 
 interface SplitLayoutProps {
-  currentTab: ContentType
   currentView: ViewType
   selectedItem: DetailItem | null
-  onTabChange: (tab: ContentType) => void
   onHomeClick: () => void
   useNarrowLayout?: boolean
   onDetailCloseComplete?: () => void
@@ -30,10 +30,8 @@ interface SplitLayoutProps {
 }
 
 export function SplitLayout({
-  currentTab,
   currentView,
   selectedItem,
-  onTabChange,
   onHomeClick,
   useNarrowLayout = false,
   onDetailCloseComplete,
@@ -47,27 +45,35 @@ export function SplitLayout({
   const transitionClass = 'transition-[width] duration-300 ease-out'
 
   return (
-    <div className="flex h-screen overflow-hidden relative">
-      {/* Left Panel - Darkest (furthest back) */}
-      <div className={`w-full ${leftWidth} flex-shrink-0 relative z-10 ${transitionClass}`}>
-        <LeftPanel
-          currentTab={currentTab}
-          onTabChange={onTabChange}
-          onHomeClick={onHomeClick}
-          isDetailOpen={hasDetailOpen}
-          imageItems={imageItems}
-          projectItems={projectItems}
-        />
+    <div className="flex h-screen flex-col bg-layer-bg">
+      {/* Top bar — logo + theme toggle, shared across layout */}
+      <div className="px-4 pt-4">
+        <div className="flex items-center justify-between rounded-lg bg-layer-2 border border-layer-3 px-6 py-3">
+          <Logo onClick={onHomeClick} />
+          <ThemeToggle />
+        </div>
       </div>
-      {/* Right Panel - Detail surface is lightest (on top) */}
-      <div className={`hidden md:flex ${rightWidth} relative z-20 ${transitionClass}`}>
-        <RightPanel
-          currentView={currentView}
-          selectedItem={selectedItem}
-          onBack={onHomeClick}
-          onCloseAnimationComplete={onDetailCloseComplete}
-          direction={detailDirection}
-        />
+
+      {/* Main content row */}
+      <div className="flex-1 px-4 pb-4 pt-4">
+        <div className="flex h-full gap-4 overflow-hidden relative">
+          {/* Left column — about, project list, contact */}
+          <div className={`w-full ${leftWidth} flex-shrink-0 relative z-10 ${transitionClass}`}>
+            <LeftPanel projectItems={projectItems} />
+          </div>
+
+          {/* Right column — portrait / detail surface */}
+          <div className={`hidden md:flex ${rightWidth} relative z-20 ${transitionClass}`}>
+            <RightPanel
+              currentView={currentView}
+              selectedItem={selectedItem}
+              onBack={onHomeClick}
+              onCloseAnimationComplete={onDetailCloseComplete}
+              direction={detailDirection}
+              className="rounded-lg border border-layer-3"
+            />
+          </div>
+        </div>
       </div>
     </div>
   )
