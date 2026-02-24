@@ -36,6 +36,18 @@ const config: Config = {
           90: 'var(--color-blue-90)',
           100: 'var(--color-blue-100)',
         },
+        yellow: {
+          10: 'var(--color-yellow-10)',
+          20: 'var(--color-yellow-20)',
+          30: 'var(--color-yellow-30)',
+          40: 'var(--color-yellow-40)',
+          50: 'var(--color-yellow-50)',
+          60: 'var(--color-yellow-60)',
+          70: 'var(--color-yellow-70)',
+          80: 'var(--color-yellow-80)',
+          90: 'var(--color-yellow-90)',
+          100: 'var(--color-yellow-100)',
+        },
         layer: {
           bg: 'hsl(var(--layer-bg))',
           1: 'hsl(var(--layer-1))',

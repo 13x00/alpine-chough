@@ -48,7 +48,10 @@ export function SplitLayout({
     <div className="flex h-screen flex-col bg-layer-bg">
       {/* Top bar — logo + theme toggle, shared across layout */}
       <div className="px-4 pt-4">
-        <div className="flex items-center justify-between rounded-lg bg-layer-2 border border-layer-3 px-6 py-3">
+        <div
+          className="flex items-center justify-between rounded-lg bg-layer-2 border border-layer-3 px-1 py-1"
+          style={{ height: 'fit-content' }}
+        >
           <Logo onClick={onHomeClick} />
           <ThemeToggle />
         </div>

@@ -27,6 +27,18 @@
   --color-blue-90: #001d6c;
   --color-blue-100: #001141;
 
+  /* Colors - Yellow Scale */
+  --color-yellow-10: #fcf4d6;
+  --color-yellow-20: #fddc69;
+  --color-yellow-30: #f1c21b;
+  --color-yellow-40: #d2a106;
+  --color-yellow-50: #b28600;
+  --color-yellow-60: #8e6a00;
+  --color-yellow-70: #684e00;
+  --color-yellow-80: #483700;
+  --color-yellow-90: #302400;
+  --color-yellow-100: #1c1500;
+
   /* ─── Default (dark) layer system ─────────────────────────────────────────
      "Further back = darker". Left panel uses layer-bg (darkest).
      Detail card uses layer-surface (lightest).

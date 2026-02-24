@@ -31,8 +31,8 @@ export function ThemeToggle() {
       data-ignore-outside="true"
       className={cn(
         'min-w-[48px] min-h-[48px] flex items-center justify-center',
-        'text-layer-6 hover:text-layer-8 transition-colors',
-        'rounded'
+        'text-layer-6 hover:text-layer-8 hover:bg-layer-3 transition-colors',
+        'rounded-lg'
       )}
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
     >
