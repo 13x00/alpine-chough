@@ -4,6 +4,9 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'Alpine Chough | Portfolio',
   description: 'Personal hub and archive for design projects, articles, and photography',
+  icons: {
+    icon: '/favicon.svg',
+  },
 }
 
 export default function RootLayout({
