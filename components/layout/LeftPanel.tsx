@@ -16,12 +16,12 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
   return (
     <div className="relative flex h-full flex-col gap-2">
       {/* About card */}
-      <section className="flex-1 min-h-[180px] rounded-lg bg-layer-2 border border-layer-3 px-6 py-6 overflow-hidden">
+      <section className="flex-1 min-h-[11.25rem] rounded-lg bg-layer-2 border border-layer-3 px-6 py-6 overflow-hidden">
         <AboutSection />
       </section>
 
       {/* Project list card */}
-      <section className="flex-1 min-h-[220px] rounded-lg bg-layer-2 border border-layer-3 overflow-y-auto">
+      <section className="flex-1 min-h-[13.75rem] rounded-lg bg-layer-2 border border-layer-3 overflow-y-auto">
         <ul className="flex flex-col divide-y divide-layer-3">
           {projectItems.map((item, index) => {
             const rowNumber = String(index + 1).padStart(2, '0')
@@ -33,14 +33,14 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
                   type="button"
                   onClick={item.onClick}
                   className={`flex h-12 w-full items-center justify-between px-6 text-left text-xs md:text-sm transition-colors ${
-                    isStriped ? 'bg-layer-surface/80 hover:bg-layer-surface' : 'hover:bg-layer-surface/60'
+                    isStriped ? 'bg-layer-3 hover:bg-layer-4' : 'hover:bg-layer-4'
                   }`}
                 >
-                  <div className="flex items-center gap-6 text-layer-6">
-                    <span className="font-mono text-[13px]">{rowNumber}</span>
-                    <span className="text-layer-7">{item.title}</span>
+                  <div className="flex items-center gap-6 text-layer-5">
+                    <span className="font-mono text-sm">{rowNumber}</span>
+                    <span className="text-layer-6">{item.title}</span>
                   </div>
-                  <span className="text-[11px] md:text-xs text-layer-6">
+                  <span className="text-xs text-layer-5">
                     {item.category ?? 'Project'}
                   </span>
                 </button>
@@ -79,9 +79,9 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
           </ul>
         </div>
 
-        <div className="inline-flex items-center gap-2 rounded-full border border-[#684e00] bg-[#302400] px-4 py-2 text-[13px] text-[#fccd27]">
-          <span className="text-[#fccd27]">//</span>
+        <div className="status-pill inline-flex items-center gap-2 rounded-full px-4 py-1 text-sm">
           <span>Alpine-Chough</span>
+          <span className="font-mono">v1.0.0</span>
         </div>
       </footer>
     </div>

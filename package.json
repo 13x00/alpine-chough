@@ -9,7 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@carbon/colors": "^11.47.0",
     "@carbon/icons-react": "^11.75.0",
+    "@carbon/themes": "^11.68.0",
     "clsx": "^2.1.1",
     "lottie-react": "^2.4.1",
     "next": "^14.2.0",

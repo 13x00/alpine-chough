@@ -14,7 +14,7 @@ export function BackButton({ onClick, className }: BackButtonProps) {
       onClick={onClick}
       className={cn(
         'absolute top-4 right-4 z-50',
-        'min-w-[48px] min-h-[48px] flex items-center justify-center',
+        'min-w-[3rem] min-h-[3rem] flex items-center justify-center',
         'bg-layer-2 border border-layer-3 rounded-full',
         'text-layer-7 hover:text-layer-8 hover:bg-layer-3',
         'transition-all duration-fast',

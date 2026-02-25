@@ -1,58 +1,229 @@
 :root {
-  /* Colors - Primary Palette (IBM Warm Gray endpoints) */
-  --color-primary: #171414;  /* Warm Gray 100 */
-  --color-secondary: #f7f3f2; /* Warm Gray 10 */
+  /* ─── IBM Carbon v11 base palette ─────────────────────────────────────────── */
+  /* Core black / white */
+  --ibm-black-100: #000000;
+  --ibm-white-0: #ffffff;
 
-  /* Colors - Warm Gray Scale (IBM Default/Warm Gray) */
-  --color-neutral-50: #f7f3f2;  /* Warm Gray 10 */
-  --color-neutral-100: #e5e0df; /* Warm Gray 20 */
-  --color-neutral-200: #cac5c4; /* Warm Gray 30 */
-  --color-neutral-300: #ada8a8; /* Warm Gray 40 */
-  --color-neutral-400: #8f8b8b; /* Warm Gray 50 */
-  --color-neutral-500: #726e6e; /* Warm Gray 60 */
-  --color-neutral-600: #565151; /* Warm Gray 70 */
-  --color-neutral-700: #3c3838; /* Warm Gray 80 */
-  --color-neutral-800: #272525; /* Warm Gray 90 */
-  --color-neutral-900: #171414; /* Warm Gray 100 */
+  /* Warm Gray (used as primary neutral scale) */
+  --ibm-warm-gray-10: #f7f3f2;
+  --ibm-warm-gray-20: #e5e0df;
+  --ibm-warm-gray-30: #cac5c4;
+  --ibm-warm-gray-40: #ada8a8;
+  --ibm-warm-gray-50: #8f8b8b;
+  --ibm-warm-gray-60: #726e6e;
+  --ibm-warm-gray-70: #565151;
+  --ibm-warm-gray-80: #3c3838;
+  --ibm-warm-gray-90: #272525;
+  --ibm-warm-gray-100: #171414;
 
-  /* Colors - Blue Scale */
-  --color-blue-10: #edf5ff;
-  --color-blue-20: #d0e2ff;
-  --color-blue-30: #a6c8ff;
-  --color-blue-40: #78a9ff;
-  --color-blue-50: #4589ff;
-  --color-blue-60: #0f62fe;
-  --color-blue-70: #0043ce;
-  --color-blue-80: #002d9c;
-  --color-blue-90: #001d6c;
-  --color-blue-100: #001141;
+  /* Gray (Carbon gray) */
+  --ibm-gray-10: #f4f4f4;
+  --ibm-gray-20: #e0e0e0;
+  --ibm-gray-30: #c6c6c6;
+  --ibm-gray-40: #a8a8a8;
+  --ibm-gray-50: #8d8d8d;
+  --ibm-gray-60: #6f6f6f;
+  --ibm-gray-70: #525252;
+  --ibm-gray-80: #393939;
+  --ibm-gray-90: #262626;
+  --ibm-gray-100: #161616;
 
-  /* Colors - Yellow Scale */
-  --color-yellow-10: #fcf4d6;
-  --color-yellow-20: #fddc69;
-  --color-yellow-30: #f1c21b;
-  --color-yellow-40: #d2a106;
-  --color-yellow-50: #b28600;
-  --color-yellow-60: #8e6a00;
-  --color-yellow-70: #684e00;
-  --color-yellow-80: #483700;
-  --color-yellow-90: #302400;
-  --color-yellow-100: #1c1500;
+  /* Cool Gray */
+  --ibm-cool-gray-10: #f2f4f8;
+  --ibm-cool-gray-20: #dde1e6;
+  --ibm-cool-gray-30: #c1c7cd;
+  --ibm-cool-gray-40: #a2a9b0;
+  --ibm-cool-gray-50: #878d96;
+  --ibm-cool-gray-60: #697077;
+  --ibm-cool-gray-70: #4d5358;
+  --ibm-cool-gray-80: #343a3f;
+  --ibm-cool-gray-90: #21272a;
+  --ibm-cool-gray-100: #121619;
 
-  /* ─── Default (dark) layer system ─────────────────────────────────────────
-     "Further back = darker". Left panel uses layer-bg (darkest).
-     Detail card uses layer-surface (lightest).
-  ───────────────────────────────────────────────────────────────────────── */
-  --layer-bg:      15 6% 9%;   /* Warm gray 100 — left panel */
-  --layer-1:       15 5% 12%;
-  --layer-2:       15 5% 15%;  /* Warm gray 90 */
-  --layer-3:       15 5% 20%;
-  --layer-4:       15 4% 30%;
-  --layer-5:       15 4% 38%;
-  --layer-6:       15 3% 50%;  /* Warm gray 50 */
-  --layer-7:       15 3% 62%;
-  --layer-8:       15 3% 72%;  /* Brightest foreground */
-  --layer-surface: 15 3% 62%;  /* Detail card — lightest surface */
+  /* Blue */
+  --ibm-blue-10: #edf5ff;
+  --ibm-blue-20: #d0e2ff;
+  --ibm-blue-30: #a6c8ff;
+  --ibm-blue-40: #78a9ff;
+  --ibm-blue-50: #4589ff;
+  --ibm-blue-60: #0f62fe;
+  --ibm-blue-70: #0043ce;
+  --ibm-blue-80: #002d9c;
+  --ibm-blue-90: #001d6c;
+  --ibm-blue-100: #001141;
+
+  /* Cyan */
+  --ibm-cyan-10: #e5f6ff;
+  --ibm-cyan-20: #bae6ff;
+  --ibm-cyan-30: #82cfff;
+  --ibm-cyan-40: #33b1ff;
+  --ibm-cyan-50: #1192e8;
+  --ibm-cyan-60: #0072c3;
+  --ibm-cyan-70: #00539a;
+  --ibm-cyan-80: #003a6d;
+  --ibm-cyan-90: #012749;
+  --ibm-cyan-100: #061727;
+
+  /* Teal */
+  --ibm-teal-10: #d9fbfb;
+  --ibm-teal-20: #9ef0f0;
+  --ibm-teal-30: #3ddbd9;
+  --ibm-teal-40: #08bdba;
+  --ibm-teal-50: #009d9a;
+  --ibm-teal-60: #007d79;
+  --ibm-teal-70: #005d5d;
+  --ibm-teal-80: #004144;
+  --ibm-teal-90: #022b30;
+  --ibm-teal-100: #081a1c;
+
+  /* Green */
+  --ibm-green-10: #defbe6;
+  --ibm-green-20: #a7f0ba;
+  --ibm-green-30: #6fdc8c;
+  --ibm-green-40: #42be65;
+  --ibm-green-50: #24a148;
+  --ibm-green-60: #198038;
+  --ibm-green-70: #0e6027;
+  --ibm-green-80: #044317;
+  --ibm-green-90: #022d0d;
+  --ibm-green-100: #071908;
+
+  /* Red */
+  --ibm-red-10: #fff1f1;
+  --ibm-red-20: #ffd7d9;
+  --ibm-red-30: #ffb3b8;
+  --ibm-red-40: #ff8389;
+  --ibm-red-50: #fa4d56;
+  --ibm-red-60: #da1e28;
+  --ibm-red-70: #a2191f;
+  --ibm-red-80: #750e13;
+  --ibm-red-90: #520408;
+  --ibm-red-100: #2d0709;
+
+  /* Orange */
+  --ibm-orange-10: #fff2e8;
+  --ibm-orange-20: #ffd9be;
+  --ibm-orange-30: #ffb784;
+  --ibm-orange-40: #ff832b;
+  --ibm-orange-50: #eb6200;
+  --ibm-orange-60: #ba4e00;
+  --ibm-orange-70: #8a3800;
+  --ibm-orange-80: #5e2900;
+  --ibm-orange-90: #3e1a00;
+  --ibm-orange-100: #231000;
+
+  /* Magenta */
+  --ibm-magenta-10: #fff0f7;
+  --ibm-magenta-20: #ffd6e8;
+  --ibm-magenta-30: #ffafd2;
+  --ibm-magenta-40: #ff7eb6;
+  --ibm-magenta-50: #ee5396;
+  --ibm-magenta-60: #d02670;
+  --ibm-magenta-70: #9f1853;
+  --ibm-magenta-80: #740937;
+  --ibm-magenta-90: #510224;
+  --ibm-magenta-100: #2a0a18;
+
+  /* Purple */
+  --ibm-purple-10: #f6f2ff;
+  --ibm-purple-20: #e8daff;
+  --ibm-purple-30: #d4bbff;
+  --ibm-purple-40: #be95ff;
+  --ibm-purple-50: #a56eff;
+  --ibm-purple-60: #8a3ffc;
+  --ibm-purple-70: #6929c4;
+  --ibm-purple-80: #491d8b;
+  --ibm-purple-90: #31135e;
+  --ibm-purple-100: #1c0f30;
+
+  /* Yellow (for status / warmth accents) */
+  --ibm-yellow-10: #fcf4d6;
+  --ibm-yellow-20: #fddc69;
+  --ibm-yellow-30: #f1c21b;
+  --ibm-yellow-40: #d2a106;
+  --ibm-yellow-50: #b28600;
+  --ibm-yellow-60: #8e6a00;
+  --ibm-yellow-70: #684e00;
+  --ibm-yellow-80: #483700;
+  --ibm-yellow-90: #302400;
+  --ibm-yellow-100: #1c1500;
+
+  /* ─── Carbon theme layer — g100 (dark default) ───────────────────────────── */
+  /* Values are the exact Carbon g100 token values so the CSS fallback and the  */
+  /* JS applyCarbonTheme() call produce identical results — no flash on load.   */
+  --cds-background: #161616;
+  --cds-layer: #262626;
+  --cds-layer-subtle: #393939;
+  --cds-layer-hover: #333333;
+
+  --cds-border-subtle: #525252;
+  --cds-border-strong: #6f6f6f;
+
+  --cds-text-primary: #f4f4f4;
+  --cds-text-secondary: #c6c6c6;
+  --cds-text-muted: #a8a8a8;
+
+  --cds-focus: #ffffff;
+
+  /* ─── App semantic tokens – default (dark) theme ──────────────────────────── */
+  /* Layer stack – darker = further back, wired through Carbon-like theme vars. */
+  --color-layer-bg: var(--cds-background);   /* page background, left panel base */
+  --color-layer-1: var(--cds-background);    /* main content base */
+  --color-layer-2: var(--cds-layer);         /* cards / panels */
+  --color-layer-3: var(--cds-layer-subtle);  /* dividers, subtle stripes */
+  --color-layer-4: var(--cds-layer-hover);   /* hover / raised */
+  --color-layer-5: var(--cds-text-muted);    /* subtle / helper text */
+  --color-layer-6: var(--cds-text-secondary);/* secondary / inactive text */
+  --color-layer-7: var(--cds-text-secondary);/* body text */
+  --color-layer-8: var(--cds-text-primary);  /* strongest foreground / headings */
+  --color-layer-surface: var(--ibm-warm-gray-70); /* detail card surface */
+
+  /* Text semantics (via Carbon-like theme) */
+  --color-text-primary: var(--cds-text-primary);
+  --color-text-secondary: var(--cds-text-secondary);
+  --color-text-muted: var(--cds-text-muted);
+
+  /* Borders (via Carbon-like theme) */
+  --color-border-subtle: var(--cds-border-subtle);
+  --color-border-strong: var(--cds-border-strong);
+
+  /* Accent / focus colors (blue-based) */
+  --color-accent-primary: var(--cds-focus);
+  --color-accent-soft: var(--ibm-blue-30);
+  --color-accent-strong: var(--ibm-blue-80);
+
+  /* Optional semantic accent aliases (for consistent usage across the app) */
+  --color-accent-teal-soft: var(--ibm-teal-20);
+  --color-accent-teal-strong: var(--ibm-teal-60);
+  --color-accent-red-soft: var(--ibm-red-20);
+  --color-accent-red-strong: var(--ibm-red-60);
+
+  /* ─── Carbon theme support & link tokens (dark / g100) ─────────────────────── */
+  /* Support colors */
+  --cds-support-error: #fa4d56;            /* red50 */
+  --cds-support-success: #42be65;          /* green40 */
+  --cds-support-warning: #f1c21b;          /* yellow30 */
+  --cds-support-info: #4589ff;             /* blue50 */
+  --cds-support-error-inverse: #da1e28;    /* red60 */
+  --cds-support-success-inverse: #24a148;  /* green50 */
+  --cds-support-warning-inverse: #f1c21b;  /* yellow30 */
+  --cds-support-info-inverse: #0043ce;     /* blue70 */
+
+  /* Link colors */
+  --cds-link-primary: #78a9ff;        /* blue40 */
+  --cds-link-primary-hover: #a6c8ff;  /* blue30 */
+  --cds-link-secondary: #a6c8ff;      /* blue30 */
+  --cds-link-inverse: #0f62fe;        /* blue60 */
+  --cds-link-visited: #be95ff;        /* purple40 */
+  --cds-link-inverse-visited: #8a3ffc;/* purple60 */
+
+  /* Interactive */
+  --cds-interactive: #4589ff;         /* blue50 */
+
+  /* Status pill semantics (dark theme defaults) */
+  --color-status-pill-border: var(--ibm-yellow-70);
+  --color-status-pill-bg: var(--ibm-yellow-90);
+  --color-status-pill-text: var(--ibm-yellow-20);
 
   /* Typography */
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -98,9 +269,6 @@
   --spacing-20: 5rem;    /* 80px */
   --spacing-24: 6rem;    /* 96px */
 
-  /* Accent */
-  --color-accent: 255 69 0; /* orange-red */
-
   /* Border Radius */
   --radius-sm: 0.125rem; /* 2px */
   --radius-md: 0.375rem; /* 6px */
@@ -123,34 +291,52 @@
   --easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
 }
 
-/* ─── Dark Mode ─────────────────────────────────────────────────────────────
-   User background = darkest. Left and right panel both use the darkest tone.
-─────────────────────────────────────────────────────────────────────────── */
-[data-theme="dark"] {
-  --layer-bg:      15 6% 9%;   /* Darkest — left panel, body, right panel base */
-  --layer-1:       15 6% 9%;   /* Same as bg so main content area is darkest */
-  --layer-2:       15 5% 15%;  /* Warm gray 90 */
-  --layer-3:       15 5% 20%;
-  --layer-4:       15 4% 30%;
-  --layer-5:       15 4% 38%;
-  --layer-6:       15 3% 50%;
-  --layer-7:       15 3% 55%;  /* Body text on dark surface */
-  --layer-8:       15 3% 72%;  /* Brightest foreground / primary text */
-  --layer-surface: 15 5% 18%;  /* Detail card — slightly lighter surface */
+/* ─── Light theme overrides ───────────────────────────────────────────────────
+   IBM palette stays the same; Carbon-like theme roles switch mapping.
+   Set this on a high-level wrapper (e.g. <body data-theme="light">).
+   Default (no data-theme) uses the dark mappings above.
+──────────────────────────────────────────────────────────────────────────── */
+[data-theme='light'] {
+  /* Carbon theme layer — g10 (light). Exact g10 token values so the CSS       */
+  /* fallback matches applyCarbonTheme() — no flash when JS hydrates.           */
+  --cds-background: #f4f4f4;
+  --cds-layer: #ffffff;
+  --cds-layer-subtle: #f4f4f4;
+  --cds-layer-hover: #e8e8e8;
+
+  --cds-border-subtle: #e0e0e0;
+  --cds-border-strong: #8d8d8d;
+
+  --cds-text-primary: #161616;
+  --cds-text-secondary: #525252;
+  --cds-text-muted: #6f6f6f;
+
+  --cds-focus: #0f62fe;
+
+  /* Support colors (light / g10) */
+  --cds-support-error: #da1e28;            /* red60 */
+  --cds-support-success: #24a148;          /* green50 */
+  --cds-support-warning: #f1c21b;          /* yellow30 */
+  --cds-support-info: #0043ce;             /* blue70 */
+  --cds-support-error-inverse: #fa4d56;    /* red50 */
+  --cds-support-success-inverse: #42be65;  /* green40 */
+  --cds-support-warning-inverse: #f1c21b;  /* yellow30 */
+  --cds-support-info-inverse: #4589ff;     /* blue50 */
+
+  /* Link colors (light / g10) */
+  --cds-link-primary: #0f62fe;        /* blue60 */
+  --cds-link-primary-hover: #0043ce;  /* blue70 */
+  --cds-link-secondary: #0043ce;      /* blue70 */
+  --cds-link-inverse: #78a9ff;        /* blue40 */
+  --cds-link-visited: #8a3ffc;        /* purple60 */
+  --cds-link-inverse-visited: #be95ff;/* purple40 */
+
+  /* Interactive (light / g10) */
+  --cds-interactive: #0f62fe;         /* blue60 */
+
+  /* Status pill semantics – blue-based in light mode */
+  --color-status-pill-border: var(--ibm-blue-50);
+  --color-status-pill-bg: var(--ibm-blue-30);
+  --color-status-pill-text: var(--ibm-blue-100);
 }
 
-/* ─── Light Mode ────────────────────────────────────────────────────────────
-   Same pattern as dark: main at extreme (lightest), detail section one step in.
-─────────────────────────────────────────────────────────────────────────── */
-[data-theme="light"] {
-  --layer-bg:      15 8% 96%;  /* Lightest — left panel, body */
-  --layer-1:       15 8% 96%;  /* Same as bg so main content area is lightest */
-  --layer-2:       15 8% 96%;  /* Elevated cards on left */
-  --layer-3:       15 4% 78%;  /* Warm gray 30 — borders */
-  --layer-4:       15 3% 66%;  /* Warm gray 40 — subtle dividers */
-  --layer-5:       15 3% 55%;  /* Warm gray 50 — muted text */
-  --layer-6:       15 3% 44%;  /* Warm gray 60 — secondary text */
-  --layer-7:       15 4% 33%;  /* Warm gray 70 — body text */
-  --layer-8:       15 6% 9%;   /* Warm gray 100 — primary text */
-  --layer-surface: 15 5% 89%;  /* Detail card — one step darker than main (like dark mode’s one step lighter) */
-}
