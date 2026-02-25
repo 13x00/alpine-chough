@@ -13,7 +13,7 @@ interface ContentTabsProps {
 
 export function ContentTabs({ currentTab, onTabChange, className }: ContentTabsProps) {
   return (
-    <div className={`relative flex border-b border-layer-3 ${className || ''}`}>
+    <div className={`relative flex border-b border-cds-border-subtle ${className || ''}`}>
       <TabButton
         active={currentTab === 'images'}
         onClick={() => onTabChange('images')}

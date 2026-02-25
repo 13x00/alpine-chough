@@ -16,12 +16,12 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
   return (
     <div className="relative flex h-full flex-col gap-2">
       {/* About card */}
-      <section className="flex-1 min-h-[11.25rem] rounded-lg bg-layer-2 border border-layer-3 px-6 py-6 overflow-hidden">
+      <section className="flex-1 min-h-[11.25rem] rounded-lg bg-layer-2 border border-cds-border-subtle px-6 py-6 overflow-hidden">
         <AboutSection />
       </section>
 
       {/* Project list card */}
-      <section className="flex-1 min-h-[13.75rem] rounded-lg bg-layer-2 border border-layer-3 overflow-y-auto">
+      <section className="flex-1 min-h-[13.75rem] rounded-lg bg-layer-2 border border-cds-border-subtle overflow-y-auto">
         <ul className="flex flex-col divide-y divide-layer-3">
           {projectItems.map((item, index) => {
             const rowNumber = String(index + 1).padStart(2, '0')
@@ -32,15 +32,19 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
                 <button
                   type="button"
                   onClick={item.onClick}
-                  className={`flex h-12 w-full items-center justify-between px-6 text-left text-xs md:text-sm transition-colors ${
-                    isStriped ? 'bg-layer-3 hover:bg-layer-4' : 'hover:bg-layer-4'
-                  }`}
+                  className={`group flex h-12 w-full items-center justify-between px-6 text-left text-xs md:text-sm transition-colors ${
+                    isStriped ? 'bg-cds-layer-subtle' : 'bg-cds-layer'
+                  } hover:bg-neutral-500 text-cds-text-secondary group-hover:text-cds-text-primary`}
                 >
-                  <div className="flex items-center gap-6 text-layer-5">
-                    <span className="font-mono text-sm">{rowNumber}</span>
-                    <span className="text-layer-6">{item.title}</span>
+                  <div className="flex items-center gap-6">
+                    <span className="font-mono text-sm text-cds-text-muted group-hover:text-cds-text-primary">
+                      {rowNumber}
+                    </span>
+                    <span className="transition-colors">
+                      {item.title}
+                    </span>
                   </div>
-                  <span className="text-xs text-layer-5">
+                  <span className="text-xs text-cds-text-muted group-hover:text-cds-text-primary">
                     {item.category ?? 'Project'}
                   </span>
                 </button>
@@ -51,7 +55,7 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
       </section>
 
       {/* Footer contact card */}
-      <footer className="rounded-lg bg-layer-2 border border-layer-3 px-6 py-6 flex items-end justify-between">
+      <footer className="rounded-lg bg-layer-2 border border-cds-border-subtle px-6 py-6 flex items-end justify-between">
         <div>
           <p className="mb-2 text-xs text-layer-6">Want to have a chat?</p>
           <ul className="space-y-1 text-xs text-layer-7">

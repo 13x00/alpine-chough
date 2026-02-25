@@ -29,7 +29,7 @@ export function ColorSwatches() {
             className="flex flex-col items-center text-xs text-layer-8"
           >
                 <div
-                  className="h-10 w-10 rounded-md border border-layer-3"
+                  className="h-10 w-10 rounded-md border border-cds-border-subtle"
                   style={{
                     backgroundColor: `var(--ibm-${palette.name}-${step})`,
                   }}

@@ -59,6 +59,7 @@ Typography, spacing, border radius, shadows, and motion do not change between da
 | `--radius-md` | 0.375rem (6px) | Buttons, inputs |
 | `--radius-lg` | 0.75rem (12px) | Cards, nav bar, panels |
 | `--radius-xl` | 1rem (16px) | Large cards |
+| `--radius-control` | 0.5rem (8px) | Inner controls inside cards/nav (e.g. theme toggle) |
 | `--radius-full` | 9999px | Pills, circular buttons |
 
 ### Shadows

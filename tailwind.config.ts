@@ -167,6 +167,18 @@ const config: Config = {
           8: 'var(--color-layer-8)',
           surface: 'var(--color-layer-surface)',
         },
+        cds: {
+          background: 'var(--cds-background)',
+          layer: 'var(--cds-layer)',
+          'layer-subtle': 'var(--cds-layer-subtle)',
+          'layer-hover': 'var(--cds-layer-hover)',
+          'border-subtle': 'var(--cds-border-subtle)',
+          'border-strong': 'var(--cds-border-strong)',
+          'text-primary': 'var(--cds-text-primary)',
+          'text-secondary': 'var(--cds-text-secondary)',
+          'text-muted': 'var(--cds-text-muted)',
+          focus: 'var(--cds-focus)',
+        },
         accent: 'var(--color-accent-primary)',
       },
       fontFamily: {
@@ -181,6 +193,9 @@ const config: Config = {
         sm: 'var(--radius-sm)',
         md: 'var(--radius-md)',
         lg: 'var(--radius-lg)',
+        xl: 'var(--radius-xl)',
+        control: 'var(--radius-control)',
+        full: 'var(--radius-full)',
       },
       boxShadow: {
         sm: 'var(--shadow-sm)',

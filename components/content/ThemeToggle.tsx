@@ -26,10 +26,10 @@ export function ThemeToggle() {
       onClick={toggleTheme}
       data-ignore-outside="true"
       className={cn(
-        'min-w-[3rem] min-h-[3rem] flex items-center justify-center',
+        'touch-target flex items-center justify-center rounded-lg',
         'text-layer-6 hover:text-layer-8 hover:bg-layer-3 transition-colors',
       )}
-      style={{ borderRadius: '0.5rem' }}
+      style={{ borderRadius: 'var(--radius-control)' }}
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
     >
       {theme === 'dark' ? (

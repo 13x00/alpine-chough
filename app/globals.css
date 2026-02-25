@@ -32,6 +32,12 @@
     text-wrap: balance;
   }
 
+  /* Touch target utility using spacing token (3rem / 48px) */
+  .touch-target {
+    min-width: var(--spacing-12);
+    min-height: var(--spacing-12);
+  }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
