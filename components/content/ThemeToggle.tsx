@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { Sun, Moon } from '@carbon/icons-react'
 import { cn } from '@/lib/utils'
-import { applyCarbonTheme } from '@/lib/carbonTheme'
 
 export function ThemeToggle() {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark')
@@ -13,7 +12,6 @@ export function ThemeToggle() {
     const initialTheme = savedTheme ?? 'dark'
     setTheme(initialTheme)
     document.documentElement.setAttribute('data-theme', initialTheme)
-    applyCarbonTheme(initialTheme)
   }, [])
 
   const toggleTheme = () => {
@@ -21,7 +19,6 @@ export function ThemeToggle() {
     setTheme(newTheme)
     localStorage.setItem('theme', newTheme)
     document.documentElement.setAttribute('data-theme', newTheme)
-    applyCarbonTheme(newTheme)
   }
 
   return (

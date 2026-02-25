@@ -168,14 +168,6 @@ const config: Config = {
           surface: 'var(--color-layer-surface)',
         },
         accent: 'var(--color-accent-primary)',
-        accentTeal: {
-          soft: 'var(--color-accent-teal-soft)',
-          strong: 'var(--color-accent-teal-strong)',
-        },
-        accentRed: {
-          soft: 'var(--color-accent-red-soft)',
-          strong: 'var(--color-accent-red-strong)',
-        },
       },
       fontFamily: {
         sans: ['var(--font-sans)'],
