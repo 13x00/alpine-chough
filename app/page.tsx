@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { SplitLayout } from '@/components/layout/SplitLayout'
+import { PageLoader } from '@/components/transition/PageLoader'
 import { useContent } from '@/hooks/useContent'
 import { Project, Photography, ImageCollection } from '@/types/content'
 import imageCollection01 from '@/content/collections/image-collection-01/collection.json'
@@ -175,15 +176,19 @@ export default function Home() {
   }))
 
   return (
-    <SplitLayout
-      currentView={currentView}
-      selectedItem={selectedItem}
-      onHomeClick={handleHomeClick}
-      useNarrowLayout={useNarrowLayout}
-      onDetailCloseComplete={() => setIsDetailClosing(false)}
-      detailDirection={detailDirection}
-      imageItems={imageItems}
-      projectItems={projectItems}
-    />
+    <>
+      {/* Page-load intro animation — fixed overlay, unmounts after completion */}
+      <PageLoader />
+      <SplitLayout
+        currentView={currentView}
+        selectedItem={selectedItem}
+        onHomeClick={handleHomeClick}
+        useNarrowLayout={useNarrowLayout}
+        onDetailCloseComplete={() => setIsDetailClosing(false)}
+        detailDirection={detailDirection}
+        imageItems={imageItems}
+        projectItems={projectItems}
+      />
+    </>
   )
 }

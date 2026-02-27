@@ -27,6 +27,18 @@
   }
 }
 
+/* AM gradient — single source of truth used by Logo (hover) and PageLoader.
+   Stops are identical between dark and light modes; only the animation direction differs. */
+:root {
+  --am-gradient: linear-gradient(
+    180deg,
+    var(--cds-blue-100) 0%,
+    var(--cds-blue-100) 25%,
+    var(--cds-blue-30) 75%,
+    var(--cds-blue-30) 100%
+  );
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -54,16 +66,11 @@
     color: var(--cds-yellow-70);
   }
 
-  /* Logo: starts one colour, smooth gradient in the middle, ends one colour. */
+  /* Logo: starts one colour, smooth gradient in the middle, ends one colour.
+     Both themes share --am-gradient; only the animation direction differs. */
   [data-theme="light"] .group:hover .logo-gradient-text {
-    /* Light: gradient reversed (100 at top, 30 at bottom) so position 100%→0% gives start 30, end 100; sweep moves downward */
-    background: linear-gradient(
-      180deg,
-      var(--cds-blue-100) 0%,
-      var(--cds-blue-100) 25%,
-      var(--cds-blue-30) 75%,
-      var(--cds-blue-30) 100%
-    );
+    /* Light: position 100%→0% so the visible sweep moves downward (blue-30→blue-100) */
+    background: var(--am-gradient);
     background-size: 100% 400%;
     -webkit-background-clip: text;
     background-clip: text;
@@ -72,14 +79,8 @@
   }
 
   [data-theme="dark"] .group:hover .logo-gradient-text {
-    /* Dark: start blue-100, end blue-30; sweep downward (position 0%→100%) */
-    background: linear-gradient(
-      180deg,
-      var(--cds-blue-100) 0%,
-      var(--cds-blue-100) 25%,
-      var(--cds-blue-30) 75%,
-      var(--cds-blue-30) 100%
-    );
+    /* Dark: position 0%→100% so the visible sweep moves downward (blue-100→blue-30) */
+    background: var(--am-gradient);
     background-size: 100% 400%;
     -webkit-background-clip: text;
     background-clip: text;
@@ -106,4 +107,5 @@
       background-position: 0% 0%;
     }
   }
+
 }
