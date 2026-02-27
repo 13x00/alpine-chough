@@ -19,13 +19,9 @@ const sections = [
     title: 'Components',
     description: 'UI primitives and composed components — each with Playground, States, and Theme Compare stories.',
     items: [
-      { name: 'Card', path: 'components-card', description: 'default / elevated / outlined · interactive hover' },
       { name: 'Typography', path: 'components-typography', description: 'heading / body / caption / small' },
-      { name: 'TabButton', path: 'components-tabs', description: 'active · inactive · hover · focus' },
-      { name: 'ContentTabs', path: 'components-contenttabs', description: 'Photography / Design tab bar' },
       { name: 'ThemeToggle', path: 'components-themetoggle', description: 'Sun/Moon toggle · hover · focus' },
       { name: 'Logo', path: 'components-logo', description: 'Gradient text animation on hover' },
-      { name: 'Grid', path: 'components-grid', description: '1–4 columns · sm/md/lg gap' },
       { name: 'BackButton', path: 'components-backbutton', description: 'Icon button · hover · focus' },
       { name: 'AboutSection', path: 'components-aboutsection', description: 'Body text block' },
       { name: 'LeftPanel', path: 'components-leftpanel', description: 'About + project list + contact footer' },
