@@ -44,7 +44,7 @@ export function ArticleDetail({ article, onBack, className }: ArticleDetailProps
           )}
         </div>
 
-        <Typography variant="body" className="text-layer-7">
+        <Typography variant="body" className="text-text-secondary">
           {article.description}
         </Typography>
 
@@ -59,7 +59,7 @@ export function ArticleDetail({ article, onBack, className }: ArticleDetailProps
             {article.tags.map((tag) => (
               <span
                 key={tag}
-                className="px-3 py-1 text-xs font-medium bg-layer-5 text-layer-7 rounded-full"
+                className="px-3 py-1 text-xs font-medium bg-layer-01 text-text-secondary rounded-full"
               >
                 {tag}
               </span>

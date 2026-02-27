@@ -140,7 +140,7 @@ export function RightPanel({
   return (
     <div
       ref={containerRef}
-      className={`relative flex-1 overflow-hidden bg-layer-1 ${className || ''}`}
+      className={`relative flex-1 overflow-hidden bg-layer-background-01 ${className || ''}`}
     >
       {/* Portrait View - stays in place, always rendered */}
       <div className="absolute inset-0 z-0">
@@ -170,7 +170,7 @@ export function RightPanel({
           }`}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="w-full h-full bg-layer-surface overflow-y-auto shadow-lg">
+          <div className="w-full h-full bg-layer-02 overflow-y-auto shadow-lg">
             {currentView === 'project' && (
               <ProjectProjectFrame project={outgoingItem as Project} onBack={onBack} />
             )}
@@ -206,7 +206,7 @@ export function RightPanel({
           onClick={(e) => e.stopPropagation()}
         >
           <div
-            className={`bg-layer-surface overflow-y-auto shadow-lg transition-all duration-300 ease-out ${
+            className={`bg-layer-02 overflow-y-auto shadow-lg transition-all duration-300 ease-out ${
               isExpanded && !outgoingItem ? 'w-full h-full rounded-none' : 'h-full w-[85%] max-w-4xl rounded-xl'
             }`}
           >
@@ -239,12 +239,12 @@ function ProjectProjectFrame({ project, onBack }: ProjectProjectFrameProps) {
   return (
     <div className="flex h-full flex-col">
       {/* Top bar with back arrow, matching Figma-inspired layout */}
-      <div className="flex h-12 items-center justify-end border-b border-layer-3 bg-layer-2 px-0">
+      <div className="flex h-12 items-center justify-end border-b border-layer-02 bg-layer-01 px-0">
         <button
           type="button"
           onClick={onBack}
           aria-label="Go back"
-          className="flex h-12 w-12 items-center justify-center rounded-none text-layer-7 hover:text-layer-8 hover:bg-layer-3 transition-colors"
+          className="flex h-12 w-12 items-center justify-center rounded-none text-text-secondary hover:text-text-primary hover:bg-layer-hover-01 transition-colors"
         >
           <svg
             width="20"

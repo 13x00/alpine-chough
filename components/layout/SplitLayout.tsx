@@ -45,11 +45,11 @@ export function SplitLayout({
   const transitionClass = 'transition-[width] duration-300 ease-out'
 
   return (
-    <div className="flex h-screen flex-col bg-layer-bg">
+    <div className="flex h-screen flex-col bg-background">
       {/* Top bar — logo + theme toggle, shared across layout */}
       <div className="px-2 pt-2">
         <div
-          className="flex items-center justify-between rounded-lg bg-layer-2 border border-cds-border-subtle px-1 py-1"
+          className="flex items-center justify-between rounded-lg bg-layer-01 border border-border-subtle-01 px-1 py-1"
           style={{ height: 'fit-content' }}
         >
           <Logo onClick={onHomeClick} />
@@ -73,7 +73,7 @@ export function SplitLayout({
               onBack={onHomeClick}
               onCloseAnimationComplete={onDetailCloseComplete}
               direction={detailDirection}
-              className="rounded-lg border border-cds-border-subtle"
+              className="rounded-lg border border-border-subtle-01"
             />
           </div>
         </div>

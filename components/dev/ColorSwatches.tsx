@@ -19,19 +19,19 @@ export function ColorSwatches() {
     <div className="space-y-8">
       {palettes.map((palette) => (
         <section key={palette.name} className="space-y-2">
-          <h2 className="text-sm font-medium text-layer-8">
-            IBM {palette.name} scale
+          <h2 className="text-sm font-medium text-text-primary">
+            Carbon {palette.name} scale
           </h2>
           <div className="flex flex-wrap gap-2">
             {palette.steps.map((step) => (
               <div
             key={step}
-            className="flex flex-col items-center text-xs text-layer-8"
+            className="flex flex-col items-center text-xs text-text-primary"
           >
                 <div
-                  className="h-10 w-10 rounded-md border border-cds-border-subtle"
+                  className="h-10 w-10 rounded-md border border-border-subtle-01"
                   style={{
-                    backgroundColor: `var(--ibm-${palette.name}-${step})`,
+                    backgroundColor: `var(--cds-${palette.name}-${step})`,
                   }}
                 />
                 <span>{step}</span>

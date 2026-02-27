@@ -16,7 +16,7 @@ export function ImageCollectionDetail({ collection, onBack, className }: ImageCo
     <div className={`relative space-y-6 p-6 md:p-8 overflow-y-auto h-full ${className || ''}`}>
       <BackButton onClick={onBack} />
 
-      <div className="relative w-full aspect-[16/10] overflow-hidden rounded-lg bg-layer-2">
+      <div className="relative w-full aspect-[16/10] overflow-hidden rounded-lg bg-layer-01">
         <Image
           src={collection.coverImage}
           alt={collection.title}
@@ -33,7 +33,7 @@ export function ImageCollectionDetail({ collection, onBack, className }: ImageCo
         </Typography>
 
         {collection.description && (
-          <Typography variant="body" className="text-layer-7 whitespace-pre-line">
+          <Typography variant="body" className="text-text-secondary whitespace-pre-line">
             {collection.description}
           </Typography>
         )}
@@ -42,7 +42,7 @@ export function ImageCollectionDetail({ collection, onBack, className }: ImageCo
       {collection.images && collection.images.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
           {collection.images.map((src, i) => (
-            <div key={i} className="relative aspect-[4/3] overflow-hidden rounded-lg bg-layer-2">
+            <div key={i} className="relative aspect-[4/3] overflow-hidden rounded-lg bg-layer-01">
               <Image
                 src={src}
                 alt=""

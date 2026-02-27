@@ -10,8 +10,8 @@
   }
 
   body {
-    background-color: var(--color-layer-bg);
-    color: var(--color-layer-8);
+    background-color: var(--cds-background);
+    color: var(--cds-text-primary);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -47,11 +47,11 @@
     display: none;
   }
 
-  /* Status pill styling – fully token-driven; theme swaps tokens in tokens.css */
+  /* Status pill styling – Carbon yellow tag tokens */
   .status-pill {
-    border: 1px solid var(--color-status-pill-border);
-    background-color: var(--color-status-pill-bg);
-    color: var(--color-status-pill-text);
+    border: 1px solid var(--cds-yellow-40);
+    background-color: var(--cds-yellow-20);
+    color: var(--cds-yellow-70);
   }
 
   /* Logo: starts one colour, smooth gradient in the middle, ends one colour. */
@@ -59,10 +59,10 @@
     /* Light: gradient reversed (100 at top, 30 at bottom) so position 100%→0% gives start 30, end 100; sweep moves downward */
     background: linear-gradient(
       180deg,
-      var(--ibm-blue-100) 0%,
-      var(--ibm-blue-100) 25%,
-      var(--ibm-blue-30) 75%,
-      var(--ibm-blue-30) 100%
+      var(--cds-blue-100) 0%,
+      var(--cds-blue-100) 25%,
+      var(--cds-blue-30) 75%,
+      var(--cds-blue-30) 100%
     );
     background-size: 100% 400%;
     -webkit-background-clip: text;
@@ -75,10 +75,10 @@
     /* Dark: start blue-100, end blue-30; sweep downward (position 0%→100%) */
     background: linear-gradient(
       180deg,
-      var(--ibm-blue-100) 0%,
-      var(--ibm-blue-100) 25%,
-      var(--ibm-blue-30) 75%,
-      var(--ibm-blue-30) 100%
+      var(--cds-blue-100) 0%,
+      var(--cds-blue-100) 25%,
+      var(--cds-blue-30) 75%,
+      var(--cds-blue-30) 100%
     );
     background-size: 100% 400%;
     -webkit-background-clip: text;

@@ -15,10 +15,10 @@ export function BackButton({ onClick, className }: BackButtonProps) {
       className={cn(
         'absolute top-4 right-4 z-50',
         'touch-target flex items-center justify-center',
-        'bg-layer-2 border border-cds-border-subtle rounded-full',
-        'text-layer-7 hover:text-layer-8 hover:bg-layer-3',
+        'bg-layer-01 border border-border-subtle-01 rounded-full',
+        'text-text-secondary hover:text-text-primary hover:bg-layer-hover-01',
         'transition-all duration-fast',
-        'focus:outline-none focus:ring-2 focus:ring-layer-8 focus:ring-offset-2',
+        'focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2',
         className
       )}
       aria-label="Go back"

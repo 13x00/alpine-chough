@@ -13,7 +13,7 @@ interface ContentTabsProps {
 
 export function ContentTabs({ currentTab, onTabChange, className }: ContentTabsProps) {
   return (
-    <div className={`relative flex border-b border-cds-border-subtle ${className || ''}`}>
+    <div className={`relative flex border-b border-border-subtle-01 ${className || ''}`}>
       <TabButton
         active={currentTab === 'images'}
         onClick={() => onTabChange('images')}
@@ -28,7 +28,7 @@ export function ContentTabs({ currentTab, onTabChange, className }: ContentTabsP
       </TabButton>
       {/* Sliding indicator — matches paper strip timing (300ms ease-out) */}
       <div
-        className={`absolute bottom-0 left-0 w-1/2 h-0.5 bg-layer-8 ${TAB_TRANSITION}`}
+        className={`absolute bottom-0 left-0 w-1/2 h-0.5 bg-interactive ${TAB_TRANSITION}`}
         style={{
           transform: currentTab === 'projects' ? 'translateX(100%)' : 'translateX(0)',
         }}

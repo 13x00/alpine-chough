@@ -12,9 +12,9 @@ export function Card({ children, className, onClick, variant = 'default' }: Card
   const baseStyles = 'rounded-lg transition-all duration-normal'
 
   const variantStyles = {
-    default: 'bg-layer-5 border border-cds-border-subtle',
-    elevated: 'bg-layer-6 shadow-md',
-    outlined: 'bg-transparent border-2 border-cds-border-strong',
+    default: 'bg-layer-01 border border-border-subtle-01',
+    elevated: 'bg-layer-02 shadow-md',
+    outlined: 'bg-transparent border-2 border-border-strong-01',
   }
 
   const interactiveStyles = onClick

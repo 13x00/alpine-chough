@@ -15,10 +15,10 @@ export function Typography({
   variant = 'body',
 }: TypographyProps) {
   const variantStyles = {
-    heading: 'text-4xl font-bold leading-tight text-layer-8',
-    body: 'text-base leading-normal text-layer-7',
-    caption: 'text-sm leading-relaxed text-layer-6',
-    small: 'text-xs leading-normal text-layer-5',
+    heading: 'text-4xl font-bold leading-tight text-text-primary',
+    body: 'text-base leading-normal text-text-secondary',
+    caption: 'text-sm leading-relaxed text-text-helper',
+    small: 'text-xs leading-normal text-text-helper',
   }
 
   const Component = as || 'p'

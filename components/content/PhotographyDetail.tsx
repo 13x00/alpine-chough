@@ -33,7 +33,7 @@ export function PhotographyDetail({ photography, onBack, className }: Photograph
         </Typography>
 
         {photography.description && (
-          <Typography variant="body" className="text-layer-7">
+          <Typography variant="body" className="text-text-secondary">
             {photography.description}
           </Typography>
         )}
@@ -53,7 +53,7 @@ export function PhotographyDetail({ photography, onBack, className }: Photograph
             {photography.tags.map((tag) => (
               <span
                 key={tag}
-                className="px-3 py-1 text-xs font-medium bg-layer-5 text-layer-7 rounded-full"
+                className="px-3 py-1 text-xs font-medium bg-layer-01 text-text-secondary rounded-full"
               >
                 {tag}
               </span>

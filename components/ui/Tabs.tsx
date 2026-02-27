@@ -16,8 +16,8 @@ export function TabButton({ children, active, onClick, className }: TabButtonPro
         'relative z-10 flex-1 px-4 py-2 text-sm font-medium transition-colors duration-fast',
         'border-b-2 border-transparent',
         active
-          ? 'text-layer-8'
-          : 'text-layer-6 hover:text-layer-7',
+          ? 'text-text-primary'
+          : 'text-text-helper hover:text-text-secondary',
         className
       )}
     >
