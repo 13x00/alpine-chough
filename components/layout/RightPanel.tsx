@@ -140,7 +140,7 @@ export function RightPanel({
   return (
     <div
       ref={containerRef}
-      className={`relative flex-1 overflow-hidden bg-layer-background-01 ${className || ''}`}
+      className={`relative flex-1 overflow-hidden bg-layer-01 ${className || ''}`}
     >
       {/* Portrait View - stays in place, always rendered */}
       <div className="absolute inset-0 z-0">

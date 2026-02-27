@@ -1,0 +1,49 @@
+/**
+ * Storybook-only: makes [data-theme='dark'] on nested elements force dark tokens.
+ * In production the dark theme is the :root default, so this selector doesn't exist
+ * in carbon-tokens.css. We add it here so ThemeCompare panes can pin the dark side
+ * regardless of whatever the global toolbar is set to.
+ *
+ * Values mirror the g100 (dark) defaults from carbon-tokens.css (:root section).
+ */
+[data-theme='dark'] {
+  --cds-background: #161616;
+  --cds-background-hover: rgba(141, 141, 141, 0.16);
+  --cds-background-active: rgba(141, 141, 141, 0.4);
+  --cds-background-selected: rgba(141, 141, 141, 0.24);
+
+  --cds-layer-01: #262626;
+  --cds-layer-02: #393939;
+  --cds-layer-03: #525252;
+  --cds-layer-background-01: #161616;
+  --cds-layer-hover-01: #333333;
+  --cds-layer-hover-02: #474747;
+  --cds-layer-selected-01: #393939;
+  --cds-layer-selected-02: #525252;
+
+  --cds-text-primary: #f4f4f4;
+  --cds-text-secondary: #c6c6c6;
+  --cds-text-helper: #a8a8a8;
+  --cds-text-disabled: rgba(244, 244, 244, 0.25);
+  --cds-text-placeholder: rgba(244, 244, 244, 0.4);
+
+  --cds-border-subtle-00: #393939;
+  --cds-border-subtle-01: #525252;
+  --cds-border-subtle-02: #6f6f6f;
+  --cds-border-strong-01: #6f6f6f;
+  --cds-border-strong-02: #8d8d8d;
+  --cds-border-interactive: #4589ff;
+
+  --cds-focus: #ffffff;
+  --cds-focus-inset: #161616;
+  --cds-interactive: #4589ff;
+
+  --cds-support-info: #4589ff;
+  --cds-support-warning: #f1c21b;
+  --cds-support-success: #42be65;
+  --cds-support-error: #fa4d56;
+
+  --cds-icon-primary: #f4f4f4;
+  --cds-icon-secondary: #c6c6c6;
+  --cds-icon-disabled: rgba(244, 244, 244, 0.25);
+}

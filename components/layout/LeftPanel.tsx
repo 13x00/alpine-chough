@@ -31,17 +31,17 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
                 <button
                   type="button"
                   onClick={item.onClick}
-                  className="group flex h-12 w-full items-center justify-between px-6 text-left text-xs md:text-sm transition-colors bg-layer-01 hover:bg-layer-hover-01 text-text-primary"
+                  className="group flex h-12 w-full items-center justify-between px-6 text-left text-base transition-colors bg-layer-01 hover:bg-layer-hover-01 text-text-primary"
                 >
                   <div className="flex items-center gap-6">
-                    <span className="font-mono text-sm text-text-primary">
+                    <span className="font-mono text-xl text-text-primary">
                       {rowNumber}
                     </span>
                     <span className="transition-colors">
                       {item.title}
                     </span>
                   </div>
-                  <span className="text-xs text-text-secondary">
+                  <span className="text-base text-text-secondary">
                     {item.category ?? 'Project'}
                   </span>
                 </button>
@@ -54,8 +54,8 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
       {/* Footer contact card */}
       <footer className="rounded-lg bg-layer-01 border border-border-subtle-00 px-6 py-6 flex items-end justify-between">
         <div>
-          <p className="mb-2 text-xs text-text-secondary">Want to have a chat?</p>
-          <ul className="space-y-1 text-xs text-text-primary">
+          <p className="mb-2 text-base text-text-secondary">Want to have a chat?</p>
+          <ul className="space-y-1 text-base text-text-primary">
             <li>
               <a
                 href="mailto:andreas.mitchley@occstudio.com"
@@ -80,7 +80,7 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
           </ul>
         </div>
 
-        <div className="status-pill inline-flex items-center gap-2 rounded-full px-4 py-1 text-sm">
+        <div className="status-pill inline-flex items-center gap-2 rounded-full px-4 py-1 text-base">
           <span>Alpine-Chough</span>
           <span className="font-mono">v1.0.0</span>
         </div>

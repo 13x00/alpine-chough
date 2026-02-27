@@ -12,6 +12,7 @@ const config: Config = {
       colors: {
         /* Carbon theme tokens (from carbon-tokens.css) */
         background: 'var(--cds-background)',
+        'background-hover': 'var(--cds-background-hover)',
         'layer-01': 'var(--cds-layer-01)',
         'layer-02': 'var(--cds-layer-02)',
         'layer-03': 'var(--cds-layer-03)',
@@ -71,6 +72,17 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-sans)'],
         mono: ['var(--font-mono)'],
+      },
+      fontSize: {
+        xs:   'var(--font-size-xs)',
+        sm:   'var(--font-size-sm)',
+        base: 'var(--font-size-base)',
+        lg:   'var(--font-size-lg)',
+        xl:   'var(--font-size-xl)',
+        '2xl': 'var(--font-size-2xl)',
+        '3xl': 'var(--font-size-3xl)',
+        '4xl': 'var(--font-size-4xl)',
+        '5xl': 'var(--font-size-5xl)',
       },
       spacing: {
         // Using CSS custom properties

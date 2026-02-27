@@ -2,6 +2,7 @@ import React from 'react';
 import type { Preview } from '@storybook/react';
 import '../app/styles/tokens.css';
 import '../app/globals.css';
+import './storybook-dark-scope.css';
 
 const preview: Preview = {
   globalTypes: {
@@ -27,25 +28,24 @@ const preview: Preview = {
       },
     },
   },
+  decorators: [
+    (Story, context) => {
+      const theme = (context.globals.theme as string) || 'dark';
+
+      if (typeof document !== 'undefined') {
+        document.documentElement.setAttribute('data-theme', theme);
+      }
+
+      return (
+        <div
+          data-theme={theme}
+          className="min-h-screen bg-background text-text-primary font-sans"
+        >
+          <Story />
+        </div>
+      );
+    },
+  ],
 };
 
 export default preview;
-
-export const decorators = [
-  (Story, context) => {
-    const theme = context.globals.theme || 'dark';
-
-    if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('data-theme', theme);
-    }
-
-    return React.createElement(
-      'div',
-      {
-        'data-theme': theme,
-        className: 'min-h-screen bg-background text-text-primary',
-      },
-      React.createElement(Story, null),
-    );
-  },
-];

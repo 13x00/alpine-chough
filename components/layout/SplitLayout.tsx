@@ -46,16 +46,13 @@ export function SplitLayout({
 
   return (
     <div className="flex h-screen flex-col bg-background">
-      {/* Top bar — logo + theme toggle, shared across layout */}
-      <div className="px-2 pt-2">
-        <div
-          className="flex items-center justify-between rounded-lg bg-layer-01 border border-border-subtle-01 px-1 py-1"
-          style={{ height: 'fit-content' }}
-        >
+      {/* Top bar — logo + theme toggle, aligned with Figma header */}
+      <header className="px-2 pt-2">
+        <div className="flex items-center justify-between px-1 py-1">
           <Logo onClick={onHomeClick} />
           <ThemeToggle />
         </div>
-      </div>
+      </header>
 
       {/* Main content row */}
       <div className="flex-1 px-2 pb-2 pt-2">
@@ -73,7 +70,7 @@ export function SplitLayout({
               onBack={onHomeClick}
               onCloseAnimationComplete={onDetailCloseComplete}
               direction={detailDirection}
-              className="rounded-lg border border-border-subtle-01"
+              className="rounded-lg border border-border-subtle-00"
             />
           </div>
         </div>

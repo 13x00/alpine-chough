@@ -27,7 +27,7 @@ export function ThemeToggle() {
       data-ignore-outside="true"
       className={cn(
         'touch-target flex items-center justify-center rounded-lg',
-        'text-text-helper hover:text-text-primary hover:bg-layer-hover-01 transition-colors',
+        'text-text-helper hover:text-text-primary hover:bg-background-hover transition-colors',
       )}
       style={{ borderRadius: 'var(--radius-control)' }}
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
