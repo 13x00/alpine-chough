@@ -30,7 +30,7 @@ npm run dev
 - `/components` - Reusable React components
   - `/ui` - Base UI components (Typography, Card, Grid, etc.)
   - `/layout` - Layout components (SplitLayout, LeftPanel, RightPanel)
-  - `/content` - Content-specific components (NavCard, ProjectDetail, etc.)
+  - `/content` - Content-specific components (NavCard, detail views, etc.)
 - `/hooks` - Custom React hooks (useContent)
 - `/lib` - Utility functions
 - `/types` - TypeScript type definitions

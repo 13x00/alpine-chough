@@ -9,17 +9,10 @@ import { ViewType, DetailItem } from '@/types/content'
 interface SplitLayoutProps {
   currentView: ViewType
   selectedItem: DetailItem | null
-  onHomeClick: () => void
+  onCloseDetail: () => void
   useNarrowLayout?: boolean
   onDetailCloseComplete?: () => void
   detailDirection?: 'forward' | 'backward'
-  imageItems: Array<{
-    id: string
-    title: string
-    category?: string
-    image: string
-    onClick: () => void
-  }>
   projectItems: Array<{
     id: string
     title: string
@@ -32,14 +25,12 @@ interface SplitLayoutProps {
 export function SplitLayout({
   currentView,
   selectedItem,
-  onHomeClick,
+  onCloseDetail,
   useNarrowLayout = false,
   onDetailCloseComplete,
   detailDirection,
-  imageItems,
   projectItems,
 }: SplitLayoutProps) {
-  const hasDetailOpen = selectedItem !== null && currentView !== 'portrait'
   const leftWidth = useNarrowLayout ? 'md:w-1/3' : 'md:w-1/2'
   const rightWidth = useNarrowLayout ? 'md:w-2/3' : 'md:w-1/2'
   const transitionClass = 'transition-[width] duration-300 ease-out'
@@ -49,7 +40,7 @@ export function SplitLayout({
       {/* Top bar — logo + theme toggle, aligned with Figma header */}
       <header className="px-2 pt-2">
         <div className="flex items-center justify-between px-1 py-1">
-          <Logo onClick={onHomeClick} />
+          <Logo onClick={onCloseDetail} />
           <ThemeToggle />
         </div>
       </header>
@@ -67,7 +58,7 @@ export function SplitLayout({
             <RightPanel
               currentView={currentView}
               selectedItem={selectedItem}
-              onBack={onHomeClick}
+              onBack={onCloseDetail}
               onCloseAnimationComplete={onDetailCloseComplete}
               direction={detailDirection}
               className="rounded-lg border border-border-subtle-00"

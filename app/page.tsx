@@ -182,11 +182,10 @@ export default function Home() {
       <SplitLayout
         currentView={currentView}
         selectedItem={selectedItem}
-        onHomeClick={handleHomeClick}
+        onCloseDetail={handleHomeClick}
         useNarrowLayout={useNarrowLayout}
         onDetailCloseComplete={() => setIsDetailClosing(false)}
         detailDirection={detailDirection}
-        imageItems={imageItems}
         projectItems={projectItems}
       />
     </>

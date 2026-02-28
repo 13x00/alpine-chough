@@ -1,6 +1,7 @@
 'use client'
 
 import { AboutSection } from '@/components/content/AboutSection'
+import { Surface } from '@/components/ui/Surface'
 
 interface LeftPanelProps {
   projectItems: Array<{
@@ -16,12 +17,12 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
   return (
     <div className="relative flex h-full flex-col gap-2">
       {/* About card */}
-      <section className="flex-1 min-h-[11.25rem] rounded-lg bg-layer-01 border border-border-subtle-00 px-6 py-6 overflow-hidden">
+      <Surface as="section" padding="md" className="flex-1 min-h-[11.25rem] overflow-hidden">
         <AboutSection />
-      </section>
+      </Surface>
 
       {/* Project list card */}
-      <section className="flex-1 min-h-[13.75rem] rounded-lg bg-layer-01 border border-border-subtle-00 overflow-y-auto">
+      <Surface as="section" padding="none" className="flex-1 min-h-[13.75rem] overflow-y-auto">
         <ul className="flex flex-col divide-y divide-border-subtle-00">
           {projectItems.map((item, index) => {
             const rowNumber = String(index + 1).padStart(2, '0')
@@ -31,6 +32,7 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
                 <button
                   type="button"
                   onClick={item.onClick}
+                  data-nav-card
                   className="group flex h-12 w-full items-center justify-between px-6 text-left text-base transition-colors bg-layer-01 hover:bg-layer-hover-01 text-text-primary"
                 >
                   <div className="flex items-center gap-6">
@@ -49,10 +51,10 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
             )
           })}
         </ul>
-      </section>
+      </Surface>
 
       {/* Footer contact card */}
-      <footer className="rounded-lg bg-layer-01 border border-border-subtle-00 px-6 py-6 flex items-end justify-between">
+      <Surface as="footer" padding="md" className="flex items-end justify-between">
         <div>
           <p className="mb-2 text-sm text-text-secondary">Want to have a chat?</p>
           <ul className="space-y-1 text-sm text-text-primary">
@@ -84,7 +86,7 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
           <span>Alpine-Chough</span>
           <span className="font-mono">v1.0.0</span>
         </div>
-      </footer>
+      </Surface>
     </div>
   )
 }
