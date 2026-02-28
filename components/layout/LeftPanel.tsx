@@ -41,7 +41,7 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
                       {item.title}
                     </span>
                   </div>
-                  <span className="text-base text-text-secondary">
+                  <span className="text-sm text-text-secondary">
                     {item.category ?? 'Project'}
                   </span>
                 </button>
@@ -54,8 +54,8 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
       {/* Footer contact card */}
       <footer className="rounded-lg bg-layer-01 border border-border-subtle-00 px-6 py-6 flex items-end justify-between">
         <div>
-          <p className="mb-2 text-base text-text-secondary">Want to have a chat?</p>
-          <ul className="space-y-1 text-base text-text-primary">
+          <p className="mb-2 text-sm text-text-secondary">Want to have a chat?</p>
+          <ul className="space-y-1 text-sm text-text-primary">
             <li>
               <a
                 href="mailto:andreas.mitchley@occstudio.com"
@@ -80,7 +80,7 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
           </ul>
         </div>
 
-        <div className="status-pill inline-flex items-center gap-2 rounded-full px-4 py-1 text-base">
+        <div className="status-pill inline-flex items-center gap-2 rounded-full px-4 py-1 text-sm">
           <span>Alpine-Chough</span>
           <span className="font-mono">v1.0.0</span>
         </div>
