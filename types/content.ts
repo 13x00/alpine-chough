@@ -19,3 +19,8 @@ export interface Photo {
 }
 
 export type DetailItem = Photo | Collection
+
+export interface ContentData {
+  photos: Photo[]
+  collections: Collection[]
+}
