@@ -80,13 +80,13 @@ export default function Home() {
     return null
   }
 
-  const { photos: mockPhotos, collections: mockCollections } = contentData
-
-  // Combined list: photos first, then collections (order used for slide direction)
-  const allEntries: Array<{ id: string; title: string; view: 'photo' | 'collection'; item: Photo | Collection }> = [
-    ...mockPhotos.map((p) => ({ id: p.id, title: p.title, view: 'photo' as const, item: p })),
-    ...mockCollections.map((c) => ({ id: c.id, title: c.title, view: 'collection' as const, item: c })),
-  ]
+  // items array preserves order from content.json (photos and collections in any order)
+  const allEntries = contentData.items.map((item) => ({
+    id: item.id,
+    title: item.title,
+    view: item.type,
+    item: item.type === 'photo' ? (item as Photo) : (item as Collection),
+  }))
 
   const projectItems = allEntries.map((entry, nextIndex) => ({
     id: entry.id,

@@ -20,7 +20,9 @@ export interface Photo {
 
 export type DetailItem = Photo | Collection
 
+/** Item in the content list: photo or collection, discriminated by `type`. */
+export type ContentItem = (Photo & { type: 'photo' }) | (Collection & { type: 'collection' })
+
 export interface ContentData {
-  photos: Photo[]
-  collections: Collection[]
+  items: ContentItem[]
 }
