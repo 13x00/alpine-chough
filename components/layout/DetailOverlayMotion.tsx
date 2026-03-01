@@ -256,7 +256,7 @@ export function DetailOverlayMotion({
              */}
             <motion.div
               key="overlay-outer"
-              className="absolute inset-0 z-20 flex items-center justify-center"
+              className="absolute inset-0 z-20 flex min-h-0 flex-col items-stretch pointer-events-auto"
               initial={{ padding: CARD_PADDING, x: 0 }}
               animate={outerAnimate}
               transition={outerTransition}
@@ -266,10 +266,10 @@ export function DetailOverlayMotion({
             >
               {/*
                * Surface — entry slide/opacity driven here; borderRadius shrinks in phase A.
-               * overflow-hidden required for borderRadius to clip content during phases.
+               * flex-1 min-h-0 so it takes remaining space but can shrink for scroll.
                */}
               <motion.div
-                className="w-full h-full bg-layer-02 shadow-lg overflow-hidden relative"
+                className="flex min-h-0 flex-1 flex-col overflow-hidden bg-layer-02 shadow-lg relative"
                 initial={surfaceInitial}
                 animate={surfaceAnimate}
                 transition={surfaceTransition}
@@ -278,11 +278,11 @@ export function DetailOverlayMotion({
                   if (!isExpanded && !isClosingRef.current) setDidArrive(true)
                 }}
               >
-                {/* Clip shell — clips horizontal overflow during push transitions */}
-                <div className="absolute inset-0 overflow-hidden">
+                {/* Clip shell — absolute fill, clips only horizontal overflow for push animation */}
+                <div className="absolute inset-0 overflow-x-hidden">
                   {/*
-                   * Content — AnimatePresence initial={false} suppresses mount animation
-                   * (surface container handles entry). Key changes on swap trigger push.
+                   * Content — absolute fill gives a fixed height so overflow-y-auto scrolls
+                   * when the detail content is taller than the panel.
                    */}
                   <AnimatePresence custom={direction} mode="sync" initial={false}>
                     <motion.div

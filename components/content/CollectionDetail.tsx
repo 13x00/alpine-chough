@@ -3,17 +3,17 @@
 import { Typography } from '@/components/ui/Typography'
 import { BackButton } from '@/components/content/BackButton'
 import Image from 'next/image'
-import { ImageCollection } from '@/types/content'
+import { Collection } from '@/types/content'
 
-interface ImageCollectionDetailProps {
-  collection: ImageCollection
+interface CollectionDetailProps {
+  collection: Collection
   onBack: () => void
   className?: string
 }
 
-export function ImageCollectionDetail({ collection, onBack, className }: ImageCollectionDetailProps) {
+export function CollectionDetail({ collection, onBack, className }: CollectionDetailProps) {
   return (
-    <div className={`relative space-y-6 p-6 md:p-8 overflow-y-auto h-full ${className || ''}`}>
+    <div className={`relative space-y-6 p-6 md:p-8 ${className || ''}`}>
       <BackButton onClick={onBack} />
 
       <div className="relative w-full aspect-[16/10] overflow-hidden rounded-lg bg-layer-01">

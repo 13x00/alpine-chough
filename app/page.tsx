@@ -4,53 +4,9 @@ import { useState } from 'react'
 import { SplitLayout } from '@/components/layout/SplitLayout'
 import { PageLoader } from '@/components/transition/PageLoader'
 import { useContent } from '@/hooks/useContent'
-import { Project, Photography, ImageCollection } from '@/types/content'
-import imageCollection01 from '@/content/collections/image-collection-01/collection.json'
+import { Photo, Collection } from '@/types/content'
 
-const mockProjects: Project[] = [
-  {
-    id: '1',
-    title: 'Occ Studio — Brand Identity',
-    description: 'Visual identity and brand system for a multidisciplinary design studio. Logo marks, typography, and application across print and digital.',
-    image: '/Portrait_cycle/AM_Portrait.jpg',
-    category: 'Brand identity',
-    tags: ['Logo', 'Typography', 'Print'],
-  },
-  {
-    id: '2',
-    title: 'Municipal Archive — Service Design',
-    description: 'Service design and interaction concept for a city archive. User research, journey mapping, and prototype for a new discovery interface.',
-    image: '/Portrait_cycle/AM_Portrait.jpg',
-    category: 'Service design',
-    tags: ['Research', 'Prototyping', 'Public sector'],
-  },
-  {
-    id: '3',
-    title: 'Alpine Chough — Portfolio',
-    description: 'Personal hub and archive for design work, articles, and photography. Built with Next.js, TypeScript, and a warm gray design system.',
-    image: '/Portrait_cycle/AM_Portrait.jpg',
-    category: 'Web & interaction',
-    tags: ['Next.js', 'Design system', 'Portfolio'],
-  },
-  {
-    id: '4',
-    title: 'Editorial — AHO Yearbook',
-    description: 'Art direction and layout design for the Oslo School of Architecture and Design yearbook. Grid system and image-led spreads.',
-    image: '/Portrait_cycle/AM_Portrait.jpg',
-    category: 'Editorial',
-    tags: ['Art direction', 'Layout', 'Print'],
-  },
-  {
-    id: '5',
-    title: 'Food Co-op — App Concept',
-    description: 'Concept for a neighbourhood food co-op app: ordering, pickup slots, and member communication. UI and flow design.',
-    image: '/Portrait_cycle/AM_Portrait.jpg',
-    category: 'UI/UX',
-    tags: ['App design', 'User flows', 'Concept'],
-  },
-]
-
-const mockImages: Photography[] = [
+const mockPhotos: Photo[] = [
   {
     id: '1',
     title: 'Mountain Landscape',
@@ -95,6 +51,25 @@ const mockImages: Photography[] = [
   },
 ]
 
+const mockCollections: Collection[] = [
+  {
+    id: 'col-1',
+    title: 'Norwegian Landscapes',
+    slug: 'norwegian-landscapes',
+    description: 'A selection of mountain and coastal scenes from Norway.',
+    coverImage: '/Portrait_cycle/IMG_6396.jpg',
+    images: ['/Portrait_cycle/IMG_6396.jpg', '/Portrait_cycle/DSC02816 2 10.png'],
+  },
+  {
+    id: 'col-2',
+    title: 'Urban Frames',
+    slug: 'urban-frames',
+    description: 'Architecture and street photography from city explorations.',
+    coverImage: '/Portrait_cycle/118_1808_Original.jpg',
+    images: ['/Portrait_cycle/118_1808_Original.jpg', '/Portrait_cycle/DSC02816 2 9.png'],
+  },
+]
+
 export default function Home() {
   const { currentView, selectedItem, setView, goHome } = useContent()
   const [isDetailClosing, setIsDetailClosing] = useState(false)
@@ -108,38 +83,20 @@ export default function Home() {
     goHome()
   }
 
-  const collection = imageCollection01 as ImageCollection
-
-  // Combined list: collection first, then single photography items (for slide order)
-  const allImageEntries: Array<
-    { id: string; title: string; category: string; image: string; view: 'collection' | 'photography'; item: ImageCollection | Photography }
-  > = [
-    {
-      id: collection.id,
-      title: collection.title,
-      category: 'Collection',
-      image: collection.coverImage,
-      view: 'collection',
-      item: collection,
-    },
-    ...mockImages.map((p) => ({
-      id: p.id,
-      title: p.title,
-      category: 'Photography',
-      image: p.image,
-      view: 'photography' as const,
-      item: p,
-    })),
+  // Combined list: photos first, then collections (order used for slide direction)
+  const allEntries: Array<{ id: string; title: string; view: 'photo' | 'collection'; item: Photo | Collection }> = [
+    ...mockPhotos.map((p) => ({ id: p.id, title: p.title, view: 'photo' as const, item: p })),
+    ...mockCollections.map((c) => ({ id: c.id, title: c.title, view: 'collection' as const, item: c })),
   ]
 
-  const imageItems = allImageEntries.map((entry, nextIndex) => ({
+  const projectItems = allEntries.map((entry, nextIndex) => ({
     id: entry.id,
     title: entry.title,
-    category: entry.category,
-    image: entry.image,
+    category: entry.view === 'photo' ? 'Photo' : 'Collection',
+    image: entry.view === 'photo' ? (entry.item as Photo).image : (entry.item as Collection).coverImage,
     onClick: () => {
-      if ((currentView === 'photography' || currentView === 'collection') && selectedItem) {
-        const currentIndex = allImageEntries.findIndex((e) => e.id === selectedItem.id)
+      if ((currentView === 'photo' || currentView === 'collection') && selectedItem) {
+        const currentIndex = allEntries.findIndex((e) => e.id === selectedItem.id)
         if (currentIndex !== -1 && nextIndex !== currentIndex) {
           setDetailDirection(nextIndex > currentIndex ? 'forward' : 'backward')
         } else {
@@ -149,29 +106,6 @@ export default function Home() {
         setDetailDirection('forward')
       }
       setView(entry.view, entry.item)
-    },
-  }))
-
-  const projectItems = mockProjects.map((item) => ({
-    id: item.id,
-    title: item.title,
-    category: item.category,
-    image: item.image,
-    onClick: () => {
-      // Determine slide direction within the project list
-      if (currentView === 'project' && selectedItem) {
-        const currentIndex = mockProjects.findIndex((p) => p.id === selectedItem.id)
-        const nextIndex = mockProjects.findIndex((p) => p.id === item.id)
-        if (currentIndex !== -1 && nextIndex !== -1 && nextIndex !== currentIndex) {
-          setDetailDirection(nextIndex > currentIndex ? 'forward' : 'backward')
-        } else {
-          setDetailDirection('forward')
-        }
-      } else {
-        // First open into projects
-        setDetailDirection('forward')
-      }
-      setView('project', item)
     },
   }))
 

@@ -4,12 +4,10 @@ import { useEffect, useRef, useState } from 'react'
 import { PortraitView } from '@/components/content/PortraitView'
 import { DetailOverlay } from '@/components/layout/DetailOverlay'
 import { DetailOverlayMotion } from '@/components/layout/DetailOverlayMotion'
-import { ArticleDetail } from '@/components/content/ArticleDetail'
-import { PhotographyDetail } from '@/components/content/PhotographyDetail'
-import { ImageCollectionDetail } from '@/components/content/ImageCollectionDetail'
-import { BackButton } from '@/components/content/BackButton'
+import { PhotoDetail } from '@/components/content/PhotoDetail'
+import { CollectionDetail } from '@/components/content/CollectionDetail'
 import { useDetailAnimation } from '@/hooks/useDetailAnimation'
-import { ViewType, DetailItem, Project, Article, Photography, ImageCollection } from '@/types/content'
+import { ViewType, DetailItem, Photo, Collection } from '@/types/content'
 
 const USE_MOTION_OVERLAY = true
 
@@ -85,14 +83,10 @@ export function RightPanel({
 
   function renderDetail(view: ViewType, item: DetailItem, onBack: () => void) {
     switch (view) {
-      case 'project':
-        return <ProjectProjectFrame project={item as Project} onBack={onBack} />
-      case 'article':
-        return <ArticleDetail article={item as Article} onBack={onBack} />
-      case 'photography':
-        return <PhotographyDetail photography={item as Photography} onBack={onBack} />
+      case 'photo':
+        return <PhotoDetail photo={item as Photo} onBack={onBack} />
       case 'collection':
-        return <ImageCollectionDetail collection={item as ImageCollection} onBack={onBack} />
+        return <CollectionDetail collection={item as Collection} onBack={onBack} />
       default:
         return null
     }
@@ -173,58 +167,6 @@ export function RightPanel({
           renderDetail={renderDetail}
         />
       )}
-    </div>
-  )
-}
-
-interface ProjectProjectFrameProps {
-  project: Project
-  onBack: () => void
-}
-
-function ProjectProjectFrame({ project, onBack }: ProjectProjectFrameProps) {
-  // TEMP DEBUG — visual differentiation only
-  const BLUE_BG_TOKENS = ['bg-blue-60', 'bg-blue-50', 'bg-blue-40', 'bg-blue-30'] as const
-  const idIndex = (() => {
-    const n = parseInt(project.id, 10)
-    if (!Number.isNaN(n)) return n
-    return [...project.id].reduce((acc, c) => acc + c.charCodeAt(0), 0)
-  })()
-  const blueBgClass = BLUE_BG_TOKENS[Math.abs(idIndex) % BLUE_BG_TOKENS.length]
-
-  return (
-    <div className="flex h-full flex-col">
-      {/* Top bar with back arrow, matching Figma-inspired layout */}
-      <div className="flex h-12 items-center justify-end border-b border-layer-02 bg-layer-01 px-0">
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label="Go back"
-          className="flex h-12 w-12 items-center justify-center rounded-none text-text-secondary hover:text-text-primary hover:bg-layer-hover-01 transition-colors"
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-          >
-            <path
-              d="M12.5 15L7.5 10L12.5 5"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-      </div>
-
-      {/* Full-bleed project image */}
-      <div className="relative flex-1">
-        <div className={`absolute inset-0 ${blueBgClass}`} />
-      </div>
     </div>
   )
 }

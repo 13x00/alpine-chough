@@ -21,7 +21,7 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
         <AboutSection />
       </Surface>
 
-      {/* Project list card */}
+      {/* Photos & collections list */}
       <Surface as="section" padding="none" className="flex-1 min-h-[13.75rem] overflow-y-auto">
         {/* data-nav-card covers the full list surface so row-gap clicks don't close the overlay */}
         <ul data-nav-card className="flex flex-col divide-y divide-border-subtle-00">
@@ -45,7 +45,7 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
                     </span>
                   </div>
                   <span className="text-sm text-text-secondary">
-                    {item.category ?? 'Project'}
+                    {item.category ?? 'Photo'}
                   </span>
                 </button>
               </li>
