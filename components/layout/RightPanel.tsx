@@ -1,14 +1,17 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { PortraitView } from '@/components/content/PortraitView'
 import { DetailOverlay } from '@/components/layout/DetailOverlay'
+import { DetailOverlayMotion } from '@/components/layout/DetailOverlayMotion'
 import { ArticleDetail } from '@/components/content/ArticleDetail'
 import { PhotographyDetail } from '@/components/content/PhotographyDetail'
 import { ImageCollectionDetail } from '@/components/content/ImageCollectionDetail'
 import { BackButton } from '@/components/content/BackButton'
 import { useDetailAnimation } from '@/hooks/useDetailAnimation'
 import { ViewType, DetailItem, Project, Article, Photography, ImageCollection } from '@/types/content'
+
+const USE_MOTION_OVERLAY = true
 
 interface RightPanelProps {
   currentView: ViewType
@@ -32,20 +35,53 @@ export function RightPanel({
   const isPortrait = currentView === 'portrait'
   const hasDetail = selectedItem !== null && !isPortrait
 
-  const {
-    showDetail,
-    isExpanded,
-    displayItem,
-    outgoingItem,
-    swapAnimating,
-    displayView,
-    outgoingView,
-  } = useDetailAnimation({
-    hasDetail,
-    selectedItem,
+  // Legacy animation hook — disabled when USE_MOTION_OVERLAY is true but always
+  // called (React rules prohibit conditional hook calls).
+  const legacyAnimation = useDetailAnimation({
+    hasDetail: USE_MOTION_OVERLAY ? false : hasDetail,
+    selectedItem: USE_MOTION_OVERLAY ? null : selectedItem,
     currentView,
-    onCloseAnimationComplete,
+    onCloseAnimationComplete: USE_MOTION_OVERLAY ? undefined : onCloseAnimationComplete,
   })
+
+  // --- Motion overlay state ---
+  const [motionIsOpen, setMotionIsOpen] = useState(false)
+  const [motionIsExpanded, setMotionIsExpanded] = useState(false)
+  const [motionDisplayItem, setMotionDisplayItem] = useState<DetailItem | null>(null)
+  const [motionDisplayView, setMotionDisplayView] = useState<ViewType>('portrait')
+
+  // Refs to detect transitions without adding stale-closure deps
+  const prevHasDetailRef = useRef(false)
+  const prevItemIdRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    const wasOpen = prevHasDetailRef.current
+    const prevId  = prevItemIdRef.current
+
+    // Update refs first so re-runs see the latest values
+    prevHasDetailRef.current = hasDetail
+    prevItemIdRef.current    = selectedItem?.id ?? null
+
+    if (hasDetail && selectedItem) {
+      if (!wasOpen) {
+        // First open — let DetailOverlayMotion run its card→expand sequence
+        setMotionDisplayItem(selectedItem)
+        setMotionDisplayView(currentView)
+        setMotionIsExpanded(false)
+        setMotionIsOpen(true)
+      } else if (selectedItem.id !== prevId) {
+        // Swap to a different item — update content; AnimatePresence handles push
+        setMotionDisplayItem(selectedItem)
+        setMotionDisplayView(currentView)
+        // isExpanded stays true so the container remains full during swap
+      }
+      // else: same item re-selected — no-op
+    } else if (wasOpen && !hasDetail) {
+      // Close — motionDisplayItem intentionally kept so AnimatePresence can exit
+      setMotionIsOpen(false)
+      setMotionIsExpanded(false)
+    }
+  }, [hasDetail, selectedItem, currentView])
 
   function renderDetail(view: ViewType, item: DetailItem, onBack: () => void) {
     switch (view) {
@@ -107,18 +143,36 @@ export function RightPanel({
         <PortraitView isVisible={isPortrait} />
       </div>
 
-      <DetailOverlay
-        showDetail={showDetail}
-        isExpanded={isExpanded}
-        displayItem={displayItem}
-        outgoingItem={outgoingItem}
-        swapAnimating={swapAnimating}
-        displayView={displayView}
-        outgoingView={outgoingView}
-        direction={direction}
-        onBack={onBack}
-        renderDetail={renderDetail}
-      />
+      {USE_MOTION_OVERLAY ? (
+        <DetailOverlayMotion
+          isOpen={motionIsOpen}
+          isExpanded={motionIsExpanded}
+          setIsExpanded={setMotionIsExpanded}
+          displayItem={motionDisplayItem}
+          displayView={motionDisplayView}
+          direction={direction}
+          onBack={onBack}
+          renderDetail={renderDetail}
+          onExited={() => {
+            setMotionDisplayItem(null)
+            setMotionIsExpanded(false)
+            onCloseAnimationComplete?.()
+          }}
+        />
+      ) : (
+        <DetailOverlay
+          showDetail={legacyAnimation.showDetail}
+          isExpanded={legacyAnimation.isExpanded}
+          displayItem={legacyAnimation.displayItem}
+          outgoingItem={legacyAnimation.outgoingItem}
+          swapAnimating={legacyAnimation.swapAnimating}
+          displayView={legacyAnimation.displayView}
+          outgoingView={legacyAnimation.outgoingView}
+          direction={direction}
+          onBack={onBack}
+          renderDetail={renderDetail}
+        />
+      )}
     </div>
   )
 }

@@ -16,6 +16,7 @@
     "@carbon/icons-react": "^11.75.0",
     "@carbon/themes": "^11.68.0",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.34.3",
     "lottie-react": "^2.4.1",
     "next": "^16.1.6",
     "react": "^18.3.1",

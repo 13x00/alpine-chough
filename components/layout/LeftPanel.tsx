@@ -23,7 +23,8 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
 
       {/* Project list card */}
       <Surface as="section" padding="none" className="flex-1 min-h-[13.75rem] overflow-y-auto">
-        <ul className="flex flex-col divide-y divide-border-subtle-00">
+        {/* data-nav-card covers the full list surface so row-gap clicks don't close the overlay */}
+        <ul data-nav-card className="flex flex-col divide-y divide-border-subtle-00">
           {projectItems.map((item, index) => {
             const rowNumber = String(index + 1).padStart(2, '0')
 
