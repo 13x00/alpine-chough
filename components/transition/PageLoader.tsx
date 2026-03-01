@@ -103,14 +103,11 @@ export function PageLoader() {
     // Dismiss motion
     transform:    isDismissing ? 'translateY(-110%)' : 'translateY(0)',
     opacity:      isDismissing ? 0.98 : 1,
-    // AM gradient — exact same stops as Logo dark-mode hover.
-    // Source: --am-gradient in globals.css (180deg, blue-100 0%/25% → blue-30 75%/100%).
-    // backgroundSize 100% 400% makes the gradient 4× the element height so
-    // logo-gradient-run can sweep background-position 0%→100% through it.
+    // AM gradient — single source of truth: app/globals.css (--am-gradient + logo-gradient-run).
+    // Do not duplicate; same variable and keyframe as Logo dark-mode hover.
+    // backgroundSize 100% 400% + keyframe sweep 0%→100% = identical dark-mode look.
     backgroundImage:   'var(--am-gradient)',
     backgroundSize:    '100% 400%',
-    // Same keyframe as the Logo dark-mode hover; duration stretched to fill Phase 1.
-    // 'forwards' keeps the end state (blue-30 dominant) through Phase 2 + 3.
     animation:         'logo-gradient-run 1.6s ease-out forwards',
     transition:        cardTransition,
   }
