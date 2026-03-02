@@ -36,7 +36,7 @@ export function SplitLayout({
   const transitionClass = 'transition-[width] duration-300 ease-out'
 
   return (
-    <div className="flex h-screen flex-col bg-background">
+    <div className="flex h-dvh overflow-hidden flex-col bg-background">
       {/* Top bar — logo + theme toggle, aligned with Figma header */}
       <header className="px-2 pt-2">
         <div className="flex items-center justify-between px-1 py-1">
@@ -46,8 +46,8 @@ export function SplitLayout({
       </header>
 
       {/* Main content row */}
-      <div className="flex-1 px-2 pb-2 pt-2">
-        <div className="flex h-full gap-2 overflow-hidden relative">
+      <div className="flex-1 min-h-0 px-2 pb-2 pt-2">
+        <div className="relative flex h-full min-h-0 gap-2 overflow-hidden">
           {/* Left column — about, project list, contact */}
           <div className={`w-full ${leftWidth} flex-shrink-0 relative z-10 ${transitionClass}`}>
             <LeftPanel projectItems={projectItems} />

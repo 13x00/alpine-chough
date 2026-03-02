@@ -15,14 +15,14 @@ interface LeftPanelProps {
 
 export function LeftPanel({ projectItems }: LeftPanelProps) {
   return (
-    <div className="relative flex h-full flex-col gap-2">
+    <div className="relative flex h-full min-h-0 flex-col gap-2">
       {/* About card */}
       <Surface as="section" padding="md" className="flex-1 min-h-[11.25rem] overflow-hidden">
         <AboutSection />
       </Surface>
 
       {/* Photos & collections list */}
-      <Surface as="section" padding="none" className="flex-1 min-h-[13.75rem] overflow-y-auto">
+      <Surface as="section" padding="none" className="flex-1 min-h-[11.25rem] overflow-y-auto">
         {/* data-nav-card covers the full list surface so row-gap clicks don't close the overlay */}
         <ul data-nav-card className="flex flex-col divide-y divide-border-subtle-00">
           {projectItems.map((item, index) => {
@@ -55,7 +55,7 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
       </Surface>
 
       {/* Footer contact card */}
-      <Surface as="footer" padding="md" className="flex items-end justify-between">
+      <Surface as="footer" padding="md" className="shrink-0 flex items-end justify-between">
         <div>
           <p className="mb-2 text-sm text-text-secondary">Want to have a chat?</p>
           <ul className="space-y-1 text-sm text-text-primary">
