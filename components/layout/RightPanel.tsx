@@ -2,14 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { PortraitView } from '@/components/content/PortraitView'
-import { DetailOverlay } from '@/components/layout/DetailOverlay'
 import { DetailOverlayMotion } from '@/components/layout/DetailOverlayMotion'
 import { PhotoDetail } from '@/components/content/PhotoDetail'
 import { CollectionDetail } from '@/components/content/CollectionDetail'
-import { useDetailAnimation } from '@/hooks/useDetailAnimation'
 import { ViewType, DetailItem, Photo, Collection } from '@/types/content'
-
-const USE_MOTION_OVERLAY = true
 
 interface RightPanelProps {
   currentView: ViewType
@@ -32,15 +28,6 @@ export function RightPanel({
 
   const isPortrait = currentView === 'portrait'
   const hasDetail = selectedItem !== null && !isPortrait
-
-  // Legacy animation hook — disabled when USE_MOTION_OVERLAY is true but always
-  // called (React rules prohibit conditional hook calls).
-  const legacyAnimation = useDetailAnimation({
-    hasDetail: USE_MOTION_OVERLAY ? false : hasDetail,
-    selectedItem: USE_MOTION_OVERLAY ? null : selectedItem,
-    currentView,
-    onCloseAnimationComplete: USE_MOTION_OVERLAY ? undefined : onCloseAnimationComplete,
-  })
 
   // --- Motion overlay state ---
   const [motionIsOpen, setMotionIsOpen] = useState(false)
@@ -137,36 +124,21 @@ export function RightPanel({
         <PortraitView isVisible={isPortrait} />
       </div>
 
-      {USE_MOTION_OVERLAY ? (
-        <DetailOverlayMotion
-          isOpen={motionIsOpen}
-          isExpanded={motionIsExpanded}
-          setIsExpanded={setMotionIsExpanded}
-          displayItem={motionDisplayItem}
-          displayView={motionDisplayView}
-          direction={direction}
-          onBack={onBack}
-          renderDetail={renderDetail}
-          onExited={() => {
-            setMotionDisplayItem(null)
-            setMotionIsExpanded(false)
-            onCloseAnimationComplete?.()
-          }}
-        />
-      ) : (
-        <DetailOverlay
-          showDetail={legacyAnimation.showDetail}
-          isExpanded={legacyAnimation.isExpanded}
-          displayItem={legacyAnimation.displayItem}
-          outgoingItem={legacyAnimation.outgoingItem}
-          swapAnimating={legacyAnimation.swapAnimating}
-          displayView={legacyAnimation.displayView}
-          outgoingView={legacyAnimation.outgoingView}
-          direction={direction}
-          onBack={onBack}
-          renderDetail={renderDetail}
-        />
-      )}
+      <DetailOverlayMotion
+        isOpen={motionIsOpen}
+        isExpanded={motionIsExpanded}
+        setIsExpanded={setMotionIsExpanded}
+        displayItem={motionDisplayItem}
+        displayView={motionDisplayView}
+        direction={direction}
+        onBack={onBack}
+        renderDetail={renderDetail}
+        onExited={() => {
+          setMotionDisplayItem(null)
+          setMotionIsExpanded(false)
+          onCloseAnimationComplete?.()
+        }}
+      />
     </div>
   )
 }
