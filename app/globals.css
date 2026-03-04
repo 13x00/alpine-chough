@@ -64,11 +64,31 @@
     display: none;
   }
 
-  /* Status pill styling – Carbon yellow tag tokens */
-  .status-pill {
-    border: 1px solid var(--cds-yellow-40);
-    background-color: var(--cds-yellow-20);
-    color: var(--cds-yellow-70);
+  /* Footer: establish container so @container query works; stack when narrow so link text doesn’t wrap */
+  .footer-card-layout {
+    container-type: inline-size;
+    container-name: footer-card;
+  }
+
+  @container footer-card (max-width: 549px) {
+    .footer-card-layout {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+  }
+
+  /* Framework version tag – Carbon Tag/Blue tokens, dark mode default */
+  .framework-version-tag {
+    border: 1px solid var(--cds-blue-50);
+    background-color: var(--cds-blue-70);
+    color: var(--cds-blue-20);
+  }
+
+  [data-theme='light'] .framework-version-tag {
+    border-color: var(--cds-blue-40);
+    background-color: var(--cds-blue-20);
+    color: var(--cds-blue-70);
   }
 
   /* Logo: show light or dark SVG based on theme (data-theme on html) */

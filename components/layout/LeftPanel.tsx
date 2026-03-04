@@ -71,9 +71,13 @@ export function LeftPanel({ projectItems, selectedItemId = null }: LeftPanelProp
         </ul>
       </Surface>
 
-      {/* Footer contact card */}
-      <Surface as="footer" padding="md" className="shrink-0 flex items-end justify-between">
-        <div>
+      {/* Footer contact card — horizontal when room, stacks when narrow (wrap + container query) */}
+      <Surface
+        as="footer"
+        padding="md"
+        className="footer-card-layout @container shrink-0 flex flex-row flex-wrap items-end justify-between gap-3"
+      >
+        <div className="min-w-[20rem] flex-1">
           <p className="mb-2 text-sm text-text-secondary">Want to have a chat?</p>
           <ul className="space-y-1 text-sm text-text-primary">
             <li>
@@ -100,9 +104,9 @@ export function LeftPanel({ projectItems, selectedItemId = null }: LeftPanelProp
           </ul>
         </div>
 
-        <div className="status-pill inline-flex items-center gap-2 rounded-full px-4 py-1 text-sm">
-          <span>Alpine-Chough</span>
-          <span className="font-mono">v1.0.0</span>
+        <div className="framework-version-tag w-fit shrink-0 inline-flex items-center gap-2 rounded-full px-4 py-1 text-sm">
+          <span>A-C</span>
+          <span className="font-mono">v1.</span>
         </div>
       </Surface>
     </div>
