@@ -9,7 +9,11 @@
     "lint": "next lint",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "tokens:generate": "node scripts/generate-carbon-tokens.js"
+    "tokens:generate": "node scripts/generate-carbon-tokens.js",
+    "images:compress": "node scripts/compress-images.mjs",
+    "images:compress:dry": "node scripts/compress-images.mjs --dry-run",
+    "images:check": "node scripts/compress-images.mjs --dry-run",
+    "images:clean": "node scripts/compress-images.mjs --clean"
   },
   "dependencies": {
     "@carbon/colors": "^11.47.0",
@@ -21,6 +25,7 @@
     "next": "^16.1.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "sharp": "^0.34.5",
     "tailwind-merge": "^2.5.0"
   },
   "devDependencies": {

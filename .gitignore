@@ -36,3 +36,10 @@ next-env.d.ts
 
 # chat transcripts
 /chat-transcripts
+
+# image pipeline
+# assets/originals/ holds large uncompressed source images — omit from git
+# (store them in LFS, a shared drive, or re-download from the camera roll)
+/assets/originals/
+# per-machine build cache for the image compression script
+/scripts/.image-cache.json

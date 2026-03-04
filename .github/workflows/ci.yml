@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Check & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # assets/originals/ is gitignored and absent in CI, so this step exits 0
+      # when no originals are present. Its primary value is:
+      #   1. Catching syntax/runtime errors in the script itself.
+      #   2. Failing fast if originals are ever tracked via Git LFS and a PR
+      #      adds new originals without running npm run images:compress first.
+      - name: Check image outputs are up to date
+        run: npm run images:check
+
+      - name: Build
+        run: npm run build
