@@ -16,18 +16,11 @@ interface PhotoDetailProps {
 }
 
 export function PhotoDetail({ photo, onBack, className }: PhotoDetailProps) {
-  // null = not yet measured (defaults to landscape layout to avoid jump on most photos)
-  const [isPortrait, setIsPortrait] = useState<boolean | null>(null)
+  const [loaded, setLoaded] = useState(false)
 
-  // Reset orientation measurement whenever the displayed photo changes
   useEffect(() => {
-    setIsPortrait(null)
+    setLoaded(false)
   }, [photo.id])
-
-  function handleLoad(e: React.SyntheticEvent<HTMLImageElement>) {
-    const { naturalWidth, naturalHeight } = e.currentTarget
-    setIsPortrait(naturalHeight > naturalWidth)
-  }
 
   return (
     <div className={`relative flex flex-col h-full p-4 ${className || ''}`}>
@@ -40,13 +33,8 @@ export function PhotoDetail({ photo, onBack, className }: PhotoDetailProps) {
           alt={photo.title}
           width={1200}
           height={800}
-          onLoad={handleLoad}
-          className="max-h-full max-w-full rounded-xs object-cover"
-          style={
-            isPortrait
-              ? { height: '100%', width: 'auto' }
-              : { width: '100%', height: 'auto' }
-          }
+          onLoad={() => setLoaded(true)}
+          className={`max-h-full max-w-full rounded-xs object-contain transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
           sizes="(max-width: 768px) 100vw, 50vw"
         />
       </div>

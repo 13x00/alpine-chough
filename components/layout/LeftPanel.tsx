@@ -3,6 +3,15 @@
 import { AboutSection } from '@/components/content/AboutSection'
 import { Surface } from '@/components/ui/Surface'
 
+const prefetchedSrcs = new Set<string>()
+
+function prefetchImage(src: string) {
+  if (!src || prefetchedSrcs.has(src)) return
+  prefetchedSrcs.add(src)
+  const img = new window.Image()
+  img.src = src.startsWith('http') ? src : `${typeof window !== 'undefined' ? window.location.origin : ''}${src}`
+}
+
 interface LeftPanelProps {
   projectItems: Array<{
     id: string
@@ -33,6 +42,8 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
                 <button
                   type="button"
                   onClick={item.onClick}
+                  onMouseEnter={() => prefetchImage(item.image)}
+                  onFocus={() => prefetchImage(item.image)}
                   data-nav-card
                   className="group flex h-12 w-full items-center justify-between px-6 text-left text-base transition-colors bg-layer-01 hover:bg-layer-hover-01 text-text-primary"
                 >
