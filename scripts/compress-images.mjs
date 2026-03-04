@@ -4,15 +4,23 @@
  *
  * Non-destructive image optimisation pipeline.
  *
- * Reads originals from assets/originals/, writes optimised copies to public/.
- * Originals are NEVER modified. A local cache (scripts/.image-cache.json)
- * records each file's mtime+size so unchanged originals are skipped on
- * subsequent runs.
+ * Reads originals from assets/originals/, writes TWO optimised copies to
+ * public/ for every input:
+ *   • <basename>.webp  — canonical deployed format (quality 80, high effort)
+ *   • <basename>.jpg   — fallback / archive (quality 82, progressive, mozjpeg)
+ *
+ * Originals are NEVER modified. All inputs are treated as opaque photos
+ * (no alpha handling). Metadata is stripped from all outputs.
+ *
+ * scripts/.image-cache.json tracks both outputs per original so unchanged
+ * files are skipped (idempotent runs).
  *
  * Modes:
- *   (default)  process new/changed originals, write outputs
- *   --dry-run  preview only — no writes; exits 1 if any file would be written
- *   --clean    delete output files in public/ with no matching original
+ *   (default)          process new/changed originals, write outputs
+ *   --dry-run          preview only — no writes; exits 1 if any output would
+ *                      be written, 0 if everything is up to date
+ *   --clean            delete output files (.webp + .jpg + legacy .png) in
+ *                      public/ that have no matching original
  *   --clean --dry-run  preview which orphans would be deleted, no deletes
  */
 
@@ -43,8 +51,10 @@ const SOURCES = [
   },
 ];
 
-const JPEG_EXTS = new Set(['.jpg', '.jpeg']);
-const PNG_EXTS  = new Set(['.png']);
+// Extensions recognised as source inputs.
+const INPUT_EXTS = new Set(['.jpg', '.jpeg', '.png']);
+// Extensions scanned in output dirs (includes legacy .png and new .webp).
+const OUTPUT_EXTS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
@@ -65,8 +75,11 @@ async function saveCache(cache) {
   await writeFile(CACHE_PATH, JSON.stringify(cache, null, 2) + '\n');
 }
 
-/** Recursively collect all image paths under a directory. */
-async function collectImages(dir) {
+/**
+ * Recursively collect files under dir whose extension is in extSet.
+ * Defaults to INPUT_EXTS when extSet is omitted.
+ */
+async function collectFiles(dir, extSet = INPUT_EXTS) {
   let results = [];
   let entries;
   try {
@@ -78,93 +91,94 @@ async function collectImages(dir) {
   for (const entry of entries) {
     const fullPath = join(dir, entry.name);
     if (entry.isDirectory()) {
-      results = results.concat(await collectImages(fullPath));
+      results = results.concat(await collectFiles(fullPath, extSet));
     } else if (entry.isFile()) {
       const ext = extname(entry.name).toLowerCase();
-      if (JPEG_EXTS.has(ext) || PNG_EXTS.has(ext)) results.push(fullPath);
+      if (extSet.has(ext)) results.push(fullPath);
     }
   }
   return results;
 }
 
 /**
- * Resolve the output path for an input file.
- * PNG-without-alpha is converted to JPEG so the extension changes to .jpg.
+ * Given an input path, return the stem-only relative path (no extension).
+ * e.g. assets/originals/photos/DSC07488.jpg → "DSC07488"
  */
-function resolveOutputPath(inputPath, inputDir, outputDir, convertToJpeg) {
-  const rel    = relative(inputDir, inputPath);
-  const ext    = extname(rel).toLowerCase();
-  const relOut = convertToJpeg && PNG_EXTS.has(ext)
-    ? rel.slice(0, -ext.length) + '.jpg'
-    : rel;
-  return join(outputDir, relOut);
+function stemRel(inputPath, inputDir) {
+  const rel = relative(inputDir, inputPath);
+  const ext = extname(rel);
+  return rel.slice(0, -ext.length);
+}
+
+/** Resolve a specific output path for an input file given the target extension. */
+function resolveOut(inputPath, inputDir, outputDir, ext) {
+  return join(outputDir, stemRel(inputPath, inputDir) + ext);
 }
 
 // ── Per-file processing ───────────────────────────────────────────────────────
 
 async function processFile(inputPath, inputDir, outputDir, maxDim, cache) {
   const fileStat = await stat(inputPath);
-  const ext      = extname(inputPath).toLowerCase();
-  const isPng    = PNG_EXTS.has(ext);
+  const cached   = cache[inputPath];
 
-  const alpha         = isPng ? (await sharp(inputPath).metadata()).hasAlpha === true : false;
-  const convertToJpeg = isPng && !alpha;
+  const webpOut = resolveOut(inputPath, inputDir, outputDir, '.webp');
+  const jpgOut  = resolveOut(inputPath, inputDir, outputDir, '.jpg');
 
-  const outPath  = resolveOutputPath(inputPath, inputDir, outputDir, convertToJpeg);
-  const cacheKey = inputPath;
-  const cached   = cache[cacheKey];
-
-  // Cache hit: same mtime + size and output already on disk → skip.
+  // Cache hit: same mtime + size AND both outputs already on disk → skip.
   if (
-    cached &&
+    cached            &&
+    cached.webp       &&
+    cached.jpg        &&
     cached.mtimeMs === fileStat.mtimeMs &&
     cached.size    === fileStat.size    &&
-    existsSync(outPath)
+    existsSync(webpOut)                 &&
+    existsSync(jpgOut)
   ) {
     console.log(`  [cached] ${inputPath}`);
-    return { status: 'cached', originalSize: fileStat.size, newSize: cached.outputSize };
-  }
-
-  // Build sharp pipeline.
-  let pipeline = sharp(inputPath)
-    .withMetadata(false)
-    .resize(maxDim, maxDim, { fit: 'inside', withoutEnlargement: true });
-
-  let outputBuffer;
-  if (!isPng || convertToJpeg) {
-    outputBuffer = await pipeline
-      .jpeg({ quality: 82, progressive: true, mozjpeg: true })
-      .toBuffer();
-  } else {
-    outputBuffer = await pipeline
-      .png({ compressionLevel: 9, effort: 10 })
-      .toBuffer();
-  }
-
-  const origSize = fileStat.size;
-  const newSize  = outputBuffer.byteLength;
-  const saving   = origSize - newSize;
-  const pct      = ((saving / origSize) * 100).toFixed(1);
-  const tag      = saving >= 0 ? `↓ ${pct}%` : `↑ grew ${Math.abs(Number(pct))}%`;
-  const fmtTag   = convertToJpeg ? ' [png→jpg]' : '';
-
-  console.log(
-    `  ${inputPath}${fmtTag}\n` +
-    `    → ${outPath}  ${fmt(origSize)} → ${fmt(newSize)}  (${tag})`
-  );
-
-  if (!DRY_RUN) {
-    await mkdir(dirname(outPath), { recursive: true });
-    await writeFile(outPath, outputBuffer);
-    cache[cacheKey] = {
-      mtimeMs:    fileStat.mtimeMs,
-      size:       fileStat.size,
-      outputPath: outPath,
-      outputSize: newSize,
+    return {
+      status:       'cached',
+      originalSize: fileStat.size,
+      webpSize:     cached.webp.outputSize,
+      jpgSize:      cached.jpg.outputSize,
     };
   }
 
-  return { status: 'processed', originalSize: origSize, newSize };
+  // Build the base pipeline (resize only — format applied per clone).
+  const base = sharp(inputPath)
+    .withMetadata(false)
+    .resize(maxDim, maxDim, { fit: 'inside', withoutEnlargement: true });
+
+  const [webpBuf, jpgBuf] = await Promise.all([
+    base.clone().webp({ quality: 80, effort: 6 }).toBuffer(),
+    base.clone().jpeg({ quality: 82, progressive: true, mozjpeg: true }).toBuffer(),
+  ]);
+
+  const origSize = fileStat.size;
+  const webpSize = webpBuf.byteLength;
+  const jpgSize  = jpgBuf.byteLength;
+  const saving   = origSize - webpSize;
+  const pct      = ((saving / origSize) * 100).toFixed(1);
+  const tag      = saving >= 0 ? `↓ ${pct}%` : `↑ grew ${Math.abs(Number(pct))}%`;
+
+  console.log(
+    `  ${inputPath}\n` +
+    `    → ${webpOut}  ${fmt(origSize)} → ${fmt(webpSize)}  (${tag})  [webp]\n` +
+    `    → ${jpgOut}   ${fmt(origSize)} → ${fmt(jpgSize)}   [jpg]`
+  );
+
+  if (!DRY_RUN) {
+    await mkdir(dirname(webpOut), { recursive: true });
+    await writeFile(webpOut, webpBuf);
+    await writeFile(jpgOut,  jpgBuf);
+    cache[inputPath] = {
+      mtimeMs: fileStat.mtimeMs,
+      size:    fileStat.size,
+      webp:    { outputPath: webpOut, outputSize: webpSize },
+      jpg:     { outputPath: jpgOut,  outputSize: jpgSize  },
+    };
+  }
+
+  return { status: 'processed', originalSize: origSize, webpSize, jpgSize };
 }
 
 // ── Compress mode ─────────────────────────────────────────────────────────────
@@ -172,19 +186,20 @@ async function processFile(inputPath, inputDir, outputDir, maxDim, cache) {
 async function runCompress() {
   if (DRY_RUN) {
     console.log('=== DRY RUN — no files will be written ===');
-    console.log('    Exits 1 if any file would be written.\n');
+    console.log('    Exits 1 if any output would be written.\n');
   }
 
   const cache = await loadCache();
 
   let totalOriginal = 0;
-  let totalNew      = 0;
+  let totalWebp     = 0;
+  let totalJpg      = 0;
   let nProcessed    = 0;
   let nCached       = 0;
   let nErrors       = 0;
 
   for (const { inputDir, outputDir, maxDim } of SOURCES) {
-    const files = await collectImages(inputDir);
+    const files = await collectFiles(inputDir);
     if (files.length === 0) continue;
 
     console.log(`\n── ${inputDir} → ${outputDir} (${files.length} file(s), cap ${maxDim}px) ─`);
@@ -193,7 +208,8 @@ async function runCompress() {
       try {
         const r = await processFile(file, inputDir, outputDir, maxDim, cache);
         totalOriginal += r.originalSize;
-        totalNew      += r.newSize;
+        totalWebp     += r.webpSize;
+        totalJpg      += r.jpgSize;
         if (r.status === 'cached') nCached++; else nProcessed++;
       } catch (err) {
         console.error(`  [error] ${file}: ${err.message}`);
@@ -207,23 +223,22 @@ async function runCompress() {
     return;
   }
 
-  const saving    = totalOriginal - totalNew;
   const savingPct = totalOriginal > 0
-    ? ((saving / totalOriginal) * 100).toFixed(1)
+    ? (((totalOriginal - totalWebp) / totalOriginal) * 100).toFixed(1)
     : '0.0';
 
   console.log('\n── Summary ─────────────────────────────────────────────────');
-  console.log(`  Processed (written) : ${nProcessed}`);
+  console.log(`  Processed (written) : ${nProcessed}  (× 2 outputs each)`);
   console.log(`  Cached    (skipped) : ${nCached}`);
   if (nErrors) console.log(`  Errors              : ${nErrors}`);
   console.log(`  Originals total     : ${fmt(totalOriginal)}`);
-  console.log(`  Outputs   total     : ${fmt(totalNew)}`);
-  console.log(`  Saved               : ${fmt(saving)} (${savingPct}%)`);
+  console.log(`  WebP outputs total  : ${fmt(totalWebp)}  (saved ${savingPct}% vs originals)`);
+  console.log(`  JPG outputs total   : ${fmt(totalJpg)}`);
 
   if (DRY_RUN) {
     if (nProcessed > 0) {
       console.log(
-        `\n  [FAIL] ${nProcessed} file(s) would be written.` +
+        `\n  [FAIL] ${nProcessed} original(s) would produce new outputs.` +
         '\n         Run: npm run images:compress'
       );
       process.exitCode = 1;
@@ -245,28 +260,22 @@ async function runClean() {
     console.log('=== CLEAN — removing orphaned output files ===\n');
   }
 
-  // Build the full set of output paths that SHOULD exist based on current originals.
+  // Build the full set of output paths that SHOULD exist.
   const expectedOutputs = new Set();
   for (const { inputDir, outputDir } of SOURCES) {
-    const files = await collectImages(inputDir);
+    const files = await collectFiles(inputDir);
     for (const inputPath of files) {
-      const ext   = extname(inputPath).toLowerCase();
-      const isPng = PNG_EXTS.has(ext);
-      let convertToJpeg = false;
-      if (isPng) {
-        const meta = await sharp(inputPath).metadata();
-        convertToJpeg = !meta.hasAlpha;
-      }
-      expectedOutputs.add(resolveOutputPath(inputPath, inputDir, outputDir, convertToJpeg));
+      expectedOutputs.add(resolveOut(inputPath, inputDir, outputDir, '.webp'));
+      expectedOutputs.add(resolveOut(inputPath, inputDir, outputDir, '.jpg'));
     }
   }
 
-  const cache          = await loadCache();
-  let   cacheModified  = false;
-  let   nDeleted       = 0;
+  const cache         = await loadCache();
+  let   cacheModified = false;
+  let   nDeleted      = 0;
 
   for (const { outputDir } of SOURCES) {
-    const outFiles = await collectImages(outputDir);
+    const outFiles = await collectFiles(outputDir, OUTPUT_EXTS);
     for (const outFile of outFiles) {
       if (expectedOutputs.has(outFile)) continue;
 
@@ -274,9 +283,14 @@ async function runClean() {
 
       if (!DRY_RUN) {
         await unlink(outFile);
-        // Prune any cache entry that pointed to this output.
+        // Prune cache entries that reference this output (handles both old and
+        // new cache formats).
         for (const [key, val] of Object.entries(cache)) {
-          if (val.outputPath === outFile) {
+          if (
+            val.webp?.outputPath === outFile ||
+            val.jpg?.outputPath  === outFile ||
+            val.outputPath       === outFile   // legacy single-output format
+          ) {
             delete cache[key];
             cacheModified = true;
           }
