@@ -4,13 +4,13 @@ import Image from 'next/image'
 import { useState, useEffect } from 'react'
 
 const portraitImages = [
-  '/Portrait_cycle/AM_Portrait.jpg',
-  '/Portrait_cycle/118_1808_Original.jpg',
-  '/Portrait_cycle/DSC02816 2 10.png',
-  '/Portrait_cycle/DSC02816 2 7.png',
-  '/Portrait_cycle/DSC02816 2 8.png',
-  '/Portrait_cycle/DSC02816 2 9.png',
-  '/Portrait_cycle/IMG_6396.jpg',
+  '/Portrait_cycle/4839201756.jpg',
+  '/Portrait_cycle/0834672130.jpg',
+  '/Portrait_cycle/2916473820.png',
+  '/Portrait_cycle/7382019564.png',
+  '/Portrait_cycle/5102938471.png',
+  '/Portrait_cycle/9247150638.png',
+  '/Portrait_cycle/1563847290.jpg',
 ]
 
 // 7 seconds — long enough to settle into, short enough to feel alive
