@@ -34,7 +34,7 @@ export function PhotoDetail({ photo, onBack, className }: PhotoDetailProps) {
           width={1200}
           height={800}
           onLoadingComplete={() => setLoaded(true)}
-          className={`block h-auto w-auto max-h-full max-w-full rounded-xs transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+          className={`block h-auto w-auto max-h-full max-w-full object-contain rounded-xs transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
           sizes="(max-width: 768px) 100vw, 50vw"
         />
       </div>

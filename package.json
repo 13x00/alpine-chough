@@ -10,6 +10,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "tokens:generate": "node scripts/generate-carbon-tokens.js",
+    "images:metadata": "node scripts/check-image-metadata.mjs",
     "images:compress": "node scripts/compress-images.mjs",
     "images:compress:dry": "node scripts/compress-images.mjs --dry-run",
     "images:check": "node scripts/compress-images.mjs --dry-run",
