@@ -26,15 +26,15 @@ export function PhotoDetail({ photo, onBack, className }: PhotoDetailProps) {
     <div className={`relative flex flex-col h-full p-4 ${className || ''}`}>
       <BackButton onClick={onBack} className="rounded" />
 
-      {/* Image area — fills all remaining height, centers the photo */}
-      <div className="flex flex-1 items-center justify-center min-h-0 min-w-0">
+      {/* Image area — flex container provides the height reference for max-h-full */}
+      <div className="flex flex-1 min-h-0 min-w-0 items-center justify-center">
         <Image
           src={photo.image}
           alt={photo.title}
           width={1200}
           height={800}
-          onLoad={() => setLoaded(true)}
-          className={`max-h-full max-w-full rounded-xs object-contain transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+          onLoadingComplete={() => setLoaded(true)}
+          className={`block h-auto w-auto max-h-full max-w-full rounded-xs transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
           sizes="(max-width: 768px) 100vw, 50vw"
         />
       </div>
