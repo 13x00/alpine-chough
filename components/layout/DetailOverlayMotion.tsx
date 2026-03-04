@@ -269,7 +269,7 @@ export function DetailOverlayMotion({
                * flex-1 min-h-0 so it takes remaining space but can shrink for scroll.
                */}
               <motion.div
-                className="flex min-h-0 flex-1 flex-col overflow-hidden bg-layer-02 shadow-lg relative"
+                className="flex min-h-0 flex-1 flex-col overflow-hidden bg-layer-01 shadow-lg relative"
                 initial={surfaceInitial}
                 animate={surfaceAnimate}
                 transition={surfaceTransition}

@@ -15,8 +15,8 @@ const robotoMono = Roboto_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Alpine Chough | Portfolio',
-  description: 'Personal hub and archive for design projects, articles, and photography',
+  title: 'AM* | Archive',
+  description: 'Photography Archive of AM*',
   icons: {
     icon: '/favicon.svg',
   },
