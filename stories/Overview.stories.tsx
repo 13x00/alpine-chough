@@ -21,7 +21,7 @@ const sections = [
     items: [
       { name: 'Typography', path: 'components-typography', description: 'heading / body / caption / small' },
       { name: 'ThemeToggle', path: 'components-themetoggle', description: 'Sun/Moon toggle · hover · focus' },
-      { name: 'Logo', path: 'components-logo', description: 'Gradient text animation on hover' },
+      { name: 'Logo', path: 'components-logo', description: 'AM asterisk SVG, light/dark by theme' },
       { name: 'BackButton', path: 'components-backbutton', description: 'Icon button · hover · focus' },
       { name: 'AboutSection', path: 'components-aboutsection', description: 'Body text block' },
       { name: 'LeftPanel', path: 'components-leftpanel', description: 'About + project list + contact footer' },
@@ -56,7 +56,7 @@ function OverviewPage() {
             {section.items.map((item) => (
               <div
                 key={item.name}
-                className="rounded-lg bg-layer-01 border border-border-subtle-01 px-4 py-3 space-y-1"
+                className="rounded-base bg-layer-01 border border-border-subtle-01 px-4 py-3 space-y-1"
               >
                 <p className="text-sm font-medium text-text-primary">{item.name}</p>
                 <p className="text-xs text-text-helper">{item.description}</p>

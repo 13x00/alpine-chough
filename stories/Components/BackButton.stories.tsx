@@ -33,7 +33,7 @@ export const States: Story = {
       <div className="flex gap-8 flex-wrap items-center">
         <div>
           <StateLabel>default</StateLabel>
-          <div className="relative w-12 h-12 bg-layer-01 border border-border-subtle-01 rounded-lg">
+          <div className="relative w-12 h-12 bg-layer-01 border border-border-subtle-01 rounded-base">
             <BackButton onClick={() => {}} className="static" />
           </div>
         </div>
@@ -60,7 +60,7 @@ export const States: Story = {
       </div>
 
       <SectionHeading>Live interaction — hover/focus this button</SectionHeading>
-      <div className="relative w-16 h-16 bg-layer-02 rounded-lg border border-border-subtle-01 overflow-visible">
+      <div className="relative w-16 h-16 bg-layer-02 rounded-base border border-border-subtle-01 overflow-visible">
         <BackButton onClick={() => {}} />
       </div>
 

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { Typography } from '@/components/ui/Typography'
-import { BackButton } from '@/components/content/BackButton'
 import Image from 'next/image'
 import { Photo } from '@/types/content'
 
@@ -15,7 +14,7 @@ interface PhotoDetailProps {
   className?: string
 }
 
-export function PhotoDetail({ photo, onBack, className }: PhotoDetailProps) {
+export function PhotoDetail({ photo, className }: PhotoDetailProps) {
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
@@ -24,7 +23,6 @@ export function PhotoDetail({ photo, onBack, className }: PhotoDetailProps) {
 
   return (
     <div className={`relative flex flex-col h-full p-4 ${className || ''}`}>
-      <BackButton onClick={onBack} className="rounded" />
 
       {/* Image area — flex container provides the height reference for max-h-full */}
       <div className="flex flex-1 min-h-0 min-w-0 items-center justify-center">

@@ -39,7 +39,7 @@ function ShadowAudit() {
         {shadowTokens.map(({ name, cssVar, value, twClass, usage }) => (
           <div key={name} className="flex flex-col gap-3">
             <div
-              className={`${twClass} rounded-lg bg-layer-01 border border-border-subtle-01 w-36 h-24 flex items-center justify-center`}
+              className={`${twClass} rounded-base bg-layer-01 border border-border-subtle-01 w-36 h-24 flex items-center justify-center`}
             >
               <span className="text-xs text-text-helper font-mono">{name}</span>
             </div>
@@ -54,13 +54,13 @@ function ShadowAudit() {
 
       <SectionHeading>Card: default vs elevated (shadow-md)</SectionHeading>
       <div className="flex gap-6">
-        <div className="rounded-lg bg-layer-01 border border-border-subtle-01 w-40 h-24 flex items-center justify-center">
+        <div className="rounded-base bg-layer-01 border border-border-subtle-01 w-40 h-24 flex items-center justify-center">
           <span className="text-xs text-text-helper">default (border only)</span>
         </div>
-        <div className="rounded-lg bg-layer-02 shadow-md w-40 h-24 flex items-center justify-center">
+        <div className="rounded-base bg-layer-02 shadow-md w-40 h-24 flex items-center justify-center">
           <span className="text-xs text-text-helper">elevated (shadow-md)</span>
         </div>
-        <div className="rounded-lg bg-layer-01 border border-border-subtle-01 shadow-lg w-40 h-24 flex items-center justify-center">
+        <div className="rounded-base bg-layer-01 border border-border-subtle-01 shadow-lg w-40 h-24 flex items-center justify-center">
           <span className="text-xs text-text-helper">hover state (shadow-lg)</span>
         </div>
       </div>

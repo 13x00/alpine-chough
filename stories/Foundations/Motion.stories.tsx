@@ -73,7 +73,7 @@ function MotionAudit() {
       <SectionHeading>Easing Tokens</SectionHeading>
       <div className="space-y-4">
         {easings.map(({ name, cssVar, value, usage }) => (
-          <div key={name} className="bg-layer-01 border border-border-subtle-01 rounded-lg px-4 py-3 space-y-1">
+          <div key={name} className="bg-layer-01 border border-border-subtle-01 rounded-base px-4 py-3 space-y-1">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-text-primary font-mono">{name}</p>
               <span className="text-xs text-text-helper">{usage}</span>

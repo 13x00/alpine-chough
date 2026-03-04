@@ -5,6 +5,7 @@ import { RightPanel } from './RightPanel'
 import { Logo } from '@/components/content/Logo'
 import { ThemeToggle } from '@/components/content/ThemeToggle'
 import { ViewType, DetailItem } from '@/types/content'
+import { Close, SidePanelClose } from '@carbon/icons-react'
 
 interface SplitLayoutProps {
   currentView: ViewType
@@ -35,13 +36,43 @@ export function SplitLayout({
   const rightWidth = useNarrowLayout ? 'md:w-2/3' : 'md:w-1/2'
   const transitionClass = 'transition-[width] duration-300 ease-out'
 
+  const hasDetailOpen = selectedItem !== null && currentView !== 'portrait'
+
   return (
     <div className="flex h-dvh overflow-hidden flex-col bg-background">
-      {/* Top bar — logo + theme toggle, aligned with Figma header */}
+      {/* Top bar — logo + theme toggle + button group */}
       <header className="px-2 pt-2">
-        <div className="flex items-center justify-between px-1 py-1">
-          <Logo onClick={onCloseDetail} />
-          <ThemeToggle />
+        <div className="flex items-center gap-2">
+          {/* Logo + ThemeToggle — mirrors left panel width */}
+          <div className={`w-full ${leftWidth} flex-shrink-0 flex items-center justify-between px-1 py-1 ${transitionClass}`}>
+            <Logo onClick={onCloseDetail} />
+            <ThemeToggle />
+          </div>
+
+          {/* Right column header — mirrors right panel width, button group hugs its content */}
+          <div className={`hidden md:flex ${rightWidth} items-center ${transitionClass}`}>
+            {hasDetailOpen && (
+              <div
+                className="rounded-base bg-layer-01 border border-border-subtle-00 inline-flex items-center gap-2 p-1"
+                data-ignore-outside="true"
+              >
+                <button
+                  onClick={onCloseDetail}
+                  aria-label="Close detail"
+                  className="flex h-12 w-12 items-center justify-center rounded-xs text-text-primary hover:bg-background-hover transition-colors cursor-pointer"
+                >
+                  <Close size={20} />
+                </button>
+                <button
+                  onClick={onCloseDetail}
+                  aria-label="Close panel"
+                  className="flex h-12 w-12 items-center justify-center rounded-xs text-text-primary hover:bg-background-hover transition-colors cursor-pointer"
+                >
+                  <SidePanelClose size={20} />
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
@@ -50,7 +81,7 @@ export function SplitLayout({
         <div className="relative flex h-full min-h-0 gap-2 overflow-hidden">
           {/* Left column — about, project list, contact */}
           <div className={`w-full ${leftWidth} flex-shrink-0 relative z-10 ${transitionClass}`}>
-            <LeftPanel projectItems={projectItems} />
+            <LeftPanel projectItems={projectItems} selectedItemId={selectedItem?.id ?? null} />
           </div>
 
           {/* Right column — portrait / detail surface */}
@@ -61,7 +92,7 @@ export function SplitLayout({
               onBack={onCloseDetail}
               onCloseAnimationComplete={onDetailCloseComplete}
               direction={detailDirection}
-              className="rounded-lg border border-border-subtle-00"
+              className="rounded-base border border-border-subtle-00"
             />
           </div>
         </div>

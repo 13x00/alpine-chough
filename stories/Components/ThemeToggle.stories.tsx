@@ -26,7 +26,7 @@ export const States: Story = {
       <div className="flex gap-8 flex-wrap">
         <div>
           <StateLabel>default (dark theme → shows Sun)</StateLabel>
-          <div className="bg-background-hover rounded-control inline-flex">
+          <div className="bg-background-hover rounded-base inline-flex">
             <ThemeToggle />
           </div>
         </div>
@@ -34,8 +34,8 @@ export const States: Story = {
         <div>
           <StateLabel>hover (bg-background-hover applied)</StateLabel>
           <div
-            className="inline-flex items-center justify-center touch-target bg-background-hover text-text-primary rounded-control"
-            style={{ borderRadius: 'var(--radius-control)' }}
+            className="inline-flex items-center justify-center touch-target bg-background-hover text-text-primary rounded-base"
+            style={{ borderRadius: 'var(--radius-base)' }}
           >
             {/* Simulated hover state — production uses :hover pseudo-class */}
             <ThemeToggle />
@@ -44,14 +44,14 @@ export const States: Story = {
 
         <div>
           <StateLabel>focus-visible (outline-accent ring)</StateLabel>
-          <div className="inline-flex outline-2 outline-offset-2 outline-focus rounded-control">
+          <div className="inline-flex outline-2 outline-offset-2 outline-focus rounded-base">
             <ThemeToggle />
           </div>
         </div>
       </div>
 
       <SectionHeading>In header context</SectionHeading>
-      <div className="flex items-center justify-between px-2 py-1 bg-background border border-border-subtle-01 rounded-lg w-64">
+      <div className="flex items-center justify-between px-2 py-1 bg-background border border-border-subtle-01 rounded-base w-64">
         <span className="text-lg font-normal text-text-primary px-3">AM*</span>
         <ThemeToggle />
       </div>
@@ -70,7 +70,7 @@ export const Compare: Story = {
           <StateLabel>default</StateLabel>
           <ThemeToggle />
           <StateLabel>hover bg (bg-background-hover)</StateLabel>
-          <div className="bg-background-hover inline-flex rounded-control p-1">
+          <div className="bg-background-hover inline-flex rounded-base p-1">
             <ThemeToggle />
           </div>
         </div>

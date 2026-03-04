@@ -23,7 +23,7 @@ export const InCard: Story = {
   render: () => (
     <div className="p-6 max-w-sm">
       <SectionHeading>About card (as seen in LeftPanel)</SectionHeading>
-      <section className="rounded-lg bg-layer-01 border border-border-subtle-00 px-6 py-6">
+      <section className="rounded-base bg-layer-01 border border-border-subtle-00 px-6 py-6">
         <AboutSection />
       </section>
     </div>
@@ -38,7 +38,7 @@ export const Compare: Story = {
     <ThemeCompare>
       {() => (
         <div className="max-w-xs">
-          <section className="rounded-lg bg-layer-01 border border-border-subtle-00 px-6 py-6">
+          <section className="rounded-base bg-layer-01 border border-border-subtle-00 px-6 py-6">
             <AboutSection />
           </section>
         </div>

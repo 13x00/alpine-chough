@@ -71,8 +71,21 @@
     color: var(--cds-yellow-70);
   }
 
-  /* Logo: starts one colour, smooth gradient in the middle, ends one colour.
-     Both themes share --am-gradient; only the animation direction differs. */
+  /* Logo: show light or dark SVG based on theme (data-theme on html) */
+  .logo-svg-light {
+    display: none; /* dark is default */
+  }
+  [data-theme="light"] .logo-svg-light {
+    display: block;
+  }
+  [data-theme="light"] .logo-svg-dark {
+    display: none;
+  }
+  [data-theme="dark"] .logo-svg-dark {
+    display: block;
+  }
+
+  /* Legacy logo gradient text (kept for PageLoader / any other use) */
   [data-theme="light"] .group:hover .logo-gradient-text {
     /* Light: position 100%→0% so the visible sweep moves downward (blue-30→blue-100) */
     background: var(--am-gradient);

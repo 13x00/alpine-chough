@@ -18,6 +18,8 @@ const config: Config = {
         'layer-03': 'var(--cds-layer-03)',
         'layer-background-01': 'var(--cds-layer-background-01)',
         'layer-hover-01': 'var(--cds-layer-hover-01)',
+        'layer-selected-01': 'var(--cds-layer-selected-01)',
+        'layer-selected-hover-01': 'var(--cds-layer-selected-hover-01)',
         'text-primary': 'var(--cds-text-primary)',
         'text-secondary': 'var(--cds-text-secondary)',
         'text-helper': 'var(--cds-text-helper)',
@@ -94,7 +96,7 @@ const config: Config = {
         md: 'var(--radius-md)',
         lg: 'var(--radius-lg)',
         xl: 'var(--radius-xl)',
-        control: 'var(--radius-control)',
+        base: 'var(--radius-base)',
         full: 'var(--radius-full)',
       },
       boxShadow: {

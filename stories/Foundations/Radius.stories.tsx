@@ -8,7 +8,7 @@ const radiusTokens = [
   { name: 'rounded-md', cssVar: '--radius-md', value: '6px', twClass: 'rounded-md' },
   { name: 'rounded-lg', cssVar: '--radius-lg', value: '12px', twClass: 'rounded-lg' },
   { name: 'rounded-xl', cssVar: '--radius-xl', value: '16px', twClass: 'rounded-xl' },
-  { name: 'rounded-control', cssVar: '--radius-control', value: '8px', twClass: 'rounded-control' },
+  { name: 'rounded-base', cssVar: '--radius-base', value: '8px', twClass: 'rounded-base' },
   { name: 'rounded-full', cssVar: '--radius-full', value: '9999px', twClass: 'rounded-full' },
 ]
 
@@ -17,9 +17,8 @@ function RadiusAudit() {
     <StoryLayout>
       <SectionHeading>Border Radius Tokens</SectionHeading>
       <p className="text-xs text-text-helper mb-4">
-        All border-radius values are tokenised CSS vars. <code className="font-mono">rounded-control</code> is
-        used for interactive elements inside cards/nav (e.g.{' '}
-        <code className="font-mono">ThemeToggle</code>).
+        All border-radius values are tokenised CSS vars. <code className="font-mono">rounded-base</code> is
+        the standard 8px radius used for cards, panels, and interactive controls.
       </p>
 
       <div className="flex flex-wrap gap-6">
@@ -40,8 +39,7 @@ function RadiusAudit() {
       <SectionHeading>Usage in Components</SectionHeading>
       <div className="space-y-3">
         {[
-          { label: 'Card', cls: 'rounded-lg', desc: 'rounded-lg — cards, panels, surface containers' },
-          { label: 'ThemeToggle / BackButton', cls: 'rounded-control', desc: 'rounded-control — interactive controls inside panels' },
+          { label: 'Card / Panel / Control', cls: 'rounded-base', desc: 'rounded-base — cards, panels, surface containers, interactive controls' },
           { label: 'Status pill', cls: 'rounded-full', desc: 'rounded-full — pill badges' },
         ].map(({ label, cls, desc }) => (
           <div key={label} className="flex items-center gap-4">

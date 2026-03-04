@@ -3,9 +3,9 @@
 import { createElement, type ElementType } from 'react'
 
 const VARIANT_CLASSES = {
-  default: 'rounded-lg bg-layer-01 border border-border-subtle-00',
-  elevated: 'rounded-lg bg-layer-01 border border-border-subtle-00',
-  outlined: 'rounded-lg bg-layer-01 border border-border-subtle-00',
+  default: 'rounded-base bg-layer-01 border border-border-subtle-00',
+  elevated: 'rounded-base bg-layer-01 border border-border-subtle-00',
+  outlined: 'rounded-base bg-layer-01 border border-border-subtle-00',
 } as const
 
 const PADDING_CLASSES = {

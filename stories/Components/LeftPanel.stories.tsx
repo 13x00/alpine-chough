@@ -16,6 +16,10 @@ const meta: Meta<typeof LeftPanel> = {
   parameters: { layout: 'padded' },
   args: {
     projectItems: sampleProjects,
+    selectedItemId: '2',
+  },
+  argTypes: {
+    selectedItemId: { control: 'select', options: [null, ...sampleProjects.map((p) => p.id)] },
   },
 }
 export default meta
@@ -73,7 +77,7 @@ export const Compare: Story = {
     <ThemeCompare gap={false}>
       {() => (
         <div className="h-screen w-80">
-          <LeftPanel projectItems={sampleProjects} />
+          <LeftPanel projectItems={sampleProjects} selectedItemId="2" />
         </div>
       )}
     </ThemeCompare>

@@ -20,9 +20,10 @@ interface LeftPanelProps {
     image: string
     onClick: () => void
   }>
+  selectedItemId?: string | null
 }
 
-export function LeftPanel({ projectItems }: LeftPanelProps) {
+export function LeftPanel({ projectItems, selectedItemId = null }: LeftPanelProps) {
   return (
     <div className="relative flex h-full min-h-0 flex-col gap-2">
       {/* About card */}
@@ -45,7 +46,12 @@ export function LeftPanel({ projectItems }: LeftPanelProps) {
                   onMouseEnter={() => prefetchImage(item.image)}
                   onFocus={() => prefetchImage(item.image)}
                   data-nav-card
-                  className="group flex h-12 w-full items-center justify-between px-6 text-left text-base transition-colors bg-layer-01 hover:bg-layer-hover-01 text-text-primary"
+                  data-selected={selectedItemId === item.id ? true : undefined}
+                  className={`group flex h-12 w-full items-center justify-between px-6 text-left text-base transition-colors text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus ${
+                    selectedItemId === item.id
+                      ? 'bg-layer-selected-01 hover:bg-layer-selected-hover-01'
+                      : 'bg-layer-01 hover:bg-layer-hover-01'
+                  }`}
                 >
                   <div className="flex items-center gap-6">
                     <span className="font-mono text-xl text-text-primary">

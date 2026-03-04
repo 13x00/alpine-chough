@@ -77,7 +77,7 @@ function SpacingAudit() {
 
       <SectionHeading>Touch Target (--spacing-12 / 48px)</SectionHeading>
       <div className="flex items-center gap-4">
-        <div className="touch-target flex items-center justify-center bg-layer-01 border border-border-subtle-01 rounded-lg">
+        <div className="touch-target flex items-center justify-center bg-layer-01 border border-border-subtle-01 rounded-base">
           <span className="text-xs text-text-helper">48px</span>
         </div>
         <span className="text-xs text-text-helper font-mono">

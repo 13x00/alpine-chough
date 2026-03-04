@@ -29,7 +29,7 @@ export function ThemeToggle() {
         'touch-target flex items-center justify-center rounded-lg',
         'text-text-helper hover:text-text-primary hover:bg-background-hover transition-colors',
       )}
-      style={{ borderRadius: 'var(--radius-control)' }}
+      style={{ borderRadius: 'var(--radius-base)' }}
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
     >
       {theme === 'dark' ? (
