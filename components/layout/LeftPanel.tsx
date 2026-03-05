@@ -105,7 +105,7 @@ export function LeftPanel({ projectItems, selectedItemId = null }: LeftPanelProp
         </div>
 
         <div className="framework-version-tag w-fit shrink-0 inline-flex items-center gap-2 rounded-full px-4 py-1 text-sm">
-          <span>A-C</span>
+          <span>A-AC</span>
           <span className="font-mono">v1.</span>
         </div>
       </Surface>
