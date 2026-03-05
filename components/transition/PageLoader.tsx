@@ -93,6 +93,8 @@ export function PageLoader() {
     left:         inset,
     zIndex:       10,
     overflow:     'hidden',
+    paddingTop:   32,
+    paddingRight: 32,
     willChange:   'transform',
     // Geometry: card shape appears in Phase 2
     borderRadius: isCard ? 'var(--radius-xl)' : '0',
@@ -126,7 +128,35 @@ export function PageLoader() {
       <div style={scrimStyle} />
 
       {/* Layer 2 — gradient card (z-10): AM-blue gradient that compresses and swipes away */}
-      <div style={cardStyle} />
+      <div style={cardStyle}>
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 12,
+          }}
+        >
+          <img
+            src="/am-asterisk.svg"
+            alt=""
+            aria-hidden="true"
+            style={{
+              width: '8%',
+              height: 'auto',
+              aspectRatio: '1',
+            }}
+          />
+          <span className="text-xl font-normal text-white font-sans">
+            AM * ARCHIVE
+          </span>
+        </div>
+      </div>
     </div>
   )
 }

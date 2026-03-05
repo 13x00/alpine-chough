@@ -52,41 +52,16 @@ export default function Home() {
     goHome()
   }
 
-  if (contentLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <p className="text-text-secondary">Loading…</p>
-      </div>
-    )
-  }
-
-  if (contentError) {
-    return (
-      <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background p-8">
-        <p className="text-center text-text-primary">Failed to load content.</p>
-        <p className="text-center text-sm text-text-secondary">{contentError.message}</p>
-        <button
-          type="button"
-          onClick={() => window.location.reload()}
-          className="rounded-md bg-layer-02 px-4 py-2 text-text-primary hover:bg-layer-hover-01"
-        >
-          Retry
-        </button>
-      </div>
-    )
-  }
-
-  if (!contentData) {
-    return null
-  }
+  const showError = !contentLoading && contentError
+  const showLayout = !contentLoading && contentData && !contentError
 
   // items array preserves order from content.json (photos and collections in any order)
-  const allEntries = contentData.items.map((item) => ({
+  const allEntries = contentData?.items.map((item) => ({
     id: item.id,
     title: item.title,
     view: item.type,
     item: item.type === 'photo' ? (item as Photo) : (item as Collection),
-  }))
+  })) ?? []
 
   const projectItems = allEntries.map((entry, nextIndex) => ({
     id: entry.id,
@@ -112,15 +87,30 @@ export default function Home() {
     <>
       {/* Page-load intro animation — fixed overlay, unmounts after completion */}
       <PageLoader />
-      <SplitLayout
-        currentView={currentView}
-        selectedItem={selectedItem}
-        onCloseDetail={handleHomeClick}
-        useNarrowLayout={useNarrowLayout}
-        onDetailCloseComplete={() => setIsDetailClosing(false)}
-        detailDirection={detailDirection}
-        projectItems={projectItems}
-      />
+      {showError && (
+        <div className="fixed inset-0 z-[9998] flex flex-col items-center justify-center gap-4 bg-background p-8">
+          <p className="text-center text-text-primary">Failed to load content.</p>
+          <p className="text-center text-sm text-text-secondary">{contentError!.message}</p>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="rounded-md bg-layer-02 px-4 py-2 text-text-primary hover:bg-layer-hover-01"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+      {showLayout && (
+        <SplitLayout
+          currentView={currentView}
+          selectedItem={selectedItem}
+          onCloseDetail={handleHomeClick}
+          useNarrowLayout={useNarrowLayout}
+          onDetailCloseComplete={() => setIsDetailClosing(false)}
+          detailDirection={detailDirection}
+          projectItems={projectItems}
+        />
+      )}
     </>
   )
 }
