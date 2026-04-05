@@ -7,6 +7,14 @@ import { PhotoDetail } from '@/components/content/PhotoDetail'
 import { CollectionDetail } from '@/components/content/CollectionDetail'
 import { ViewType, DetailItem, Photo, Collection } from '@/types/content'
 
+function isTypingTarget(target: EventTarget | null): boolean {
+  if (target == null || !(target instanceof Element)) return false
+  const el = target as HTMLElement
+  if (el.isContentEditable) return true
+  const tag = el.tagName
+  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT'
+}
+
 interface RightPanelProps {
   currentView: ViewType
   selectedItem: import('@/types/content').DetailItem | null
@@ -14,6 +22,7 @@ interface RightPanelProps {
   onCloseAnimationComplete?: () => void
   className?: string
   direction?: 'forward' | 'backward'
+  onNavigateAdjacent?: (delta: -1 | 1) => void
 }
 
 export function RightPanel({
@@ -23,6 +32,7 @@ export function RightPanel({
   onCloseAnimationComplete,
   className,
   direction = 'forward',
+  onNavigateAdjacent,
 }: RightPanelProps) {
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -79,17 +89,32 @@ export function RightPanel({
     }
   }
 
-  // Escape key handler
+  // Escape closes detail; arrow keys navigate the content list (when not typing in a field)
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && currentView !== 'portrait') {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (currentView === 'portrait') return
+
+      if (e.key === 'Escape') {
         onBack()
+        return
+      }
+
+      if (!onNavigateAdjacent || isTypingTarget(document.activeElement)) return
+
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault()
+        onNavigateAdjacent(-1)
+        return
+      }
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault()
+        onNavigateAdjacent(1)
       }
     }
 
-    window.addEventListener('keydown', handleEscape)
-    return () => window.removeEventListener('keydown', handleEscape)
-  }, [currentView, onBack])
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [currentView, onBack, onNavigateAdjacent])
 
   // Click outside handler - close when clicking on left panel (but not when clicking a card to open another item)
   useEffect(() => {

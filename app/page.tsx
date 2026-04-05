@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { SplitLayout } from '@/components/layout/SplitLayout'
 import { PageLoader } from '@/components/transition/PageLoader'
 import { useContent } from '@/hooks/useContent'
@@ -60,12 +60,30 @@ export default function Home() {
   const showLayout = !contentLoading && contentData && !contentError
 
   // items array preserves order from content.json (photos and collections in any order)
-  const allEntries = contentData?.items.map((item) => ({
-    id: item.id,
-    title: item.title,
-    view: item.type,
-    item: item.type === 'photo' ? (item as Photo) : (item as Collection),
-  })) ?? []
+  const allEntries = useMemo(
+    () =>
+      contentData?.items.map((item) => ({
+        id: item.id,
+        title: item.title,
+        view: item.type,
+        item: item.type === 'photo' ? (item as Photo) : (item as Collection),
+      })) ?? [],
+    [contentData]
+  )
+
+  const navigateAdjacent = useCallback(
+    (delta: -1 | 1) => {
+      if (!selectedItem || allEntries.length === 0) return
+      const currentIndex = allEntries.findIndex((e) => e.id === selectedItem.id)
+      if (currentIndex === -1) return
+      const nextIndex = currentIndex + delta
+      if (nextIndex < 0 || nextIndex >= allEntries.length) return
+      const nextEntry = allEntries[nextIndex]
+      setDetailDirection(nextIndex > currentIndex ? 'forward' : 'backward')
+      setView(nextEntry.view, nextEntry.item)
+    },
+    [allEntries, selectedItem, setView]
+  )
 
   const projectItems = allEntries.map((entry, nextIndex) => ({
     id: entry.id,
@@ -114,6 +132,7 @@ export default function Home() {
           useNarrowLayout={useNarrowLayout}
           onDetailCloseComplete={() => setIsDetailClosing(false)}
           detailDirection={detailDirection}
+          onNavigateAdjacent={navigateAdjacent}
           projectItems={projectItems}
         />
       )}
