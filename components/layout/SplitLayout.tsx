@@ -5,12 +5,14 @@ import { RightPanel } from './RightPanel'
 import { Logo } from '@/components/content/Logo'
 import { ThemeToggle } from '@/components/content/ThemeToggle'
 import { ViewType, DetailItem } from '@/types/content'
-import { Close, SidePanelClose } from '@carbon/icons-react'
+import { Close, SidePanelClose, SidePanelOpen } from '@carbon/icons-react'
 
 interface SplitLayoutProps {
   currentView: ViewType
   selectedItem: DetailItem | null
   onCloseDetail: () => void
+  leftPanelHidden?: boolean
+  onToggleLeftPanel?: () => void
   useNarrowLayout?: boolean
   onDetailCloseComplete?: () => void
   detailDirection?: 'forward' | 'backward'
@@ -27,6 +29,8 @@ export function SplitLayout({
   currentView,
   selectedItem,
   onCloseDetail,
+  leftPanelHidden = false,
+  onToggleLeftPanel,
   useNarrowLayout = false,
   onDetailCloseComplete,
   detailDirection,
@@ -37,6 +41,23 @@ export function SplitLayout({
   const transitionClass = 'transition-[width] duration-300 ease-out'
 
   const hasDetailOpen = selectedItem !== null && currentView !== 'portrait'
+  const hideLeftColumn = hasDetailOpen && leftPanelHidden
+
+  const headerLeftClass = hideLeftColumn
+    ? `w-auto flex-shrink-0 flex items-center justify-between px-1 py-1 ${transitionClass}`
+    : `w-full ${leftWidth} flex-shrink-0 flex items-center justify-between px-1 py-1 ${transitionClass}`
+
+  const headerRightClass = hideLeftColumn
+    ? `hidden md:flex flex-1 min-w-0 items-center ${transitionClass}`
+    : `hidden md:flex ${rightWidth} items-center ${transitionClass}`
+
+  const bodyLeftClass = hideLeftColumn
+    ? `w-full md:w-0 md:min-w-0 md:overflow-hidden md:opacity-0 md:pointer-events-none flex-shrink-0 relative z-10 ${transitionClass}`
+    : `w-full ${leftWidth} flex-shrink-0 relative z-10 ${transitionClass}`
+
+  const bodyRightClass = hideLeftColumn
+    ? `hidden md:flex flex-1 min-w-0 relative z-20 ${transitionClass}`
+    : `hidden md:flex ${rightWidth} relative z-20 ${transitionClass}`
 
   return (
     <div className="flex h-dvh overflow-hidden flex-col bg-background">
@@ -44,19 +65,20 @@ export function SplitLayout({
       <header className="px-2 pt-2">
         <div className="flex items-center gap-2">
           {/* Logo + ThemeToggle — mirrors left panel width */}
-          <div className={`w-full ${leftWidth} flex-shrink-0 flex items-center justify-between px-1 py-1 ${transitionClass}`}>
+          <div className={headerLeftClass}>
             <Logo onClick={onCloseDetail} />
             <ThemeToggle />
           </div>
 
           {/* Right column header — mirrors right panel width, button group hugs its content */}
-          <div className={`hidden md:flex ${rightWidth} items-center ${transitionClass}`}>
+          <div className={headerRightClass}>
             {hasDetailOpen && (
               <div
                 className="rounded-base bg-layer-01 border border-border-subtle-00 inline-flex items-center gap-2 p-1"
                 data-ignore-outside="true"
               >
                 <button
+                  type="button"
                   onClick={onCloseDetail}
                   aria-label="Close detail"
                   className="flex h-12 w-12 items-center justify-center rounded-xs text-text-primary hover:bg-background-hover transition-colors cursor-pointer"
@@ -64,11 +86,12 @@ export function SplitLayout({
                   <Close size={20} />
                 </button>
                 <button
-                  onClick={onCloseDetail}
-                  aria-label="Close panel"
+                  type="button"
+                  onClick={() => onToggleLeftPanel?.()}
+                  aria-label={leftPanelHidden ? 'Show left panel' : 'Hide left panel'}
                   className="flex h-12 w-12 items-center justify-center rounded-xs text-text-primary hover:bg-background-hover transition-colors cursor-pointer"
                 >
-                  <SidePanelClose size={20} />
+                  {leftPanelHidden ? <SidePanelOpen size={20} /> : <SidePanelClose size={20} />}
                 </button>
               </div>
             )}
@@ -80,12 +103,12 @@ export function SplitLayout({
       <div className="flex-1 min-h-0 px-2 pb-2 pt-2">
         <div className="relative flex h-full min-h-0 gap-2 overflow-hidden">
           {/* Left column — about, project list, contact */}
-          <div className={`w-full ${leftWidth} flex-shrink-0 relative z-10 ${transitionClass}`}>
+          <div className={bodyLeftClass}>
             <LeftPanel projectItems={projectItems} selectedItemId={selectedItem?.id ?? null} />
           </div>
 
           {/* Right column — portrait / detail surface */}
-          <div className={`hidden md:flex ${rightWidth} relative z-20 ${transitionClass}`}>
+          <div className={bodyRightClass}>
             <RightPanel
               currentView={currentView}
               selectedItem={selectedItem}

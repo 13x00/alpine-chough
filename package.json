@@ -14,12 +14,14 @@
     "images:compress": "node scripts/compress-images.mjs",
     "images:compress:dry": "node scripts/compress-images.mjs --dry-run",
     "images:check": "node scripts/compress-images.mjs --dry-run",
-    "images:clean": "node scripts/compress-images.mjs --clean"
+    "images:clean": "node scripts/compress-images.mjs --clean",
+    "db:seed": "node scripts/seed-from-json.mjs"
   },
   "dependencies": {
     "@carbon/colors": "^11.47.0",
     "@carbon/icons-react": "^11.75.0",
     "@carbon/themes": "^11.68.0",
+    "@neondatabase/serverless": "^1.0.2",
     "clsx": "^2.1.1",
     "framer-motion": "^12.34.3",
     "lottie-react": "^2.4.1",

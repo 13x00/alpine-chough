@@ -9,6 +9,7 @@ import { Photo, Collection, ContentData } from '@/types/content'
 export default function Home() {
   const { currentView, selectedItem, setView, goHome } = useContent()
   const [isDetailClosing, setIsDetailClosing] = useState(false)
+  const [leftPanelHidden, setLeftPanelHidden] = useState(false)
   const [detailDirection, setDetailDirection] = useState<'forward' | 'backward'>('forward')
 
   const [contentData, setContentData] = useState<ContentData | null>(null)
@@ -19,7 +20,7 @@ export default function Home() {
     let cancelled = false
     setContentLoading(true)
     setContentError(null)
-    fetch('/content.json')
+    fetch('/api/content')
       .then((res) => {
         if (!res.ok) throw new Error(`Failed to load content: ${res.status}`)
         return res.json()
@@ -48,9 +49,12 @@ export default function Home() {
   const useNarrowLayout = hasDetailOpen || isDetailClosing
 
   const handleHomeClick = () => {
+    setLeftPanelHidden(false)
     if (hasDetailOpen) setIsDetailClosing(true)
     goHome()
   }
+
+  const toggleLeftPanel = () => setLeftPanelHidden((v) => !v)
 
   const showError = !contentLoading && contentError
   const showLayout = !contentLoading && contentData && !contentError
@@ -105,6 +109,8 @@ export default function Home() {
           currentView={currentView}
           selectedItem={selectedItem}
           onCloseDetail={handleHomeClick}
+          leftPanelHidden={leftPanelHidden}
+          onToggleLeftPanel={toggleLeftPanel}
           useNarrowLayout={useNarrowLayout}
           onDetailCloseComplete={() => setIsDetailClosing(false)}
           detailDirection={detailDirection}
