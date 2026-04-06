@@ -46,6 +46,7 @@
     "ajv": "^8.18.0",
     "ajv-keywords": "^5.1.0",
     "autoprefixer": "^10.4.0",
+    "dotenv": "^17.4.1",
     "eslint": "^9.0.0",
     "eslint-config-next": "^16.1.6",
     "postcss": "^8.4.0",

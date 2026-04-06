@@ -287,6 +287,7 @@ export function DetailOverlayMotion({
                   <AnimatePresence custom={direction} mode="sync" initial={false}>
                     <motion.div
                       key={`${displayView}-${displayItem!.id}`}
+                      data-detail-scroll-root
                       className="absolute inset-0 overflow-y-auto"
                       custom={direction}
                       variants={contentVariants}

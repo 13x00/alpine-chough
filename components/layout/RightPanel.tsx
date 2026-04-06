@@ -23,6 +23,7 @@ interface RightPanelProps {
   className?: string
   direction?: 'forward' | 'backward'
   onNavigateAdjacent?: (delta: -1 | 1) => void
+  onToggleLeftPanel?: () => void
 }
 
 export function RightPanel({
@@ -33,6 +34,7 @@ export function RightPanel({
   className,
   direction = 'forward',
   onNavigateAdjacent,
+  onToggleLeftPanel,
 }: RightPanelProps) {
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -99,7 +101,26 @@ export function RightPanel({
         return
       }
 
-      if (!onNavigateAdjacent || isTypingTarget(document.activeElement)) return
+      if (isTypingTarget(document.activeElement)) return
+
+      if (e.code === 'Space' && onToggleLeftPanel) {
+        e.preventDefault()
+        onToggleLeftPanel()
+        return
+      }
+
+      if (currentView === 'collection' && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+        e.preventDefault()
+        const root = document.querySelector<HTMLElement>('[data-detail-scroll-root]')
+        if (root) {
+          const step = Math.max(120, Math.round(root.clientHeight * 0.85))
+          const delta = e.key === 'ArrowUp' ? -step : step
+          root.scrollBy({ top: delta, behavior: 'smooth' })
+        }
+        return
+      }
+
+      if (!onNavigateAdjacent) return
 
       if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
         e.preventDefault()
@@ -114,7 +135,7 @@ export function RightPanel({
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [currentView, onBack, onNavigateAdjacent])
+  }, [currentView, onBack, onNavigateAdjacent, onToggleLeftPanel])
 
   // Click outside handler - close when clicking on left panel (but not when clicking a card to open another item)
   useEffect(() => {

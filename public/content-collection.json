@@ -1,0 +1,224 @@
+{
+  "items": [
+    {
+      "type": "collection",
+      "title": "Urban sketches",
+      "slug": "urban-sketches",
+      "description": "A small set of street and architecture studies from the same roll.",
+      "coverImage": "/photos/DSC00008.webp",
+      "images": [
+        {
+          "image": "/photos/DSC00008.webp",
+          "description": "Corner facade in late afternoon light; long shadows across the pavement."
+        },
+        {
+          "image": "/photos/DSC00139.webp",
+          "description": "Narrow alley with a single strong highlight on brickwork."
+        },
+        {
+          "image": "/photos/DSC00447.webp",
+          "description": "Wide view of the crossing before the crowds arrived."
+        }
+      ]
+    },
+    {
+      "type": "collection",
+      "title": "Coast morning",
+      "slug": "coast-morning",
+      "description": "Calm water and low tide textures shot within an hour of sunrise.",
+      "coverImage": "/photos/DSC00508.webp",
+      "images": [
+        {
+          "image": "/photos/DSC00508.webp",
+          "description": "First light on wet sand; cool blues with a thin band of warmth."
+        },
+        {
+          "image": "/photos/DSC00798.webp",
+          "description": "Breakers reduced to soft lines on a long exposure feel."
+        },
+        {
+          "image": "/photos/DSC00801.webp",
+          "description": "Gulls and distance; negative space kept deliberately high."
+        }
+      ]
+    },
+    {
+      "type": "collection",
+      "title": "Night series",
+      "slug": "night-series",
+      "description": "Hand-held available light; emphasis on colour cast and isolation.",
+      "coverImage": "/photos/DSC00887.webp",
+      "images": [
+        {
+          "image": "/photos/DSC00887.webp",
+          "description": "Neon spill on wet asphalt; primary colours separated cleanly."
+        },
+        {
+          "image": "/photos/DSC00890.webp",
+          "description": "Window grid repeating; one lit rectangle breaks the rhythm."
+        },
+        {
+          "image": "/photos/DSC00892.webp",
+          "description": "Deep shadow with a single readable silhouette at the frame edge."
+        }
+      ]
+    },
+    {
+      "type": "collection",
+      "title": "Trail and tide",
+      "slug": "trail-and-tide",
+      "description": "Seven frames from coastal paths and quiet inland trails.",
+      "coverImage": "/photos/DSC00913.webp",
+      "images": [
+        {
+          "image": "/photos/DSC00913.webp",
+          "description": "Low horizon; sky takes two-thirds of the frame."
+        },
+        {
+          "image": "/photos/DSC00923.webp",
+          "description": "Footprints leading out of frame toward the waterline."
+        },
+        {
+          "image": "/photos/DSC01223.webp",
+          "description": "Wind-leaned grass in the foreground, cliffs softened by haze."
+        },
+        {
+          "image": "/photos/DSC01240.webp",
+          "description": "Tide pool geometry; dark rock rimmed with white salt."
+        },
+        {
+          "image": "/photos/DSC01284.webp",
+          "description": "Single figure small against a wide grey sea."
+        },
+        {
+          "image": "/photos/DSC02865.webp",
+          "description": "Warm side light on pebbles; cool fill from open sky."
+        },
+        {
+          "image": "/photos/DSC03060.webp",
+          "description": "Last usable light before the path disappears into shadow."
+        }
+      ]
+    },
+    {
+      "type": "collection",
+      "title": "Industrial edges",
+      "slug": "industrial-edges",
+      "description": "Four studies of metal, glass, and repeating structure.",
+      "coverImage": "/photos/DSC03595.webp",
+      "images": [
+        {
+          "image": "/photos/DSC03595.webp",
+          "description": "Corrugated wall catching a narrow band of sun."
+        },
+        {
+          "image": "/photos/DSC04369.webp",
+          "description": "Reflection fractured in warehouse windows."
+        },
+        {
+          "image": "/photos/DSC05553.webp",
+          "description": "Pipes and valves read as abstract curves."
+        },
+        {
+          "image": "/photos/DSC05823.webp",
+          "description": "Loading bay in shade; one door held open."
+        }
+      ]
+    },
+    {
+      "type": "collection",
+      "title": "Green and grey",
+      "slug": "green-and-grey",
+      "description": "Nine images mixing vegetation, overcast sky, and wet surfaces.",
+      "coverImage": "/photos/DSC06504.webp",
+      "images": [
+        {
+          "image": "/photos/DSC06504.webp",
+          "description": "Moss-heavy stone wall after rain."
+        },
+        {
+          "image": "/photos/DSC06507.webp",
+          "description": "Tree canopy closing over a narrow road."
+        },
+        {
+          "image": "/photos/DSC07488.webp",
+          "description": "Field edge; hedgerow as a dark horizontal."
+        },
+        {
+          "image": "/photos/DSC07924.webp",
+          "description": "Puddle mirror breaking the symmetry of the path."
+        },
+        {
+          "image": "/photos/DSC08882.webp",
+          "description": "Fog lifting; distant hills barely separated from sky."
+        },
+        {
+          "image": "/photos/DSC09108.webp",
+          "description": "Ferns in shade with one blade catching a highlight."
+        },
+        {
+          "image": "/photos/DSC09783.webp",
+          "description": "Wet bark texture filling the frame."
+        },
+        {
+          "image": "/photos/DSC_0472.webp",
+          "description": "Overcast portrait of place: bench, path, empty middle."
+        },
+        {
+          "image": "/photos/IMG_8765.webp",
+          "description": "Wide cloud deck with a sliver of brighter band near zenith."
+        }
+      ]
+    },
+    {
+      "type": "collection",
+      "title": "Two frames",
+      "slug": "two-frames",
+      "description": "A minimal pair kept deliberately short.",
+      "coverImage": "/photos/IMG_9028.webp",
+      "images": [
+        {
+          "image": "/photos/IMG_9028.webp",
+          "description": "Interior corner; warm lamp against cool ambient."
+        },
+        {
+          "image": "/photos/R1-05403-0023.webp",
+          "description": "Street geometry simplified to three tones."
+        }
+      ]
+    },
+    {
+      "type": "collection",
+      "title": "Scan strip notes",
+      "slug": "scan-strip-notes",
+      "description": "Six frames from film scans—edges, numbers, and small imperfections left visible.",
+      "coverImage": "/photos/R1-05549-0032.webp",
+      "images": [
+        {
+          "image": "/photos/R1-05549-0032.webp",
+          "description": "Perforation edge visible; subject shifted off-centre."
+        },
+        {
+          "image": "/photos/R1-06614-0021.webp",
+          "description": "Soft grain in mid-tones; contrast held low."
+        },
+        {
+          "image": "/photos/R1-06615-0002.webp",
+          "description": "Highlights lifted slightly; shadow detail retained."
+        },
+        {
+          "image": "/photos/R1-06616-0025.webp",
+          "description": "Colour cast left uncorrected for mood."
+        },
+        {
+          "image": "/photos/R1-06617-0013.webp",
+          "description": "Frame within frame; doorway as natural crop."
+        },
+        {
+          "image": "/photos/R1-06617-0033.webp",
+          "description": "Last frame on the strip; slight light leak at one edge."
+        }
+      ]
+    }
+  ]
+}

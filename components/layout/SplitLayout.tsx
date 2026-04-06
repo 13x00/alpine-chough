@@ -118,6 +118,7 @@ export function SplitLayout({
               onCloseAnimationComplete={onDetailCloseComplete}
               direction={detailDirection}
               onNavigateAdjacent={onNavigateAdjacent}
+              onToggleLeftPanel={onToggleLeftPanel}
               className="rounded-base border border-border-subtle-00"
             />
           </div>
