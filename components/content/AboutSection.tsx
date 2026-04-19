@@ -14,6 +14,9 @@ export function AboutSection({ className }: AboutSectionProps) {
       <p className="text-base leading-normal text-text-primary">
       An archive of photos by Andreas Mitchley. A place to browse and revisit selected work — single images and collections — without the noise of a feed. The archive grows over time; everything stays available.
       </p>
+      <p className="text-sm leading-normal text-text-secondary">
+        © 2026 Andreas Mitchley. All rights reserved.
+      </p>
     </section>
   )
 }

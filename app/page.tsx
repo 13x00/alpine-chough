@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { SplitLayout } from '@/components/layout/SplitLayout'
 import { PageLoader } from '@/components/transition/PageLoader'
 import { useContent } from '@/hooks/useContent'
-import { Photo, Collection, ContentData } from '@/types/content'
+import { Photo, ContentData } from '@/types/content'
 
 export default function Home() {
   const { currentView, selectedItem, setView, goHome } = useContent()
@@ -59,40 +59,42 @@ export default function Home() {
   const showError = !contentLoading && contentError
   const showLayout = !contentLoading && contentData && !contentError
 
-  // items array preserves order from content.json (photos and collections in any order)
-  const allEntries = useMemo(
+  // Photos only in nav until collections are ready to ship (API may still return collection rows).
+  const photoEntries = useMemo(
     () =>
-      contentData?.items.map((item) => ({
-        id: item.id,
-        title: item.title,
-        view: item.type,
-        item: item.type === 'photo' ? (item as Photo) : (item as Collection),
-      })) ?? [],
+      contentData?.items
+        .filter((item) => item.type === 'photo')
+        .map((item) => ({
+          id: item.id,
+          title: item.title,
+          view: 'photo' as const,
+          item: item as Photo,
+        })) ?? [],
     [contentData]
   )
 
   const navigateAdjacent = useCallback(
     (delta: -1 | 1) => {
-      if (!selectedItem || allEntries.length === 0) return
-      const currentIndex = allEntries.findIndex((e) => e.id === selectedItem.id)
+      if (!selectedItem || photoEntries.length === 0) return
+      const currentIndex = photoEntries.findIndex((e) => e.id === selectedItem.id)
       if (currentIndex === -1) return
       const nextIndex = currentIndex + delta
-      if (nextIndex < 0 || nextIndex >= allEntries.length) return
-      const nextEntry = allEntries[nextIndex]
+      if (nextIndex < 0 || nextIndex >= photoEntries.length) return
+      const nextEntry = photoEntries[nextIndex]
       setDetailDirection(nextIndex > currentIndex ? 'forward' : 'backward')
       setView(nextEntry.view, nextEntry.item)
     },
-    [allEntries, selectedItem, setView]
+    [photoEntries, selectedItem, setView]
   )
 
-  const projectItems = allEntries.map((entry, nextIndex) => ({
+  const projectItems = photoEntries.map((entry, nextIndex) => ({
     id: entry.id,
     title: entry.title,
-    category: entry.view === 'photo' ? 'Photo' : 'Collection',
-    image: entry.view === 'photo' ? (entry.item as Photo).image : (entry.item as Collection).coverImage,
+    category: 'Photo',
+    image: entry.item.image,
     onClick: () => {
       if ((currentView === 'photo' || currentView === 'collection') && selectedItem) {
-        const currentIndex = allEntries.findIndex((e) => e.id === selectedItem.id)
+        const currentIndex = photoEntries.findIndex((e) => e.id === selectedItem.id)
         if (currentIndex !== -1 && nextIndex !== currentIndex) {
           setDetailDirection(nextIndex > currentIndex ? 'forward' : 'backward')
         } else {
