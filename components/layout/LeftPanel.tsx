@@ -31,7 +31,7 @@ export function LeftPanel({ projectItems, selectedItemId = null }: LeftPanelProp
         <AboutSection />
       </Surface>
 
-      {/* Photos list */}
+      {/* Photos & collections list */}
       <Surface as="section" padding="none" className="flex-1 min-h-[11.25rem] overflow-y-auto">
         {/* data-nav-card covers the full list surface so row-gap clicks don't close the overlay */}
         <ul data-nav-card className="flex flex-col divide-y divide-border-subtle-00">
