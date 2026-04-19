@@ -5,6 +5,7 @@ interface AboutSectionProps {
 }
 
 export function AboutSection({ className }: AboutSectionProps) {
+  const year = new Date().getFullYear()
   return (
     <section className={cn('flex flex-col gap-4', className)}>
       <p className="text-xl leading-normal text-text-primary">
@@ -13,6 +14,9 @@ export function AboutSection({ className }: AboutSectionProps) {
       </p>
       <p className="text-base leading-normal text-text-primary">
       An archive of photos by Andreas Mitchley. A place to browse and revisit selected work — single images and collections — without the noise of a feed. The archive grows over time; everything stays available.
+      </p>
+      <p className="text-sm leading-normal text-text-secondary">
+        © {year} Andreas Mitchley. All rights reserved.
       </p>
     </section>
   )
