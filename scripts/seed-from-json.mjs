@@ -17,6 +17,7 @@
  * Prereqs:
  *   1. Run scripts/schema.sql in Neon (SQL Editor) for database alpine_chough.
  *   2. DATABASE_URL: loaded from .env.local at project root (via dotenv), or export in the shell.
+ *   Optional: ENABLE_COLLECTIONS=true seeds collection entries (default skips them).
  *
  * Usage: node scripts/seed-from-json.mjs [path-to-content.json]
  *        (from project root; DATABASE_URL must be set)
@@ -164,6 +165,14 @@ npm run db:seed -- content-collection.json`)
     process.exit(1)
   }
 
+  const collectionsEnabled = process.env.ENABLE_COLLECTIONS === 'true'
+  const collectionSkipCount = items.filter((x) => x.type === 'collection').length
+  if (!collectionsEnabled && collectionSkipCount > 0) {
+    console.log(
+      `  Note: ${collectionSkipCount} collection entries skipped (set ENABLE_COLLECTIONS=true to seed them).`
+    )
+  }
+
   const maxRows = await sql`
     SELECT COALESCE(MAX(sort_order), -1) AS m FROM content_items
   `
@@ -206,6 +215,7 @@ npm run db:seed -- content-collection.json`)
       console.log(`    content_item added at sort_order ${nextSort}`)
       nextSort += 1
     } else if (item.type === 'collection') {
+      if (!collectionsEnabled) continue
       let collectionId = await findCollectionIdBySlug(sql, item.slug)
       if (collectionId) {
         console.log(`  Collection exists (by slug), skip insert: ${item.slug}`)

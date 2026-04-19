@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { collectionsEnabled } from '@/lib/features'
 import { getSql } from '@/lib/db'
 import type { ContentData, ContentItem } from '@/types/content'
 
@@ -23,6 +24,7 @@ export async function GET() {
       FROM content_items ci
       LEFT JOIN photos p ON ci.photo_id = p.id
       LEFT JOIN collections c ON ci.collection_id = c.id
+      WHERE (${collectionsEnabled} OR ci.item_type = 'photo')
       ORDER BY ci.sort_order ASC
     `
 
@@ -35,7 +37,7 @@ export async function GET() {
     ]
 
     let collectionImages: { collection_id: string; image_id: string; sort_order: number }[] = []
-    if (collectionIds.length > 0) {
+    if (collectionsEnabled && collectionIds.length > 0) {
       const ciRows = await sql`
         SELECT collection_id, image_id, sort_order
         FROM collection_images
