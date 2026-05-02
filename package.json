@@ -17,7 +17,8 @@
     "images:clean": "node scripts/compress-images.mjs --clean",
     "db:seed": "node scripts/seed-from-json.mjs",
     "drive:setup": "node scripts/drive-setup.mjs",
-    "drive:ingest": "tsx scripts/drive-ingest.ts"
+    "drive:ingest": "tsx scripts/drive-ingest.ts",
+    "drive:stop-channel": "node scripts/drive-stop-channel.mjs"
   },
   "dependencies": {
     "@carbon/colors": "^11.47.0",

@@ -60,3 +60,14 @@ CREATE TABLE IF NOT EXISTS drive_processed_files (
   drive_file_id TEXT PRIMARY KEY,
   processed_at  TIMESTAMPTZ DEFAULT now()
 );
+
+-- Stores the single active Drive push notification channel.
+-- The cron renewal reads the old channel from here, stops it, registers
+-- a new one, then upserts the new details back into this row.
+CREATE TABLE IF NOT EXISTS drive_webhook_channel (
+  id          INT PRIMARY KEY DEFAULT 1, -- always 1; single-row table
+  channel_id  TEXT NOT NULL,
+  resource_id TEXT NOT NULL,
+  expires_at  TIMESTAMPTZ NOT NULL,
+  updated_at  TIMESTAMPTZ DEFAULT now()
+);

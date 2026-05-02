@@ -119,11 +119,11 @@ export interface WatchChannelResult {
 }
 
 /**
- * Registers (or re-registers) a Drive push notification channel on `folderId`.
- * Google caps files.watch channels at 24 hours; call this daily to keep the
- * webhook alive. Returns the new channel details.
+ * Registers a new Drive push notification channel on `folderId`.
+ * Google caps files.watch channels at 24 hours; call this daily.
+ * Returns the new channel details.
  */
-export async function renewWatchChannel(
+export async function registerWatchChannel(
   drive: drive_v3.Drive,
   folderId: string,
   webhookUrl: string,
@@ -144,11 +144,29 @@ export async function renewWatchChannel(
     },
   }) as Promise<{ data: { id?: string | null; resourceId?: string | null; expiration?: string | null } }>)
 
-  const channelId = res.data.id ?? ''
-  const resourceId = res.data.resourceId ?? ''
-  const expiration = new Date(Number(res.data.expiration ?? 0)).toISOString()
+  return {
+    channelId: res.data.id ?? '',
+    resourceId: res.data.resourceId ?? '',
+    expiration: new Date(Number(res.data.expiration ?? 0)).toISOString(),
+  }
+}
 
-  return { channelId, resourceId, expiration }
+/**
+ * Stops an active Drive push notification channel.
+ * Safe to call with stale IDs — a 404 from Google is ignored.
+ */
+export async function stopWatchChannel(
+  drive: drive_v3.Drive,
+  channelId: string,
+  resourceId: string
+): Promise<void> {
+  try {
+    await drive.channels.stop({ requestBody: { id: channelId, resourceId } })
+  } catch (err: unknown) {
+    // 404 means the channel already expired — nothing to do.
+    const status = (err as { code?: number })?.code
+    if (status !== 404) throw err
+  }
 }
 
 /** Returns true if the MIME type is a supported image format. */

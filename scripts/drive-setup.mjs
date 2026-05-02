@@ -38,6 +38,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import dotenv from 'dotenv'
 import crypto from 'node:crypto'
+import { neon } from '@neondatabase/serverless'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const root = join(__dirname, '..')
@@ -153,19 +154,38 @@ async function main() {
 
   // 3. Register webhook channel on upload/
   console.log('\nRegistering push notification channel on upload/ folder...')
-  const channelId = crypto.randomUUID()
+
+  // Stop any existing channel stored in DB before registering a new one.
+  const databaseUrl = process.env.DATABASE_URL
+  const sql = databaseUrl ? neon(databaseUrl) : null
+
+  if (sql) {
+    const existing = await sql`
+      SELECT channel_id, resource_id FROM drive_webhook_channel WHERE id = 1 LIMIT 1
+    `
+    if (existing[0]) {
+      try {
+        await drive.channels.stop({
+          requestBody: { id: existing[0].channel_id, resourceId: existing[0].resource_id },
+        })
+        console.log(`  Stopped old channel: ${existing[0].channel_id}`)
+      } catch (e) {
+        if (e?.code !== 404) console.warn(`  Could not stop old channel: ${e.message ?? e}`)
+      }
+    }
+  }
+
   // Google Drive: max expiration for files.watch is 86400s (1 day) from now.
-  // Requesting longer is clamped — do not expect a week until we switch to changes.watch.
-  const expireMs = Date.now() + 24 * 60 * 60 * 1000 - 60_000 // 1 day minus 1 min slack
+  const expireMs = Date.now() + 23 * 60 * 60 * 1000 // 23h — safety buffer
 
   const watchRes = await drive.files.watch({
     fileId: uploadFolderId,
     requestBody: {
-      id: channelId,
+      id: crypto.randomUUID(),
       type: 'web_hook',
       address: webhookUrl,
       token: webhookSecret,
-      expiration: expireMs,
+      expiration: String(expireMs),
     },
   })
 
@@ -178,24 +198,34 @@ async function main() {
   console.log(`    Expires  : ${expiryDate}`)
   console.log(`    Endpoint : ${webhookUrl}`)
 
+  // Store channel in DB so the cron renewal knows what to stop next time.
+  if (sql) {
+    await sql`
+      INSERT INTO drive_webhook_channel (id, channel_id, resource_id, expires_at, updated_at)
+      VALUES (1, ${channel.id}, ${channel.resourceId}, ${expiryDate}, now())
+      ON CONFLICT (id) DO UPDATE SET
+        channel_id  = EXCLUDED.channel_id,
+        resource_id = EXCLUDED.resource_id,
+        expires_at  = EXCLUDED.expires_at,
+        updated_at  = now()
+    `
+    console.log('  Channel saved to DB.')
+  }
+
   // 4. Print .env.local additions
   console.log('\n─────────────────────────────────────────────────────')
   console.log('Add these to your .env.local:\n')
   console.log(`GOOGLE_DRIVE_PREP_FOLDER_ID=${prepFolderId}`)
   console.log(`GOOGLE_DRIVE_UPLOAD_FOLDER_ID=${uploadFolderId}`)
   console.log(`GOOGLE_DRIVE_PROCESSED_FOLDER_ID=${processedFolderId}`)
-  console.log(`# Webhook channel (renew before ${expiryDate}):`)
-  console.log(`# GOOGLE_DRIVE_CHANNEL_ID=${channel.id}`)
-  console.log(`# GOOGLE_DRIVE_CHANNEL_RESOURCE_ID=${channel.resourceId}`)
   console.log('─────────────────────────────────────────────────────')
   console.log('\nWorkflow:')
   console.log('  1. Upload files to prep/ — stage everything here first')
   console.log('  2. Move the batch from prep/ → upload/ when ready')
   console.log('  3. The webhook fires and the pipeline runs automatically')
   console.log('\nSetup complete.')
-  console.log(
-    `\nReminder: files.watch expires within 24h (Google limit). Re-run "npm run drive:setup" before ${expiryDate}.`
-  )
+  console.log(`\nWebhook channel expires: ${expiryDate}`)
+  console.log('The daily Vercel Cron (/api/cron/renew-webhook) will renew it automatically.')
 }
 
 main().catch((err) => {
