@@ -213,15 +213,15 @@ export function DetailOverlayMotion({
     // All other phases (e.g. 'open'): ignore padding/expand animation completions.
   }
 
-  // ── Content push-slide variants (swap, unchanged) ────────────────────────────
+  // ── Content push-slide variants — vertical to match list mental model ────────
   const contentVariants = {
     enter: (dir: 'forward' | 'backward') => ({
-      x: dir === 'forward' ? '100%' : '-100%',
+      y: dir === 'forward' ? '100%' : '-100%',
       opacity: 0.92,
     }),
-    center: { x: 0, opacity: 1 },
+    center: { y: 0, opacity: 1 },
     exit: (dir: 'forward' | 'backward') => ({
-      x: dir === 'forward' ? '-100%' : '100%',
+      y: dir === 'forward' ? '-100%' : '100%',
       opacity: 0.92,
     }),
   } as const

@@ -70,11 +70,12 @@
     container-name: footer-card;
   }
 
+  /* Stack link cluster + org when the footer is narrow */
   @container footer-card (max-width: 549px) {
     .footer-card-layout {
       flex-direction: column;
-      align-items: stretch;
-      gap: 0.75rem;
+      align-items: flex-start;
+      gap: var(--cds-spacing-04);
     }
   }
 

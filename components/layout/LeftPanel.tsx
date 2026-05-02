@@ -1,6 +1,9 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
+import { Folder, Image } from '@carbon/icons-react'
 import { AboutSection } from '@/components/content/AboutSection'
+import { FooterCard } from '@/components/layout/FooterCard'
 import { Surface } from '@/components/ui/Surface'
 
 const prefetchedSrcs = new Set<string>()
@@ -24,6 +27,19 @@ interface LeftPanelProps {
 }
 
 export function LeftPanel({ projectItems, selectedItemId = null }: LeftPanelProps) {
+  const listRef = useRef<HTMLUListElement>(null)
+
+  // When selectedItemId changes (e.g. arrow-key navigation from the right panel),
+  // move focus to the newly selected button. This clears the stale ring on the old
+  // item, keeps a single consistent indicator, and scrolls the row into view for
+  // free. The RightPanel key handler is on `window` so it fires regardless of where
+  // focus lives — moving focus here does not break keyboard navigation.
+  useEffect(() => {
+    if (!selectedItemId || !listRef.current) return
+    const selected = listRef.current.querySelector<HTMLElement>('[data-selected="true"]')
+    selected?.focus({ preventScroll: false })
+  }, [selectedItemId])
+
   return (
     <div className="relative flex h-full min-h-0 flex-col gap-2">
       {/* About card */}
@@ -34,7 +50,7 @@ export function LeftPanel({ projectItems, selectedItemId = null }: LeftPanelProp
       {/* Photos & collections list */}
       <Surface as="section" padding="none" className="flex-1 min-h-[11.25rem] overflow-y-auto">
         {/* data-nav-card covers the full list surface so row-gap clicks don't close the overlay */}
-        <ul data-nav-card className="flex flex-col divide-y divide-border-subtle-00">
+        <ul ref={listRef} data-nav-card className="flex flex-col divide-y divide-border-subtle-00">
           {projectItems.map((item, index) => {
             const rowNumber = String(index + 1).padStart(2, '0')
 
@@ -54,15 +70,17 @@ export function LeftPanel({ projectItems, selectedItemId = null }: LeftPanelProp
                   }`}
                 >
                   <div className="flex items-center gap-6">
-                    <span className="font-mono text-xl text-text-primary">
+                    <span className="font-mono text-base text-text-secondary">
                       {rowNumber}
                     </span>
                     <span className="transition-colors">
                       {item.title}
                     </span>
                   </div>
-                  <span className="text-sm text-text-secondary">
-                    {item.category ?? 'Photo'}
+                  <span className="text-text-secondary">
+                    {item.category === 'Collection'
+                      ? <Folder size={16} aria-label="Collection" />
+                      : <Image size={16} aria-label="Photo" />}
                   </span>
                 </button>
               </li>
@@ -71,44 +89,7 @@ export function LeftPanel({ projectItems, selectedItemId = null }: LeftPanelProp
         </ul>
       </Surface>
 
-      {/* Footer contact card — horizontal when room, stacks when narrow (wrap + container query) */}
-      <Surface
-        as="footer"
-        padding="md"
-        className="footer-card-layout @container shrink-0 flex flex-row flex-wrap items-end justify-between gap-3"
-      >
-        <div className="min-w-[20rem] flex-1">
-          <p className="mb-2 text-sm text-text-secondary">Want to have a chat?</p>
-          <ul className="space-y-1 text-sm text-text-primary">
-            <li>
-              <a
-                href="mailto:andreas.mitchley@occstudio.com"
-                className="transition-colors"
-              >
-                [ andreas.mitchley@occstudio.com ]
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-colors"
-              >
-                [ LinkedIn ]
-              </a>
-            </li>
-            <li>
-              <span>[ Org nr: 932 150 840 ]</span>
-            </li>
-          </ul>
-        </div>
-
-        <div className="framework-version-tag w-fit shrink-0 inline-flex items-center gap-2 rounded-full px-4 py-1 text-sm">
-          <span>A-AC</span>
-          <span className="font-mono">v1.</span>
-        </div>
-      </Surface>
+      <FooterCard />
     </div>
   )
 }
