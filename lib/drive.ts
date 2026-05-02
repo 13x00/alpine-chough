@@ -112,6 +112,45 @@ export async function createFolder(
   return res.data.id
 }
 
+export interface WatchChannelResult {
+  channelId: string
+  resourceId: string
+  expiration: string
+}
+
+/**
+ * Registers (or re-registers) a Drive push notification channel on `folderId`.
+ * Google caps files.watch channels at 24 hours; call this daily to keep the
+ * webhook alive. Returns the new channel details.
+ */
+export async function renewWatchChannel(
+  drive: drive_v3.Drive,
+  folderId: string,
+  webhookUrl: string,
+  secret: string
+): Promise<WatchChannelResult> {
+  const { randomUUID } = await import('crypto')
+  // Request just under 24 hours — Google clamps files.watch to 1 day max.
+  const expireMs = Date.now() + 23 * 60 * 60 * 1000
+
+  const res = await (drive.files.watch({
+    fileId: folderId,
+    requestBody: {
+      id: randomUUID(),
+      type: 'web_hook',
+      address: webhookUrl,
+      token: secret,
+      expiration: String(expireMs),
+    },
+  }) as Promise<{ data: { id?: string | null; resourceId?: string | null; expiration?: string | null } }>)
+
+  const channelId = res.data.id ?? ''
+  const resourceId = res.data.resourceId ?? ''
+  const expiration = new Date(Number(res.data.expiration ?? 0)).toISOString()
+
+  return { channelId, resourceId, expiration }
+}
+
 /** Returns true if the MIME type is a supported image format. */
 export function isImageMime(mimeType: string | null | undefined): boolean {
   return (

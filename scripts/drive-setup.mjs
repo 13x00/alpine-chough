@@ -28,12 +28,14 @@
  *   node scripts/drive-setup.mjs [--root-folder-name <name>]
  *   npm run drive:setup
  *
- * Webhook channels expire after ~7 days. Re-run this script before expiry to
- * renew (a new channel ID is registered; the old one simply expires).
+ * Webhook: we use files.watch on the upload/ folder. Google caps those
+ * channels at 1 day max (see Drive push docs — "files" vs "changes").
+ * Re-run this script daily or before the printed expiry to renew.
  */
 
 import { google } from 'googleapis'
-import { join, fileURLToPath } from 'node:path'
+import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import dotenv from 'dotenv'
 import crypto from 'node:crypto'
 
@@ -152,7 +154,9 @@ async function main() {
   // 3. Register webhook channel on upload/
   console.log('\nRegistering push notification channel on upload/ folder...')
   const channelId = crypto.randomUUID()
-  const expireMs = Date.now() + 7 * 24 * 60 * 60 * 1000 // 7 days from now
+  // Google Drive: max expiration for files.watch is 86400s (1 day) from now.
+  // Requesting longer is clamped — do not expect a week until we switch to changes.watch.
+  const expireMs = Date.now() + 24 * 60 * 60 * 1000 - 60_000 // 1 day minus 1 min slack
 
   const watchRes = await drive.files.watch({
     fileId: uploadFolderId,
@@ -161,7 +165,7 @@ async function main() {
       type: 'web_hook',
       address: webhookUrl,
       token: webhookSecret,
-      expiration: String(expireMs),
+      expiration: expireMs,
     },
   })
 
@@ -189,7 +193,9 @@ async function main() {
   console.log('  2. Move the batch from prep/ → upload/ when ready')
   console.log('  3. The webhook fires and the pipeline runs automatically')
   console.log('\nSetup complete.')
-  console.log(`\nReminder: re-run "npm run drive:setup" before ${expiryDate} to renew the channel.`)
+  console.log(
+    `\nReminder: files.watch expires within 24h (Google limit). Re-run "npm run drive:setup" before ${expiryDate}.`
+  )
 }
 
 main().catch((err) => {
