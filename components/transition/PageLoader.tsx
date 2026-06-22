@@ -143,13 +143,12 @@ export function PageLoader() {
           }}
         >
           <img
-            src="/am-asterisk.svg"
+            src="/AM-Signature.svg"
             alt=""
             aria-hidden="true"
             style={{
               width: '8%',
               height: 'auto',
-              aspectRatio: '1',
             }}
           />
           <span className="text-xl font-normal text-white font-sans">
