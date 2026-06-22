@@ -58,6 +58,7 @@ CREATE INDEX IF NOT EXISTS idx_collection_images_sort ON collection_images(colle
 -- Prevents re-processing on repeated webhook pings for the same files.
 CREATE TABLE IF NOT EXISTS drive_processed_files (
   drive_file_id TEXT PRIMARY KEY,
+  filename TEXT NOT NULL,
   processed_at  TIMESTAMPTZ DEFAULT now()
 );
 

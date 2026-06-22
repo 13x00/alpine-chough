@@ -101,10 +101,10 @@ async function isAlreadyProcessed(sql: Sql, driveFileId: string): Promise<boolea
   return rows.length > 0
 }
 
-async function markProcessed(sql: Sql, driveFileId: string): Promise<void> {
+async function markProcessed(sql: Sql, driveFileId: string, filename: string): Promise<void> {
   await sql`
-    INSERT INTO drive_processed_files (drive_file_id)
-    VALUES (${driveFileId})
+    INSERT INTO drive_processed_files (drive_file_id, filename)
+    VALUES (${driveFileId}, ${filename})
     ON CONFLICT DO NOTHING
   `
 }
@@ -220,7 +220,7 @@ async function ingestPhoto(
     log(`    Added content_item at sort_order ${sortOrder}`)
   }
 
-  await markProcessed(sql, file.id!)
+  await markProcessed(sql, file.id!, filename)
   await moveFile(drive, file.id!, uploadFolderId, processedFolderId)
   log(`    Moved to processed/`)
 }
@@ -346,7 +346,7 @@ async function ingestCollection(
     log(`    Added content_item at sort_order ${sortOrder}`)
   }
 
-  await markProcessed(sql, folder.id!)
+  await markProcessed(sql, folder.id!, folderName)
   await moveFile(drive, folder.id!, uploadFolderId, processedFolderId)
   log(`    Moved to processed/`)
 }
