@@ -77,12 +77,21 @@ export async function moveFile(
   sourceFolderId: string,
   destinationFolderId: string
 ): Promise<void> {
-  await drive.files.update({
-    fileId,
-    addParents: destinationFolderId,
-    removeParents: sourceFolderId,
-    fields: 'id, parents',
-  })
+  try {
+    await drive.files.update({
+      fileId,
+      addParents: destinationFolderId,
+      removeParents: sourceFolderId,
+      fields: 'id, parents',
+    })
+  } catch (error: any) {
+    // Add detailed error information for debugging
+    const errorMsg = error?.message || String(error)
+    const errorCode = error?.code || error?.response?.status
+    throw new Error(
+      `Failed to move file ${fileId} from ${sourceFolderId} to ${destinationFolderId}: ${errorMsg} (code: ${errorCode})`
+    )
+  }
 }
 
 /**

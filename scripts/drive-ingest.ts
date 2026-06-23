@@ -61,32 +61,36 @@ if (missing.length > 0) {
   process.exit(1)
 }
 
-if (DRY_RUN) {
-  const { getDriveClient, listFolder } = await import('../lib/drive.js')
-  const drive = getDriveClient()
-  const files = await listFolder(drive, process.env.GOOGLE_DRIVE_UPLOAD_FOLDER_ID!)
+async function main() {
+  if (DRY_RUN) {
+    const { getDriveClient, listFolder } = await import('../lib/drive.js')
+    const drive = getDriveClient()
+    const files = await listFolder(drive, process.env.GOOGLE_DRIVE_UPLOAD_FOLDER_ID!)
 
-  console.log(`=== DRY RUN — ${files.length} item(s) in upload/ ===\n`)
-  for (const f of files) {
-    const size = f.size ? `${(Number(f.size) / 1024).toFixed(1)} KB` : '(folder)'
-    console.log(`  [${f.mimeType}]  ${f.name}  ${size}`)
+    console.log(`=== DRY RUN — ${files.length} item(s) in upload/ ===\n`)
+    for (const f of files) {
+      const size = f.size ? `${(Number(f.size) / 1024).toFixed(1)} KB` : '(folder)'
+      console.log(`  [${f.mimeType}]  ${f.name}  ${size}`)
+    }
+    console.log('\nNo changes made. Remove --dry-run to run the full pipeline.')
+    process.exit(0)
   }
-  console.log('\nNo changes made. Remove --dry-run to run the full pipeline.')
-  process.exit(0)
-}
 
-console.log('=== Google Drive Manual Ingest ===\n')
+  console.log('=== Google Drive Manual Ingest ===\n')
 
-const { runIngest } = await import('../lib/ingest.js')
+  const { runIngest } = await import('../lib/ingest.js')
 
-try {
-  const result = await runIngest((msg) => console.log(msg))
-  if (result.errors.length > 0) {
-    console.error('\nErrors encountered:')
-    result.errors.forEach((e: string) => console.error(`  ${e}`))
+  try {
+    const result = await runIngest((msg) => console.log(msg))
+    if (result.errors.length > 0) {
+      console.error('\nErrors encountered:')
+      result.errors.forEach((e: string) => console.error(`  ${e}`))
+      process.exit(1)
+    }
+  } catch (err) {
+    console.error('\nFatal error:', err instanceof Error ? err.message : err)
     process.exit(1)
   }
-} catch (err) {
-  console.error('\nFatal error:', err instanceof Error ? err.message : err)
-  process.exit(1)
 }
+
+main()
