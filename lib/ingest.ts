@@ -214,21 +214,34 @@ async function ingestPhoto(
   } else {
     const sortOrder = await nextSortOrder(sql)
     try {
+      // Try with ON CONFLICT first (requires unique index from migration)
       await sql`
         INSERT INTO content_items (sort_order, item_type, photo_id, collection_id)
         VALUES (${sortOrder}, 'photo', ${photoId}::uuid, NULL)
         ON CONFLICT (photo_id) WHERE photo_id IS NOT NULL DO NOTHING
       `
-      // Check if the insert actually happened
-      const inserted = await contentItemExistsForPhoto(sql, photoId)
-      if (inserted) {
-        log(`    Added content_item at sort_order ${sortOrder}`)
-      } else {
-        log(`    content_item was created by another process, skipping`)
-      }
+      log(`    Added content_item at sort_order ${sortOrder}`)
     } catch (err) {
-      // If there's a race condition, log and continue
-      log(`    Warning: content_item insert failed (likely already exists): ${err instanceof Error ? err.message : String(err)}`)
+      // If ON CONFLICT fails (no index yet), try without it
+      const errMsg = err instanceof Error ? err.message : String(err)
+      if (errMsg.includes('no unique or exclusion constraint')) {
+        try {
+          // Double-check it doesn't exist before inserting
+          if (!(await contentItemExistsForPhoto(sql, photoId))) {
+            await sql`
+              INSERT INTO content_items (sort_order, item_type, photo_id, collection_id)
+              VALUES (${sortOrder}, 'photo', ${photoId}::uuid, NULL)
+            `
+            log(`    Added content_item at sort_order ${sortOrder}`)
+          } else {
+            log(`    content_item was created by another process, skipping`)
+          }
+        } catch (insertErr) {
+          log(`    Warning: content_item insert failed: ${insertErr instanceof Error ? insertErr.message : String(insertErr)}`)
+        }
+      } else {
+        log(`    Warning: content_item insert failed: ${errMsg}`)
+      }
     }
   }
 
@@ -352,21 +365,34 @@ async function ingestCollection(
   } else {
     const sortOrder = await nextSortOrder(sql)
     try {
+      // Try with ON CONFLICT first (requires unique index from migration)
       await sql`
         INSERT INTO content_items (sort_order, item_type, photo_id, collection_id)
         VALUES (${sortOrder}, 'collection', NULL, ${collectionId}::uuid)
         ON CONFLICT (collection_id) WHERE collection_id IS NOT NULL DO NOTHING
       `
-      // Check if the insert actually happened
-      const inserted = await contentItemExistsForCollection(sql, collectionId)
-      if (inserted) {
-        log(`    Added content_item at sort_order ${sortOrder}`)
-      } else {
-        log(`    content_item was created by another process, skipping`)
-      }
+      log(`    Added content_item at sort_order ${sortOrder}`)
     } catch (err) {
-      // If there's a race condition, log and continue
-      log(`    Warning: content_item insert failed (likely already exists): ${err instanceof Error ? err.message : String(err)}`)
+      // If ON CONFLICT fails (no index yet), try without it
+      const errMsg = err instanceof Error ? err.message : String(err)
+      if (errMsg.includes('no unique or exclusion constraint')) {
+        try {
+          // Double-check it doesn't exist before inserting
+          if (!(await contentItemExistsForCollection(sql, collectionId))) {
+            await sql`
+              INSERT INTO content_items (sort_order, item_type, photo_id, collection_id)
+              VALUES (${sortOrder}, 'collection', NULL, ${collectionId}::uuid)
+            `
+            log(`    Added content_item at sort_order ${sortOrder}`)
+          } else {
+            log(`    content_item was created by another process, skipping`)
+          }
+        } catch (insertErr) {
+          log(`    Warning: content_item insert failed: ${insertErr instanceof Error ? insertErr.message : String(insertErr)}`)
+        }
+      } else {
+        log(`    Warning: content_item insert failed: ${errMsg}`)
+      }
     }
   }
 
