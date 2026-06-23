@@ -56,11 +56,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return new NextResponse(null, { status: 200 })
   }
 
+  // Set the flag immediately to prevent race conditions
+  ingestInProgress = true
+
   // Respond immediately; run the ingest pipeline after the response is sent.
   after(async () => {
     // Process ingests in a loop until no more are pending
     while (true) {
-      ingestInProgress = true
       pendingIngest = false
 
       try {
