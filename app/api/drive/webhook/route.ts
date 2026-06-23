@@ -3,6 +3,13 @@ import { after } from 'next/server'
 import { runIngest } from '@/lib/ingest'
 
 /**
+ * In-memory mutex to prevent concurrent ingest operations.
+ * When multiple webhooks arrive simultaneously, only one should process.
+ */
+let ingestInProgress = false
+let pendingIngest = false
+
+/**
  * POST /api/drive/webhook
  *
  * Receives Google Drive push notifications for the upload/ folder.
@@ -14,6 +21,10 @@ import { runIngest } from '@/lib/ingest'
  *
  * Processing runs after the 200 response via next/server `after()` so Drive's
  * HTTP timeout is not a concern for large image batches.
+ *
+ * Concurrency: Uses an in-memory mutex to prevent multiple simultaneous ingests.
+ * If an ingest is already running, we mark that another is pending and skip
+ * starting a new one. The running ingest will trigger another pass when done.
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const secret = process.env.GOOGLE_DRIVE_WEBHOOK_SECRET
@@ -38,15 +49,40 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const channelId = request.headers.get('x-goog-channel-id') ?? 'unknown'
   console.log(`[drive/webhook] Notification received — channel: ${channelId}, state: ${resourceState}`)
 
+  // Check if an ingest is already running
+  if (ingestInProgress) {
+    console.log('[drive/webhook] Ingest already in progress, marking pending')
+    pendingIngest = true
+    return new NextResponse(null, { status: 200 })
+  }
+
   // Respond immediately; run the ingest pipeline after the response is sent.
   after(async () => {
-    try {
-      const result = await runIngest((msg) => console.log(`[drive/ingest] ${msg}`))
-      if (result.errors.length > 0) {
-        console.error('[drive/ingest] Errors:', result.errors)
+    // Process ingests in a loop until no more are pending
+    while (true) {
+      ingestInProgress = true
+      pendingIngest = false
+
+      try {
+        console.log('[drive/ingest] Starting ingest...')
+        const result = await runIngest((msg) => console.log(`[drive/ingest] ${msg}`))
+        if (result.errors.length > 0) {
+          console.error('[drive/ingest] Errors:', result.errors)
+        }
+      } catch (err) {
+        console.error('[drive/ingest] Fatal error:', err)
+      } finally {
+        ingestInProgress = false
       }
-    } catch (err) {
-      console.error('[drive/ingest] Fatal error:', err)
+
+      // If another webhook arrived while we were processing, run again
+      if (pendingIngest) {
+        console.log('[drive/ingest] Pending ingest detected, running again...')
+        continue
+      }
+
+      // No more pending ingests, exit the loop
+      break
     }
   })
 

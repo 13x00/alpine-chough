@@ -213,11 +213,23 @@ async function ingestPhoto(
     log(`    content_item already exists, skipping`)
   } else {
     const sortOrder = await nextSortOrder(sql)
-    await sql`
-      INSERT INTO content_items (sort_order, item_type, photo_id, collection_id)
-      VALUES (${sortOrder}, 'photo', ${photoId}::uuid, NULL)
-    `
-    log(`    Added content_item at sort_order ${sortOrder}`)
+    try {
+      await sql`
+        INSERT INTO content_items (sort_order, item_type, photo_id, collection_id)
+        VALUES (${sortOrder}, 'photo', ${photoId}::uuid, NULL)
+        ON CONFLICT (photo_id) WHERE photo_id IS NOT NULL DO NOTHING
+      `
+      // Check if the insert actually happened
+      const inserted = await contentItemExistsForPhoto(sql, photoId)
+      if (inserted) {
+        log(`    Added content_item at sort_order ${sortOrder}`)
+      } else {
+        log(`    content_item was created by another process, skipping`)
+      }
+    } catch (err) {
+      // If there's a race condition, log and continue
+      log(`    Warning: content_item insert failed (likely already exists): ${err instanceof Error ? err.message : String(err)}`)
+    }
   }
 
   await markProcessed(sql, file.id!, filename)
@@ -339,11 +351,23 @@ async function ingestCollection(
     log(`    content_item already exists, skipping`)
   } else {
     const sortOrder = await nextSortOrder(sql)
-    await sql`
-      INSERT INTO content_items (sort_order, item_type, photo_id, collection_id)
-      VALUES (${sortOrder}, 'collection', NULL, ${collectionId}::uuid)
-    `
-    log(`    Added content_item at sort_order ${sortOrder}`)
+    try {
+      await sql`
+        INSERT INTO content_items (sort_order, item_type, photo_id, collection_id)
+        VALUES (${sortOrder}, 'collection', NULL, ${collectionId}::uuid)
+        ON CONFLICT (collection_id) WHERE collection_id IS NOT NULL DO NOTHING
+      `
+      // Check if the insert actually happened
+      const inserted = await contentItemExistsForCollection(sql, collectionId)
+      if (inserted) {
+        log(`    Added content_item at sort_order ${sortOrder}`)
+      } else {
+        log(`    content_item was created by another process, skipping`)
+      }
+    } catch (err) {
+      // If there's a race condition, log and continue
+      log(`    Warning: content_item insert failed (likely already exists): ${err instanceof Error ? err.message : String(err)}`)
+    }
   }
 
   await markProcessed(sql, folder.id!, folderName)
