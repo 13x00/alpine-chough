@@ -18,6 +18,8 @@ const config: Config = {
         'layer-03': 'var(--cds-layer-03)',
         'layer-background-01': 'var(--cds-layer-background-01)',
         'layer-hover-01': 'var(--cds-layer-hover-01)',
+        'layer-active-01': 'var(--cds-layer-active-01)',
+        'layer-active-02': 'var(--cds-layer-active-02)',
         'layer-selected-01': 'var(--cds-layer-selected-01)',
         'layer-selected-hover-01': 'var(--cds-layer-selected-hover-01)',
         'text-primary': 'var(--cds-text-primary)',

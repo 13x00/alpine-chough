@@ -5,6 +5,7 @@ import { SplitLayout } from '@/components/layout/SplitLayout'
 import { PageLoader } from '@/components/transition/PageLoader'
 import { useContent } from '@/hooks/useContent'
 import { Photo, Collection, ContentData } from '@/types/content'
+import { yearFromDate } from '@/lib/utils'
 
 export default function Home() {
   const { currentView, selectedItem, setView, goHome } = useContent()
@@ -89,6 +90,10 @@ export default function Home() {
     id: entry.id,
     title: entry.title,
     category: entry.view === 'photo' ? 'Photo' : 'Collection',
+    year:
+      entry.view === 'photo'
+        ? yearFromDate((entry.item as Photo).date)
+        : undefined,
     image: entry.view === 'photo' ? (entry.item as Photo).image : (entry.item as Collection).coverImage,
     onClick: () => {
       if ((currentView === 'photo' || currentView === 'collection') && selectedItem) {

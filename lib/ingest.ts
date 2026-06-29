@@ -14,6 +14,7 @@
  */
 
 import sharp from 'sharp'
+import { extractImageDate } from './image-metadata'
 import { neon } from '@neondatabase/serverless'
 import type { NeonQueryFunction } from '@neondatabase/serverless'
 import {
@@ -186,6 +187,7 @@ async function ingestPhoto(
 
   const rawBuffer = await downloadFile(drive, file.id!)
   const mimeType = file.mimeType ?? 'image/jpeg'
+  const exifDate = meta.date ?? (await extractImageDate(rawBuffer))
   const { buffer, contentType } = await compressImage(rawBuffer, mimeType)
 
   const imageId = await ensureImageInDb(sql, buffer, contentType, `drive/${filename}`)
@@ -200,7 +202,7 @@ async function ingestPhoto(
         ${title},
         ${imageId}::uuid,
         ${meta.description ?? null},
-        ${meta.date ?? null},
+        ${exifDate ?? null},
         ${meta.tags?.length ? meta.tags : null}
       )
       RETURNING id

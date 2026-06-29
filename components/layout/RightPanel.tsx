@@ -1,11 +1,25 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Close, SidePanelClose, SidePanelOpen } from '@carbon/icons-react'
 import { PortraitView } from '@/components/content/PortraitView'
 import { DetailOverlayMotion } from '@/components/layout/DetailOverlayMotion'
 import { PhotoDetail } from '@/components/content/PhotoDetail'
 import { CollectionDetail } from '@/components/content/CollectionDetail'
 import { ViewType, DetailItem, Photo, Collection } from '@/types/content'
+import { cn } from '@/lib/utils'
+
+/** Hide detail chrome after this many ms without pointer/keyboard activity */
+const CHROME_IDLE_MS = 2500
+
+function isImageNavigationKey(key: string) {
+  return (
+    key === 'ArrowLeft' ||
+    key === 'ArrowRight' ||
+    key === 'ArrowUp' ||
+    key === 'ArrowDown'
+  )
+}
 
 function isTypingTarget(target: EventTarget | null): boolean {
   if (target == null || !(target instanceof Element)) return false
@@ -24,6 +38,148 @@ interface RightPanelProps {
   direction?: 'forward' | 'backward'
   onNavigateAdjacent?: (delta: -1 | 1) => void
   onToggleLeftPanel?: () => void
+  leftPanelHidden?: boolean
+}
+
+function ChromeIconButton({
+  onClick,
+  label,
+  children,
+}: {
+  onClick: () => void
+  label: string
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation()
+        onClick()
+      }}
+      aria-label={label}
+      data-ignore-outside="true"
+      className="flex h-12 w-12 items-center justify-center rounded-xs text-text-primary hover:bg-background-hover transition-colors cursor-pointer"
+    >
+      {children}
+    </button>
+  )
+}
+
+function useIdleChromeVisibility(active: boolean) {
+  const [visible, setVisible] = useState(true)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pinnedRef = useRef(false)
+
+  const clearTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+      timerRef.current = null
+    }
+  }, [])
+
+  const scheduleHide = useCallback(() => {
+    clearTimer()
+    if (!active || pinnedRef.current) return
+    timerRef.current = setTimeout(() => setVisible(false), CHROME_IDLE_MS)
+  }, [active, clearTimer])
+
+  const reveal = useCallback(() => {
+    setVisible(true)
+    scheduleHide()
+  }, [scheduleHide])
+
+  useEffect(() => {
+    if (!active) {
+      clearTimer()
+      setVisible(true)
+      pinnedRef.current = false
+      return
+    }
+
+    setVisible(true)
+    scheduleHide()
+
+    const onActivity = () => reveal()
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (isImageNavigationKey(e.key)) return
+      reveal()
+    }
+
+    window.addEventListener('mousemove', onActivity, { passive: true })
+    window.addEventListener('mousedown', onActivity, { passive: true })
+    window.addEventListener('keydown', onKeyDown)
+    window.addEventListener('touchstart', onActivity, { passive: true })
+    window.addEventListener('wheel', onActivity, { passive: true })
+
+    return () => {
+      clearTimer()
+      window.removeEventListener('mousemove', onActivity)
+      window.removeEventListener('mousedown', onActivity)
+      window.removeEventListener('keydown', onKeyDown)
+      window.removeEventListener('touchstart', onActivity)
+      window.removeEventListener('wheel', onActivity)
+    }
+  }, [active, reveal, scheduleHide, clearTimer])
+
+  const onChromeEnter = useCallback(() => {
+    pinnedRef.current = true
+    clearTimer()
+    setVisible(true)
+  }, [clearTimer])
+
+  const onChromeLeave = useCallback(() => {
+    pinnedRef.current = false
+    scheduleHide()
+  }, [scheduleHide])
+
+  return { visible, onChromeEnter, onChromeLeave }
+}
+
+/** Figma 528:80 — close + side panel controls overlaid on the right card */
+function DetailChromeBar({
+  onBack,
+  onToggleLeftPanel,
+  leftPanelHidden,
+  visible,
+  onMouseEnter,
+  onMouseLeave,
+}: {
+  onBack: () => void
+  onToggleLeftPanel?: () => void
+  leftPanelHidden: boolean
+  visible: boolean
+  onMouseEnter: () => void
+  onMouseLeave: () => void
+}) {
+  return (
+    <div
+      className={cn(
+        'absolute left-0 top-0 z-30 flex items-center gap-1 p-1 transition-opacity duration-normal ease-[var(--easing-standard)] motion-reduce:transition-none',
+        visible ? 'opacity-100' : 'pointer-events-none opacity-0',
+      )}
+      data-ignore-outside="true"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      <ChromeIconButton onClick={onBack} label="Close detail">
+        <Close size={24} />
+      </ChromeIconButton>
+      {onToggleLeftPanel && (
+        <ChromeIconButton
+          onClick={onToggleLeftPanel}
+          label={leftPanelHidden ? 'Show left panel' : 'Hide left panel'}
+        >
+          {leftPanelHidden ? (
+            <SidePanelOpen size={24} />
+          ) : (
+            <SidePanelClose size={24} />
+          )}
+        </ChromeIconButton>
+      )}
+    </div>
+  )
 }
 
 export function RightPanel({
@@ -35,11 +191,17 @@ export function RightPanel({
   direction = 'forward',
   onNavigateAdjacent,
   onToggleLeftPanel,
+  leftPanelHidden = false,
 }: RightPanelProps) {
   const containerRef = useRef<HTMLDivElement>(null)
 
   const isPortrait = currentView === 'portrait'
   const hasDetail = selectedItem !== null && !isPortrait
+  const {
+    visible: chromeVisible,
+    onChromeEnter,
+    onChromeLeave,
+  } = useIdleChromeVisibility(hasDetail)
 
   // --- Motion overlay state ---
   const [motionIsOpen, setMotionIsOpen] = useState(false)
@@ -137,26 +299,26 @@ export function RightPanel({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [currentView, onBack, onNavigateAdjacent, onToggleLeftPanel])
 
-  // Click outside handler - close when clicking on left panel (but not when clicking a card to open another item)
+  // Click outside handler — desktop only (RightPanel stays mounted but hidden on mobile)
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (currentView !== 'portrait' && containerRef.current) {
-        const target = e.target as Node
-        // Don't close when clicking a nav card — let that click open the other project/image
-        if ((target as Element).closest?.('[data-nav-card]')) return
-        // Don't close when clicking UI chrome like the theme toggle
-        if ((target as Element).closest?.('[data-ignore-outside]')) return
-        // Close if click is outside the right panel container (e.g., on left panel background)
-        if (!containerRef.current.contains(target)) {
-          e.stopPropagation()
-          onBack()
-        }
+      if (window.matchMedia('(max-width: 767px)').matches) return
+      if (currentView === 'portrait' || !containerRef.current) return
+
+      const target = e.target
+      if (target == null || !(target instanceof Element)) return
+
+      if (target.closest('[data-nav-card]')) return
+      if (target.closest('[data-ignore-outside]')) return
+
+      if (!containerRef.current.contains(target)) {
+        onBack()
       }
     }
 
     if (currentView !== 'portrait') {
-      document.addEventListener('click', handleClickOutside, true)
-      return () => document.removeEventListener('click', handleClickOutside, true)
+      document.addEventListener('click', handleClickOutside)
+      return () => document.removeEventListener('click', handleClickOutside)
     }
   }, [currentView, onBack])
 
@@ -165,6 +327,17 @@ export function RightPanel({
       ref={containerRef}
       className={`relative flex-1 overflow-hidden bg-layer-01 ${className || ''}`}
     >
+      {hasDetail && (
+        <DetailChromeBar
+          onBack={onBack}
+          onToggleLeftPanel={onToggleLeftPanel}
+          leftPanelHidden={leftPanelHidden}
+          visible={chromeVisible}
+          onMouseEnter={onChromeEnter}
+          onMouseLeave={onChromeLeave}
+        />
+      )}
+
       {/* Portrait View - stays in place, always rendered */}
       <div className="absolute inset-0 z-0">
         <PortraitView isVisible={isPortrait} />

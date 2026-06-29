@@ -1,11 +1,12 @@
 'use client'
 
 import { LeftPanel } from './LeftPanel'
+import { MobileLayout } from './MobileLayout'
 import { RightPanel } from './RightPanel'
 import { Logo } from '@/components/content/Logo'
 import { ThemeToggle } from '@/components/content/ThemeToggle'
 import { ViewType, DetailItem } from '@/types/content'
-import { Close, SidePanelClose, SidePanelOpen } from '@carbon/icons-react'
+import { cn } from '@/lib/utils'
 
 interface SplitLayoutProps {
   currentView: ViewType
@@ -21,9 +22,24 @@ interface SplitLayoutProps {
     id: string
     title: string
     category?: string
+    year?: string
     image: string
     onClick: () => void
   }>
+}
+
+function LeftColumnHeader({ onCloseDetail }: { onCloseDetail: () => void }) {
+  return (
+    <div
+      className="flex h-14 shrink-0 items-start gap-2"
+      data-ignore-outside="true"
+    >
+      <div className="flex min-w-0 flex-1 items-center justify-between overflow-hidden rounded-base p-1">
+        <Logo onClick={onCloseDetail} />
+        <ThemeToggle />
+      </div>
+    </div>
+  )
 }
 
 export function SplitLayout({
@@ -40,76 +56,49 @@ export function SplitLayout({
 }: SplitLayoutProps) {
   const leftWidth = useNarrowLayout ? 'md:w-1/3' : 'md:w-1/2'
   const rightWidth = useNarrowLayout ? 'md:w-2/3' : 'md:w-1/2'
-  const transitionClass = 'transition-[width] duration-300 ease-out'
-
+  const transitionClass =
+    'transition-[width,opacity] duration-300 ease-out motion-reduce:transition-none'
   const hasDetailOpen = selectedItem !== null && currentView !== 'portrait'
   const hideLeftColumn = hasDetailOpen && leftPanelHidden
 
-  const headerLeftClass = hideLeftColumn
-    ? `w-auto flex-shrink-0 flex items-center justify-between px-1 py-1 ${transitionClass}`
-    : `w-full ${leftWidth} flex-shrink-0 flex items-center justify-between px-1 py-1 ${transitionClass}`
-
-  const headerRightClass = hideLeftColumn
-    ? `hidden md:flex flex-1 min-w-0 items-center ${transitionClass}`
-    : `hidden md:flex ${rightWidth} items-center ${transitionClass}`
-
   const bodyLeftClass = hideLeftColumn
-    ? `w-full md:w-0 md:min-w-0 md:overflow-hidden md:opacity-0 md:pointer-events-none flex-shrink-0 relative z-10 ${transitionClass}`
-    : `w-full ${leftWidth} flex-shrink-0 relative z-10 ${transitionClass}`
+    ? `w-full md:w-0 md:min-w-0 md:overflow-hidden md:opacity-0 md:pointer-events-none shrink-0 relative z-10 ${transitionClass}`
+    : `w-full ${leftWidth} shrink-0 relative z-10 ${transitionClass}`
 
   const bodyRightClass = hideLeftColumn
     ? `hidden md:flex flex-1 min-w-0 relative z-20 ${transitionClass}`
     : `hidden md:flex ${rightWidth} relative z-20 ${transitionClass}`
 
+  const rowGapClass = hideLeftColumn
+    ? 'gap-0 transition-[gap] duration-300 ease-out motion-reduce:transition-none'
+    : 'gap-2 transition-[gap] duration-300 ease-out motion-reduce:transition-none'
+
   return (
-    <div className="flex h-dvh overflow-hidden flex-col bg-background">
-      {/* Top bar — logo + theme toggle + button group */}
-      <header className="px-2 pt-2">
-        <div className="flex items-center gap-2">
-          {/* Logo + ThemeToggle — mirrors left panel width */}
-          <div className={headerLeftClass}>
-            <Logo onClick={onCloseDetail} />
-            <ThemeToggle />
-          </div>
+    <>
+      <div className="md:hidden">
+        <MobileLayout
+          currentView={currentView}
+          selectedItem={selectedItem}
+          onCloseDetail={onCloseDetail}
+          onNavigateAdjacent={onNavigateAdjacent}
+          projectItems={projectItems}
+        />
+      </div>
 
-          {/* Right column header — mirrors right panel width, button group hugs its content */}
-          <div className={headerRightClass}>
-            {hasDetailOpen && (
-              <div
-                className="rounded-base bg-layer-01 border border-border-subtle-00 inline-flex items-center gap-2 p-1"
-                data-ignore-outside="true"
-              >
-                <button
-                  type="button"
-                  onClick={onCloseDetail}
-                  aria-label="Close detail"
-                  className="flex h-12 w-12 items-center justify-center rounded-xs text-text-primary hover:bg-background-hover transition-colors cursor-pointer"
-                >
-                  <Close size={20} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onToggleLeftPanel?.()}
-                  aria-label={leftPanelHidden ? 'Show left panel' : 'Hide left panel'}
-                  className="flex h-12 w-12 items-center justify-center rounded-xs text-text-primary hover:bg-background-hover transition-colors cursor-pointer"
-                >
-                  {leftPanelHidden ? <SidePanelOpen size={20} /> : <SidePanelClose size={20} />}
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
-
-      {/* Main content row */}
-      <div className="flex-1 min-h-0 px-2 pb-2 pt-2">
-        <div className="relative flex h-full min-h-0 gap-2 overflow-hidden">
-          {/* Left column — about, project list, contact */}
+      <div className="hidden md:flex h-dvh flex-col overflow-hidden bg-background">
+      <div className="flex min-h-0 flex-1 flex-col px-2 pb-2 pt-2">
+        <div className={cn('relative flex h-full min-h-0 overflow-hidden', rowGapClass)}>
           <div className={bodyLeftClass}>
-            <LeftPanel projectItems={projectItems} selectedItemId={selectedItem?.id ?? null} />
+            <div className="flex h-full min-h-0 flex-col gap-2">
+              <LeftColumnHeader onCloseDetail={onCloseDetail} />
+              <LeftPanel
+                projectItems={projectItems}
+                selectedItemId={selectedItem?.id ?? null}
+                className="min-h-0 flex-1"
+              />
+            </div>
           </div>
 
-          {/* Right column — portrait / detail surface */}
           <div className={bodyRightClass}>
             <RightPanel
               currentView={currentView}
@@ -119,11 +108,13 @@ export function SplitLayout({
               direction={detailDirection}
               onNavigateAdjacent={onNavigateAdjacent}
               onToggleLeftPanel={onToggleLeftPanel}
+              leftPanelHidden={leftPanelHidden}
               className="rounded-base border border-border-subtle-00"
             />
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }

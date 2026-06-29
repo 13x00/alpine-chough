@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { Folder, Image } from '@carbon/icons-react'
+import { Folder, Image as ImageIcon } from '@carbon/icons-react'
 import { AboutSection } from '@/components/content/AboutSection'
 import { FooterCard } from '@/components/layout/FooterCard'
-import { Surface } from '@/components/ui/Surface'
+import { cn } from '@/lib/utils'
 
 const prefetchedSrcs = new Set<string>()
 
@@ -15,51 +15,66 @@ function prefetchImage(src: string) {
   img.src = src.startsWith('http') ? src : `${typeof window !== 'undefined' ? window.location.origin : ''}${src}`
 }
 
+const rowOverlay =
+  'pointer-events-none absolute inset-x-0 -top-px -bottom-px rounded-xs transition-opacity duration-fast ease-[var(--easing-standard)] motion-reduce:transition-none'
+
 interface LeftPanelProps {
   projectItems: Array<{
     id: string
     title: string
     category?: string
+    year?: string
     image: string
     onClick: () => void
   }>
   selectedItemId?: string | null
+  /** Hide about block (mobile detail states) */
+  showAbout?: boolean
+  /** Show list section */
+  showList?: boolean
+  variant?: 'desktop' | 'mobile'
+  className?: string
 }
 
-export function LeftPanel({ projectItems, selectedItemId = null }: LeftPanelProps) {
+export function LeftPanel({
+  projectItems,
+  selectedItemId = null,
+  showAbout = true,
+  showList = true,
+  variant = 'desktop',
+  className,
+}: LeftPanelProps) {
   const listRef = useRef<HTMLUListElement>(null)
 
-  // Preload all project images when the list loads
   useEffect(() => {
     projectItems.forEach((item) => {
       prefetchImage(item.image)
     })
   }, [projectItems])
 
-  // When selectedItemId changes (e.g. arrow-key navigation from the right panel),
-  // move focus to the newly selected button. This clears the stale ring on the old
-  // item, keeps a single consistent indicator, and scrolls the row into view for
-  // free. The RightPanel key handler is on `window` so it fires regardless of where
-  // focus lives — moving focus here does not break keyboard navigation.
   useEffect(() => {
     if (!selectedItemId || !listRef.current) return
     const selected = listRef.current.querySelector<HTMLElement>('[data-selected="true"]')
     selected?.focus({ preventScroll: false })
   }, [selectedItemId])
 
-  return (
-    <div className="relative flex h-full min-h-0 flex-col gap-2">
-      {/* About card */}
-      <Surface as="section" padding="md" className="flex-1 min-h-[11.25rem] overflow-hidden">
-        <AboutSection />
-      </Surface>
+  const isMobile = variant === 'mobile'
 
-      {/* Photos & collections list */}
-      <Surface as="section" padding="xs" className="flex-1 min-h-[11.25rem] overflow-y-auto">
-        {/* data-nav-card covers the full list surface so row-gap clicks don't close the overlay */}
-        <ul ref={listRef} data-nav-card className="flex flex-col divide-y divide-border-subtle-00">
+  return (
+    <div className={cn('relative flex min-h-0 flex-col gap-2', className)}>
+      {showAbout && (
+        <section className="shrink-0 rounded-base p-6">
+          <AboutSection />
+        </section>
+      )}
+
+      {showList && (
+      <section className="flex min-h-[11.25rem] flex-1 flex-col overflow-y-auto rounded-base border border-border-subtle-00 bg-layer-01">
+        <ul ref={listRef} data-nav-card className="flex w-full flex-col p-2">
           {projectItems.map((item, index) => {
             const rowNumber = String(index + 1).padStart(2, '0')
+            const isCollection = item.category === 'Collection'
+            const isSelected = selectedItemId === item.id
 
             return (
               <li key={item.id}>
@@ -69,32 +84,70 @@ export function LeftPanel({ projectItems, selectedItemId = null }: LeftPanelProp
                   onMouseEnter={() => prefetchImage(item.image)}
                   onFocus={() => prefetchImage(item.image)}
                   data-nav-card
-                  data-selected={selectedItemId === item.id ? true : undefined}
-                  className={`group flex h-12 w-full items-center justify-between px-6 text-left text-base transition-colors text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus ${
-                    selectedItemId === item.id
-                      ? 'bg-layer-selected-01 hover:bg-layer-selected-hover-01'
-                      : 'bg-layer-01 hover:bg-layer-hover-01'
-                  }`}
+                  data-selected={isSelected ? true : undefined}
+                  className={cn(
+                    'group relative h-12 w-full text-left text-text-primary',
+                    'border-b border-border-subtle-00',
+                    'focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus',
+                    'hover:z-10',
+                    isSelected && 'z-10 rounded-xs border-b-transparent',
+                  )}
                 >
-                  <div className="flex items-center gap-6">
-                    <span className="font-mono text-base text-text-secondary">
-                      {rowNumber}
-                    </span>
-                    <span className="transition-colors">
-                      {item.title}
-                    </span>
-                  </div>
-                  <span className="text-text-secondary">
-                    {item.category === 'Collection'
-                      ? <Folder size={16} aria-label="Collection" />
-                      : <Image size={16} aria-label="Photo" />}
+                  <span
+                    aria-hidden
+                    className={cn(
+                      rowOverlay,
+                      isSelected
+                        ? 'bg-layer-active-01 opacity-100 transition-[background-color] duration-fast group-hover:bg-layer-active-02'
+                        : 'bg-layer-hover-01 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100',
+                    )}
+                  />
+                  <span
+                    className={cn(
+                      'relative z-10 flex h-full w-full items-center px-6',
+                      isMobile ? 'gap-4' : 'gap-6',
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        'flex min-w-0 items-center',
+                        isMobile ? 'min-w-0 flex-1 gap-6' : 'w-64 shrink-0 gap-6',
+                      )}
+                    >
+                      <span className="shrink-0 font-mono text-base leading-normal text-text-secondary">
+                        {rowNumber}
+                      </span>
+                      <span className="min-w-0 truncate text-base leading-normal text-text-primary">
+                        {item.title}
+                      </span>
+                    </div>
+                    {!isMobile && (
+                      <>
+                        <span className="min-w-0 flex-1 font-mono text-base leading-normal text-text-primary">
+                          {item.year ?? ''}
+                        </span>
+                        <span className="flex shrink-0 items-center justify-end text-base text-text-secondary">
+                          {isCollection ? (
+                            <Folder aria-label="Collection" className="size-[1em]" />
+                          ) : (
+                            <ImageIcon aria-label="Photo" className="size-[1em]" />
+                          )}
+                        </span>
+                      </>
+                    )}
+                    {isMobile && (
+                      <span className="shrink-0 font-mono text-base leading-normal text-text-primary">
+                        {item.year ?? ''}
+                      </span>
+                    )}
                   </span>
                 </button>
               </li>
             )
           })}
         </ul>
-      </Surface>
+      </section>
+      )}
 
       <FooterCard />
     </div>
