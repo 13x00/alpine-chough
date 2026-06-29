@@ -1,13 +1,15 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback, useMemo, lazy, Suspense } from 'react'
 import { PortraitView } from '@/components/content/PortraitView'
-import { ProjectDetail } from '@/components/content/ProjectDetail'
-import { ArticleDetail } from '@/components/content/ArticleDetail'
-import { PhotographyDetail } from '@/components/content/PhotographyDetail'
-import { ImageCollectionDetail } from '@/components/content/ImageCollectionDetail'
 import { BackButton } from '@/components/content/BackButton'
 import { ViewType, Project, Article, Photography, ImageCollection } from '@/types/content'
+
+// Lazy load detail components to reduce initial bundle size
+const ProjectDetail = lazy(() => import('@/components/content/ProjectDetail').then(m => ({ default: m.ProjectDetail })))
+const ArticleDetail = lazy(() => import('@/components/content/ArticleDetail').then(m => ({ default: m.ArticleDetail })))
+const PhotographyDetail = lazy(() => import('@/components/content/PhotographyDetail').then(m => ({ default: m.PhotographyDetail })))
+const ImageCollectionDetail = lazy(() => import('@/components/content/ImageCollectionDetail').then(m => ({ default: m.ImageCollectionDetail })))
 
 const SLIDE_IN_DELAY_MS = 300
 const SWAP_DURATION_MS = 300
@@ -40,6 +42,29 @@ export function RightPanel({
 
   const isPortrait = currentView === 'portrait'
   const hasDetail = selectedItem !== null && !isPortrait
+
+  // Memoize expensive computations
+  const detailContent = useMemo(() => {
+    if (!displayItem) return null
+    
+    return {
+      project: currentView === 'project' ? displayItem as Project : null,
+      article: currentView === 'article' ? displayItem as Article : null,
+      photography: currentView === 'photography' ? displayItem as Photography : null,
+      collection: currentView === 'collection' ? displayItem as ImageCollection : null,
+    }
+  }, [displayItem, currentView])
+
+  const outgoingContent = useMemo(() => {
+    if (!outgoingItem) return null
+    
+    return {
+      project: currentView === 'project' ? outgoingItem as Project : null,
+      article: currentView === 'article' ? outgoingItem as Article : null,
+      photography: currentView === 'photography' ? outgoingItem as Photography : null,
+      collection: currentView === 'collection' ? outgoingItem as ImageCollection : null,
+    }
+  }, [outgoingItem, currentView])
 
   // Handle detail view entrance animation - two stages
   useEffect(() => {
@@ -101,38 +126,48 @@ export function RightPanel({
     }
   }, [hasDetail, selectedItem, currentView, onCloseAnimationComplete])
 
-  // Escape key handler
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && currentView !== 'portrait') {
+  // Memoize event handlers
+  const handleEscape = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape' && currentView !== 'portrait') {
+      onBack()
+    }
+  }, [currentView, onBack])
+
+  const handleClickOutside = useCallback((e: MouseEvent) => {
+    if (currentView !== 'portrait' && containerRef.current) {
+      const target = e.target as Node
+      // Don't close when clicking a nav card — let that click open the other project/image
+      if ((target as Element).closest?.('[data-nav-card]')) return
+      // Close if click is outside the right panel container (e.g., on left panel background)
+      if (!containerRef.current.contains(target)) {
+        e.stopPropagation()
         onBack()
       }
     }
-
-    window.addEventListener('keydown', handleEscape)
-    return () => window.removeEventListener('keydown', handleEscape)
   }, [currentView, onBack])
 
-  // Click outside handler - close when clicking on left panel (but not when clicking a card to open another item)
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (currentView !== 'portrait' && containerRef.current) {
-        const target = e.target as Node
-        // Don't close when clicking a nav card — let that click open the other project/image
-        if ((target as Element).closest?.('[data-nav-card]')) return
-        // Close if click is outside the right panel container (e.g., on left panel background)
-        if (!containerRef.current.contains(target)) {
-          e.stopPropagation()
-          onBack()
-        }
-      }
-    }
+  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    onBack()
+  }, [onBack])
 
+  const handleDetailClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+  }, [])
+
+  // Escape key handler
+  useEffect(() => {
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [handleEscape])
+
+  // Click outside handler
+  useEffect(() => {
     if (currentView !== 'portrait') {
       document.addEventListener('click', handleClickOutside, true)
       return () => document.removeEventListener('click', handleClickOutside, true)
     }
-  }, [currentView, onBack])
+  }, [currentView, handleClickOutside])
 
   return (
     <div
@@ -150,46 +185,48 @@ export function RightPanel({
           className={`absolute inset-0 z-10 transition-opacity duration-300 bg-black/40 ${
             showDetail || outgoingItem ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
           }`}
-          onClick={onBack}
+          onClick={handleBackdropClick}
         />
       )}
 
       {/* Outgoing detail - full section slides out when switching items */}
-      {outgoingItem && (
+      {outgoingItem && outgoingContent && (
         <div
           key={`outgoing-${currentView}-${outgoingItem.id}`}
-          className={`absolute inset-0 z-20 transition-transform duration-300 ease-out ${
+          className={`absolute inset-0 z-20 will-change-transform transition-transform duration-300 ease-out ${
             swapAnimating
               ? direction === 'forward'
                 ? '-translate-x-full'
                 : 'translate-x-full'
               : 'translate-x-0'
           }`}
-          onClick={(e) => e.stopPropagation()}
+          onClick={handleDetailClick}
         >
           <div className="w-full h-full bg-layer-surface overflow-y-auto shadow-lg">
-            {currentView === 'project' && (
-              <ProjectDetail project={outgoingItem as Project} onBack={onBack} />
-            )}
-            {currentView === 'article' && (
-              <ArticleDetail article={outgoingItem as Article} onBack={onBack} />
-            )}
-            {currentView === 'photography' && (
-              <PhotographyDetail photography={outgoingItem as Photography} onBack={onBack} />
-            )}
-            {currentView === 'collection' && (
-              <ImageCollectionDetail collection={outgoingItem as ImageCollection} onBack={onBack} />
-            )}
+            <Suspense fallback={<div className="p-8">Loading...</div>}>
+              {outgoingContent.project && (
+                <ProjectDetail project={outgoingContent.project} onBack={onBack} />
+              )}
+              {outgoingContent.article && (
+                <ArticleDetail article={outgoingContent.article} onBack={onBack} />
+              )}
+              {outgoingContent.photography && (
+                <PhotographyDetail photography={outgoingContent.photography} onBack={onBack} />
+              )}
+              {outgoingContent.collection && (
+                <ImageCollectionDetail collection={outgoingContent.collection} onBack={onBack} />
+              )}
+            </Suspense>
           </div>
         </div>
       )}
 
       {/* Detail Views - card that slides in, then expands to full section */}
-      {displayItem && (
+      {displayItem && detailContent && (
         <div
           ref={detailRef}
           key={`detail-${currentView}-${displayItem.id}`}
-          className={`absolute inset-0 z-20 transition-all duration-300 ease-out ${
+          className={`absolute inset-0 z-20 will-change-transform transition-all duration-300 ease-out ${
             outgoingItem
               ? swapAnimating
                 ? 'translate-x-0'
@@ -200,25 +237,27 @@ export function RightPanel({
                 ? 'translate-x-0 opacity-100'
                 : 'translate-x-full opacity-0'
           } ${isExpanded && !outgoingItem ? 'p-0' : 'py-2 px-4 md:px-6 flex items-center justify-center'}`}
-          onClick={(e) => e.stopPropagation()}
+          onClick={handleDetailClick}
         >
           <div
             className={`bg-layer-surface overflow-y-auto shadow-lg transition-all duration-300 ease-out ${
               isExpanded && !outgoingItem ? 'w-full h-full rounded-none' : 'h-full w-[85%] max-w-4xl rounded-xl'
             }`}
           >
-            {currentView === 'project' && displayItem && (
-              <ProjectDetail project={displayItem as Project} onBack={onBack} />
-            )}
-            {currentView === 'article' && displayItem && (
-              <ArticleDetail article={displayItem as Article} onBack={onBack} />
-            )}
-            {currentView === 'photography' && displayItem && (
-              <PhotographyDetail photography={displayItem as Photography} onBack={onBack} />
-            )}
-            {currentView === 'collection' && displayItem && (
-              <ImageCollectionDetail collection={displayItem as ImageCollection} onBack={onBack} />
-            )}
+            <Suspense fallback={<div className="p-8">Loading...</div>}>
+              {detailContent.project && (
+                <ProjectDetail project={detailContent.project} onBack={onBack} />
+              )}
+              {detailContent.article && (
+                <ArticleDetail article={detailContent.article} onBack={onBack} />
+              )}
+              {detailContent.photography && (
+                <PhotographyDetail photography={detailContent.photography} onBack={onBack} />
+              )}
+              {detailContent.collection && (
+                <ImageCollectionDetail collection={detailContent.collection} onBack={onBack} />
+              )}
+            </Suspense>
           </div>
         </div>
       )}

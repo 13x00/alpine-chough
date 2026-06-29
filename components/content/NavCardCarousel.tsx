@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useMemo, useCallback } from 'react'
 import { NavCard } from './NavCard'
 import { cn } from '@/lib/utils'
 
@@ -31,6 +31,19 @@ export function NavCardCarousel({
 }: NavCardCarouselProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const dimensionsRef = useRef<{ step: number; maxScroll: number }>({ step: 0, maxScroll: 0 })
+
+  // Memoize dimension calculation function
+  const calculateDimensions = useCallback(() => {
+    const container = containerRef.current
+    if (!container) return { step: 0, maxScroll: 0 }
+    
+    const cardHeight = container.clientWidth / 2
+    const step = cardHeight + CARD_GAP
+    const maxScroll = container.scrollHeight - container.clientHeight
+    
+    return { step, maxScroll }
+  }, [])
 
   // When this carousel becomes active (tab selected), scroll to top
   useEffect(() => {
@@ -38,6 +51,29 @@ export function NavCardCarousel({
       containerRef.current.scrollTo({ top: 0, behavior: 'auto' })
     }
   }, [isActive])
+
+  // Memoized scroll function
+  const performScroll = useCallback(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    // Use cached dimensions or recalculate if needed
+    if (dimensionsRef.current.step === 0) {
+      dimensionsRef.current = calculateDimensions()
+    }
+    
+    const { step, maxScroll } = dimensionsRef.current
+    if (maxScroll <= 0) return
+
+    const current = container.scrollTop
+    const next = Math.round(current / step) * step + step
+
+    if (next >= maxScroll) {
+      container.scrollTo({ top: 0, behavior: 'smooth' })
+    } else {
+      container.scrollTo({ top: next, behavior: 'smooth' })
+    }
+  }, [calculateDimensions])
 
   useEffect(() => {
     const shouldPause = pauseAutoScroll || !isActive
@@ -48,67 +84,38 @@ export function NavCardCarousel({
       }
       return
     }
+    
     const container = containerRef.current
     if (!container || items.length === 0) return
 
-    // Card height from aspect-[2/1]: height = width/2. Step = one card + gap for alignment.
-    const getStep = () => {
-      const cardHeight = container.clientWidth / 2
-      return cardHeight + CARD_GAP
-    }
+    // Calculate dimensions once when starting
+    dimensionsRef.current = calculateDimensions()
 
-    const scroll = () => {
-      const step = getStep()
-      const maxScroll = container.scrollHeight - container.clientHeight
-      if (maxScroll <= 0) return
-
-      // Round to nearest step so we land on card boundaries, then advance one step
-      const current = container.scrollTop
-      const next = Math.round(current / step) * step + step
-
-      if (next >= maxScroll) {
-        container.scrollTo({ top: 0, behavior: 'smooth' })
-      } else {
-        container.scrollTo({ top: next, behavior: 'smooth' })
-      }
-    }
-
-    scrollIntervalRef.current = setInterval(scroll, autoScrollSpeed)
+    scrollIntervalRef.current = setInterval(performScroll, autoScrollSpeed)
 
     return () => {
       if (scrollIntervalRef.current) {
         clearInterval(scrollIntervalRef.current)
       }
     }
-  }, [items.length, autoScrollSpeed, pauseAutoScroll, isActive])
+  }, [items.length, autoScrollSpeed, pauseAutoScroll, isActive, calculateDimensions, performScroll])
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = useCallback(() => {
     if (scrollIntervalRef.current) {
       clearInterval(scrollIntervalRef.current)
+      scrollIntervalRef.current = null
     }
-  }
+  }, [])
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     if (pauseAutoScroll || !isActive) return
     const container = containerRef.current
     if (!container || items.length === 0) return
 
-    const step = container.clientWidth / 2 + CARD_GAP
-    const maxScroll = container.scrollHeight - container.clientHeight
-    if (maxScroll <= 0) return
-
-    const scroll = () => {
-      const pos = container.scrollTop
-      const nextPos = Math.round(pos / step) * step + step
-      if (nextPos >= maxScroll) {
-        container.scrollTo({ top: 0, behavior: 'smooth' })
-      } else {
-        container.scrollTo({ top: nextPos, behavior: 'smooth' })
-      }
-    }
-
-    scrollIntervalRef.current = setInterval(scroll, autoScrollSpeed)
-  }
+    // Recalculate dimensions when resuming
+    dimensionsRef.current = calculateDimensions()
+    scrollIntervalRef.current = setInterval(performScroll, autoScrollSpeed)
+  }, [pauseAutoScroll, isActive, items.length, autoScrollSpeed, calculateDimensions, performScroll])
 
   return (
     <div

@@ -23,7 +23,9 @@ export function ImageCollectionDetail({ collection, onBack, className }: ImageCo
           width={1200}
           height={750}
           className="w-full h-full object-cover"
-          sizes="(max-width: 768px) 100vw, 50vw"
+          sizes="(max-width: 768px) 100vw, 66vw"
+          quality={85}
+          priority
         />
       </div>
 
@@ -48,7 +50,9 @@ export function ImageCollectionDetail({ collection, onBack, className }: ImageCo
                 alt=""
                 fill
                 className="object-cover"
-                sizes="(max-width: 640px) 100vw, 50vw"
+                sizes="(max-width: 640px) 100vw, 33vw"
+                quality={80}
+                loading="lazy"
               />
             </div>
           ))}

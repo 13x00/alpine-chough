@@ -23,7 +23,9 @@ export function PhotographyDetail({ photography, onBack, className }: Photograph
           width={1200}
           height={800}
           className="w-full h-auto object-contain"
-          sizes="(max-width: 768px) 100vw, 50vw"
+          sizes="(max-width: 768px) 100vw, 66vw"
+          quality={90}
+          priority
         />
       </div>
 

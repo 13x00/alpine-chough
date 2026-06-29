@@ -22,7 +22,9 @@ export function ProjectDetail({ project, onBack, className }: ProjectDetailProps
           alt={project.title}
           fill
           className="object-cover"
-          sizes="(max-width: 768px) 100vw, 50vw"
+          sizes="(max-width: 768px) 100vw, 66vw"
+          quality={85}
+          priority
         />
       </div>
       
