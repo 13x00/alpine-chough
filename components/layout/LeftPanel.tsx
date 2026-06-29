@@ -29,6 +29,13 @@ interface LeftPanelProps {
 export function LeftPanel({ projectItems, selectedItemId = null }: LeftPanelProps) {
   const listRef = useRef<HTMLUListElement>(null)
 
+  // Preload all project images when the list loads
+  useEffect(() => {
+    projectItems.forEach((item) => {
+      prefetchImage(item.image)
+    })
+  }, [projectItems])
+
   // When selectedItemId changes (e.g. arrow-key navigation from the right panel),
   // move focus to the newly selected button. This clears the stale ring on the old
   // item, keeps a single consistent indicator, and scrolls the row into view for
