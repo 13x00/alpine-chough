@@ -74,11 +74,17 @@ export function DetailOverlayMotion({
   const SWIPE_VELOCITY_THRESHOLD = 0.5
 
   const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: { offset: { y: number }; velocity: { y: number } }) => {
-    if (!onNavigateAdjacent || !isExpanded) return
-    
     const { offset, velocity } = info
     const swipeDistance = Math.abs(offset.y)
     const swipeVelocity = Math.abs(velocity.y)
+    
+    // If expanded and swiping down significantly, collapse to card view instead of navigating
+    if (isExpanded && offset.y > SWIPE_THRESHOLD * 1.5 && swipeVelocity < SWIPE_VELOCITY_THRESHOLD * 2) {
+      setIsExpanded(false)
+      return
+    }
+    
+    if (!onNavigateAdjacent || !isExpanded) return
     
     // Trigger navigation if either threshold is met
     if (swipeDistance > SWIPE_THRESHOLD || swipeVelocity > SWIPE_VELOCITY_THRESHOLD) {
@@ -307,6 +313,21 @@ export function DetailOverlayMotion({
                   if (!isExpanded && !isClosingRef.current) setDidArrive(true)
                 }}
               >
+                {/* Drag handle indicator — visible at bottom in card phase, hidden when expanded */}
+                <motion.div
+                  className="absolute bottom-2 left-1/2 -translate-x-1/2 z-50 flex items-center justify-center cursor-pointer"
+                  style={{ 
+                    width: '64px',
+                    height: '48px',
+                    pointerEvents: isExpanded ? 'none' : 'auto'
+                  }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: isExpanded ? 0 : 1 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => !isExpanded && setIsExpanded(true)}
+                >
+                  <div className="w-10 h-1.5 bg-text-secondary/50 rounded-full hover:bg-text-secondary/70 transition-colors" />
+                </motion.div>
                 {/* Clip shell — absolute fill, clips only horizontal overflow for push animation */}
                 <div className="absolute inset-0 overflow-x-hidden">
                   {/*
