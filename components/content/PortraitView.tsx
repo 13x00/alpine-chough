@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 
 const portraitImages = [
   '/Portrait_cycle/4839201756.webp',
@@ -29,6 +29,10 @@ export function PortraitView({ className, isVisible = true }: PortraitViewProps)
   const [nextIndex, setNextIndex] = useState(1)
   const [fading, setFading] = useState(false)
 
+  // Memoize image sources to avoid recalculation
+  const currentImage = useMemo(() => portraitImages[currentIndex], [currentIndex])
+  const nextImage = useMemo(() => portraitImages[nextIndex], [nextIndex])
+
   useEffect(() => {
     if (!isVisible) return // Pause cycle when not visible
 
@@ -50,8 +54,8 @@ export function PortraitView({ className, isVisible = true }: PortraitViewProps)
     <div className={`relative w-full h-full overflow-hidden ${className || ''}`}>
       {/* Current image */}
       <Image
-        key={portraitImages[currentIndex]}
-        src={portraitImages[currentIndex]}
+        key={currentImage}
+        src={currentImage}
         alt="Portrait"
         fill
         className="object-cover"
@@ -61,15 +65,16 @@ export function PortraitView({ className, isVisible = true }: PortraitViewProps)
 
       {/* Next image fading in */}
       <Image
-        key={`next-${portraitImages[nextIndex]}`}
-        src={portraitImages[nextIndex]}
+        key={`next-${nextImage}`}
+        src={nextImage}
         alt="Portrait"
         fill
-        className="object-cover transition-opacity"
+        className="object-cover will-change-opacity"
         style={{
           opacity: fading ? 1 : 0,
           transitionDuration: `${FADE_DURATION}ms`,
           transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+          transitionProperty: 'opacity',
         }}
         sizes="(max-width: 768px) 100vw, 50vw"
       />

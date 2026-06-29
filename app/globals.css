@@ -64,6 +64,15 @@
     display: none;
   }
 
+  /* GPU-accelerated animations hint */
+  .will-change-transform {
+    will-change: transform;
+  }
+
+  .will-change-opacity {
+    will-change: opacity;
+  }
+
   /* Footer: establish container so @container query works; stack when narrow so link text doesn’t wrap */
   .footer-card-layout {
     container-type: inline-size;
@@ -115,6 +124,7 @@
     background-clip: text;
     color: transparent;
     animation: logo-gradient-run-down 1.4s ease-out 1 forwards;
+    will-change: background-position;
   }
 
   [data-theme="dark"] .group:hover .logo-gradient-text {
@@ -125,6 +135,7 @@
     background-clip: text;
     color: transparent;
     animation: logo-gradient-run 1.4s ease-out 1 forwards;
+    will-change: background-position;
   }
 
   /* Dark: scroll from top to bottom of gradient (sweep downward) */
