@@ -33,6 +33,14 @@ export function PortraitView({ className, isVisible = true }: PortraitViewProps)
   const currentImage = useMemo(() => portraitImages[currentIndex], [currentIndex])
   const nextImage = useMemo(() => portraitImages[nextIndex], [nextIndex])
 
+  // Preload all portrait images on mount for instant cycling
+  useEffect(() => {
+    portraitImages.forEach((src) => {
+      const img = new window.Image()
+      img.src = src
+    })
+  }, [])
+
   useEffect(() => {
     if (!isVisible) return // Pause cycle when not visible
 
