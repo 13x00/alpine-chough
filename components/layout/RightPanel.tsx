@@ -179,6 +179,7 @@ export function RightPanel({
         direction={direction}
         onBack={onBack}
         renderDetail={renderDetail}
+        onNavigateAdjacent={onNavigateAdjacent}
         onExited={() => {
           setMotionDisplayItem(null)
           setMotionIsExpanded(false)

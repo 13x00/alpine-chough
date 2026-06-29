@@ -22,6 +22,8 @@ export interface DetailOverlayMotionProps {
   renderDetail: (view: ViewType, item: DetailItem, onBack: () => void) => React.ReactNode
   /** Called after the overlay surface has fully exited (all exit animations complete) */
   onExited?: () => void
+  /** Navigation callback for swipe gestures */
+  onNavigateAdjacent?: (delta: -1 | 1) => void
 }
 
 // ─── Motion token set ────────────────────────────────────────────────────────
@@ -60,8 +62,35 @@ export function DetailOverlayMotion({
   onBack,
   renderDetail,
   onExited,
+  onNavigateAdjacent,
 }: DetailOverlayMotionProps) {
   const skipMotion = Boolean(useReducedMotion())
+
+  // ── Swipe gesture handling (mobile navigation) ──────────────────────────────
+  // Swipe up → next item (+1), swipe down → previous item (-1)
+  // Threshold: minimum distance in pixels to trigger navigation
+  const SWIPE_THRESHOLD = 50
+  // Velocity threshold: minimum speed in px/ms to trigger even if distance is less
+  const SWIPE_VELOCITY_THRESHOLD = 0.5
+
+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: { offset: { y: number }; velocity: { y: number } }) => {
+    if (!onNavigateAdjacent || !isExpanded) return
+    
+    const { offset, velocity } = info
+    const swipeDistance = Math.abs(offset.y)
+    const swipeVelocity = Math.abs(velocity.y)
+    
+    // Trigger navigation if either threshold is met
+    if (swipeDistance > SWIPE_THRESHOLD || swipeVelocity > SWIPE_VELOCITY_THRESHOLD) {
+      // Swipe up (negative offset) → next item (+1)
+      // Swipe down (positive offset) → previous item (-1)
+      if (offset.y < 0) {
+        onNavigateAdjacent(1) // next
+      } else {
+        onNavigateAdjacent(-1) // previous
+      }
+    }
+  }
 
   // ── Measurement ─────────────────────────────────────────────────────────────
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -295,6 +324,11 @@ export function DetailOverlayMotion({
                       animate="center"
                       exit="exit"
                       transition={swapTransition}
+                      drag={onNavigateAdjacent && isExpanded ? 'y' : false}
+                      dragConstraints={{ top: 0, bottom: 0 }}
+                      dragElastic={0.2}
+                      dragMomentum={false}
+                      onDragEnd={handleDragEnd}
                     >
                       {renderDetail(displayView, displayItem!, onBack)}
                     </motion.div>
