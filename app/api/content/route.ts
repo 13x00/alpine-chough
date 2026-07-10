@@ -25,7 +25,7 @@ export async function GET() {
       LEFT JOIN photos p ON ci.photo_id = p.id
       LEFT JOIN collections c ON ci.collection_id = c.id
       WHERE (${collectionsEnabled} OR ci.item_type = 'photo')
-      ORDER BY ci.sort_order ASC
+      ORDER BY p.date DESC NULLS LAST, ci.sort_order ASC
     `
 
     const collectionIds = [

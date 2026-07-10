@@ -30,7 +30,8 @@ export async function listFolder(
   do {
     const res = await drive.files.list({
       q: `'${folderId}' in parents and trashed = false`,
-      fields: 'nextPageToken, files(id, name, mimeType, size)',
+      fields:
+        'nextPageToken, files(id, name, mimeType, size, createdTime, imageMediaMetadata(time))',
       pageSize: 1000,
       pageToken,
     })

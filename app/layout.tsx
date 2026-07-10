@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Roboto, Roboto_Mono } from 'next/font/google'
+import { ArchiveRoot } from '@/components/archive/ArchiveRoot'
 import './globals.css'
 
 const roboto = Roboto({
@@ -40,7 +41,7 @@ export default function RootLayout({
             __html: `(function(){var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t||'dark');})()`,
           }}
         />
-        {children}
+        <ArchiveRoot>{children}</ArchiveRoot>
       </body>
     </html>
   )

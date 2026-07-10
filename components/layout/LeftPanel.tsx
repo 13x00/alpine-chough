@@ -1,32 +1,19 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Link from 'next/link'
 import { Folder, Image as ImageIcon } from '@carbon/icons-react'
 import { AboutSection } from '@/components/content/AboutSection'
 import { FooterCard } from '@/components/layout/FooterCard'
+import { preloadImage } from '@/lib/image-preload'
 import { cn } from '@/lib/utils'
-
-const prefetchedSrcs = new Set<string>()
-
-function prefetchImage(src: string) {
-  if (!src || prefetchedSrcs.has(src)) return
-  prefetchedSrcs.add(src)
-  const img = new window.Image()
-  img.src = src.startsWith('http') ? src : `${typeof window !== 'undefined' ? window.location.origin : ''}${src}`
-}
+import type { ProjectListItem } from '@/types/content'
 
 const rowOverlay =
   'pointer-events-none absolute inset-x-0 -top-px -bottom-px rounded-xs transition-opacity duration-fast ease-[var(--easing-standard)] motion-reduce:transition-none'
 
 interface LeftPanelProps {
-  projectItems: Array<{
-    id: string
-    title: string
-    category?: string
-    year?: string
-    image: string
-    onClick: () => void
-  }>
+  projectItems: ProjectListItem[]
   selectedItemId?: string | null
   /** Hide about block (mobile detail states) */
   showAbout?: boolean
@@ -45,12 +32,6 @@ export function LeftPanel({
   className,
 }: LeftPanelProps) {
   const listRef = useRef<HTMLUListElement>(null)
-
-  useEffect(() => {
-    projectItems.forEach((item) => {
-      prefetchImage(item.image)
-    })
-  }, [projectItems])
 
   useEffect(() => {
     if (!selectedItemId || !listRef.current) return
@@ -72,21 +53,22 @@ export function LeftPanel({
       <section className="flex min-h-[11.25rem] flex-1 flex-col overflow-y-auto rounded-base border border-border-subtle-00 bg-layer-01">
         <ul ref={listRef} data-nav-card className="flex w-full flex-col p-2">
           {projectItems.map((item, index) => {
-            const rowNumber = String(index + 1).padStart(2, '0')
+            const rowNumber = String(projectItems.length - index).padStart(2, '0')
             const isCollection = item.category === 'Collection'
             const isSelected = selectedItemId === item.id
 
             return (
               <li key={item.id}>
-                <button
-                  type="button"
+                <Link
+                  href={item.href}
+                  scroll={false}
                   onClick={item.onClick}
-                  onMouseEnter={() => prefetchImage(item.image)}
-                  onFocus={() => prefetchImage(item.image)}
+                  onMouseEnter={() => preloadImage(item.image)}
+                  onFocus={() => preloadImage(item.image)}
                   data-nav-card
                   data-selected={isSelected ? true : undefined}
                   className={cn(
-                    'group relative h-12 w-full text-left text-text-primary',
+                    'group relative block h-12 w-full text-left text-text-primary',
                     'border-b border-border-subtle-00',
                     'focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus',
                     'hover:z-10',
@@ -141,7 +123,7 @@ export function LeftPanel({
                       </span>
                     )}
                   </span>
-                </button>
+                </Link>
               </li>
             )
           })}

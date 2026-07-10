@@ -5,7 +5,7 @@ import { MobileLayout } from './MobileLayout'
 import { RightPanel } from './RightPanel'
 import { Logo } from '@/components/content/Logo'
 import { ThemeToggle } from '@/components/content/ThemeToggle'
-import { ViewType, DetailItem } from '@/types/content'
+import { ViewType, DetailItem, ProjectListItem } from '@/types/content'
 import { cn } from '@/lib/utils'
 
 interface SplitLayoutProps {
@@ -18,14 +18,7 @@ interface SplitLayoutProps {
   onDetailCloseComplete?: () => void
   detailDirection?: 'forward' | 'backward'
   onNavigateAdjacent?: (delta: -1 | 1) => void
-  projectItems: Array<{
-    id: string
-    title: string
-    category?: string
-    year?: string
-    image: string
-    onClick: () => void
-  }>
+  projectItems: ProjectListItem[]
 }
 
 function LeftColumnHeader({ onCloseDetail }: { onCloseDetail: () => void }) {

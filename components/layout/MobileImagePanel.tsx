@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { scrubStepsFromDelta } from '@/lib/mobile-scrub'
@@ -40,6 +40,10 @@ export function MobileImagePanel({
   const dragModeRef = useRef<'none' | 'resize' | 'scrub'>('none')
   const pointerIdRef = useRef<number | null>(null)
   const didDragRef = useRef(false)
+
+  useEffect(() => {
+    setLoaded(false)
+  }, [imageSrc])
 
   const resetDrag = useCallback(() => {
     dragModeRef.current = 'none'

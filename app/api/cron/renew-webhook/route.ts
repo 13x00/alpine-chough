@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDriveClient, registerWatchChannel, stopWatchChannel } from '@/lib/drive'
 import { getSql } from '@/lib/db'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/cron/renew-webhook
  *

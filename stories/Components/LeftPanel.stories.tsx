@@ -4,10 +4,10 @@ import { LeftPanel } from '@/components/layout/LeftPanel'
 import { ThemeCompare } from '../_utils/ThemeCompare'
 
 const sampleProjects = [
-  { id: '1', title: 'Brand Identity', category: 'Collection', year: '2024', image: '/placeholder.jpg', onClick: () => {} },
-  { id: '2', title: 'Wayfinding System', category: 'Photo', year: '2025', image: '/placeholder.jpg', onClick: () => {} },
-  { id: '3', title: 'App Design', category: 'Photo', year: '2025', image: '/placeholder.jpg', onClick: () => {} },
-  { id: '4', title: 'Packaging', category: 'Collection', year: '2023', image: '/placeholder.jpg', onClick: () => {} },
+  { id: '1', title: 'Brand Identity', category: 'Collection', year: '2024', image: '/placeholder.jpg', href: '/c/brand-identity', onClick: () => {} },
+  { id: '2', title: 'Wayfinding System', category: 'Photo', year: '2025', image: '/placeholder.jpg', href: '/p/Wayfinding%20System', onClick: () => {} },
+  { id: '3', title: 'App Design', category: 'Photo', year: '2025', image: '/placeholder.jpg', href: '/p/App%20Design', onClick: () => {} },
+  { id: '4', title: 'Packaging', category: 'Collection', year: '2023', image: '/placeholder.jpg', href: '/c/packaging', onClick: () => {} },
 ]
 
 const meta: Meta<typeof LeftPanel> = {
@@ -59,6 +59,7 @@ export const ManyItems: Story = {
       category: i % 3 === 0 ? 'Collection' : 'Photo',
       year: String(2023 + (i % 3)),
       image: '/placeholder.jpg',
+      href: `/p/Project%20${i + 1}`,
       onClick: () => {},
     })),
   },

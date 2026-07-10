@@ -26,3 +26,13 @@ export type ContentItem = (Photo & { type: 'photo' }) | (Collection & { type: 'c
 export interface ContentData {
   items: ContentItem[]
 }
+
+export interface ProjectListItem {
+  id: string
+  title: string
+  category?: string
+  year?: string
+  image: string
+  href: string
+  onClick: () => void
+}

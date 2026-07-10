@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS images (
 -- Photos: single image per row
 CREATE TABLE IF NOT EXISTS photos (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title TEXT NOT NULL,
+  title TEXT NOT NULL UNIQUE,
   image_id UUID NOT NULL REFERENCES images(id) ON DELETE RESTRICT,
   description TEXT,
   date DATE,

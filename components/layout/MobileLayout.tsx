@@ -5,21 +5,14 @@ import { LeftPanel } from './LeftPanel'
 import { MobileImagePanel } from './MobileImagePanel'
 import { Logo } from '@/components/content/Logo'
 import { ThemeToggle } from '@/components/content/ThemeToggle'
-import { ViewType, DetailItem, Photo, Collection } from '@/types/content'
+import { ViewType, DetailItem, Photo, Collection, ProjectListItem } from '@/types/content'
 
 interface MobileLayoutProps {
   currentView: ViewType
   selectedItem: DetailItem | null
   onCloseDetail: () => void
   onNavigateAdjacent?: (delta: -1 | 1) => void
-  projectItems: Array<{
-    id: string
-    title: string
-    category?: string
-    year?: string
-    image: string
-    onClick: () => void
-  }>
+  projectItems: ProjectListItem[]
 }
 
 function MobileHeader({ onCloseDetail }: { onCloseDetail: () => void }) {

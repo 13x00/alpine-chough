@@ -68,25 +68,21 @@ export interface IngestResult {
 
 /**
  * Compresses an image buffer using Sharp and returns the output buffer.
- * WebP originals stay as WebP; everything else is converted to JPEG.
+ * All supported input formats are converted to WebP for web delivery.
  */
-async function compressImage(
-  input: Buffer,
-  mimeType: string
-): Promise<{ buffer: Buffer; contentType: string }> {
+async function compressImage(input: Buffer): Promise<{ buffer: Buffer; contentType: string }> {
   const base = sharp(input).resize(3840, 3840, {
     fit: 'inside',
     withoutEnlargement: true,
   })
 
-  if (mimeType === 'image/webp') {
-    const buffer = await base.webp({ quality: 80, effort: 6 }).toBuffer()
-    return { buffer, contentType: 'image/webp' }
-  }
-  const buffer = await base
-    .jpeg({ quality: 82, progressive: true, mozjpeg: true })
-    .toBuffer()
-  return { buffer, contentType: 'image/jpeg' }
+  const buffer = await base.webp({ quality: 80, effort: 6 }).toBuffer()
+  return { buffer, contentType: 'image/webp' }
+}
+
+function dateFromTimestamp(value: string | null | undefined): string | null {
+  const date = value?.slice(0, 10).replaceAll(':', '-')
+  return date && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : null
 }
 
 // ---------------------------------------------------------------------------
@@ -186,29 +182,39 @@ async function ingestPhoto(
   log(`  Photo: ${filename} → "${title}"`)
 
   const rawBuffer = await downloadFile(drive, file.id!)
-  const mimeType = file.mimeType ?? 'image/jpeg'
-  const exifDate = meta.date ?? (await extractImageDate(rawBuffer))
-  const { buffer, contentType } = await compressImage(rawBuffer, mimeType)
+  const photoDate =
+    meta.date ??
+    (await extractImageDate(rawBuffer)) ??
+    dateFromTimestamp(file.imageMediaMetadata?.time) ??
+    dateFromTimestamp(file.createdTime)
+  const { buffer, contentType } = await compressImage(rawBuffer)
 
   const imageId = await ensureImageInDb(sql, buffer, contentType, `drive/${filename}`)
 
-  let photoId = await findPhotoIdByTitle(sql, title)
-  if (photoId) {
-    log(`    Photo already in DB (by title), skipping insert`)
-  } else {
-    const rows = (await sql`
-      INSERT INTO photos (title, image_id, description, date, tags)
-      VALUES (
-        ${title},
-        ${imageId}::uuid,
-        ${meta.description ?? null},
-        ${exifDate ?? null},
-        ${meta.tags?.length ? meta.tags : null}
-      )
-      RETURNING id
-    `) as { id: string }[]
+  const rows = (await sql`
+    INSERT INTO photos (title, image_id, description, date, tags)
+    VALUES (
+      ${title},
+      ${imageId}::uuid,
+      ${meta.description ?? null},
+      ${photoDate},
+      ${meta.tags?.length ? meta.tags : null}
+    )
+    ON CONFLICT (title) DO NOTHING
+    RETURNING id
+  `) as { id: string }[]
+
+  let photoId: string
+  if (rows[0]) {
     photoId = rows[0].id
     log(`    Inserted photo ${photoId}`)
+  } else {
+    const existingPhotoId = await findPhotoIdByTitle(sql, title)
+    if (!existingPhotoId) {
+      throw new Error(`Photo "${title}" conflicted but could not be found`)
+    }
+    photoId = existingPhotoId
+    log(`    Photo already in DB (by title), skipping insert`)
   }
 
   if (await contentItemExistsForPhoto(sql, photoId)) {
@@ -308,11 +314,8 @@ async function ingestCollection(
   }
 
   const coverBuffer = await downloadFile(drive, coverFile.id!)
-  const coverMime = coverFile.mimeType ?? 'image/jpeg'
-  const { buffer: coverCompressed, contentType: coverContentType } = await compressImage(
-    coverBuffer,
-    coverMime
-  )
+  const { buffer: coverCompressed, contentType: coverContentType } =
+    await compressImage(coverBuffer)
   const coverImageId = await ensureImageInDb(
     sql,
     coverCompressed,
@@ -344,11 +347,8 @@ async function ingestCollection(
   for (let i = 0; i < orderedImages.length; i++) {
     const imgFile = orderedImages[i]
     const imgBuffer = await downloadFile(drive, imgFile.id!)
-    const imgMime = imgFile.mimeType ?? 'image/jpeg'
-    const { buffer: imgCompressed, contentType: imgContentType } = await compressImage(
-      imgBuffer,
-      imgMime
-    )
+    const { buffer: imgCompressed, contentType: imgContentType } =
+      await compressImage(imgBuffer)
     const imgId = await ensureImageInDb(
       sql,
       imgCompressed,
