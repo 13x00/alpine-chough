@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import Link from 'next/link'
 import { Folder, Image as ImageIcon } from '@carbon/icons-react'
 import { AboutSection } from '@/components/content/AboutSection'
 import { FooterCard } from '@/components/layout/FooterCard'
@@ -34,6 +33,12 @@ export function LeftPanel({
   const listRef = useRef<HTMLUListElement>(null)
 
   useEffect(() => {
+    projectItems.forEach((item) => {
+      preloadImage(item.image)
+    })
+  }, [projectItems])
+
+  useEffect(() => {
     if (!selectedItemId || !listRef.current) return
     const selected = listRef.current.querySelector<HTMLElement>('[data-selected="true"]')
     selected?.focus({ preventScroll: false })
@@ -59,16 +64,15 @@ export function LeftPanel({
 
             return (
               <li key={item.id}>
-                <Link
-                  href={item.href}
-                  scroll={false}
+                <button
+                  type="button"
                   onClick={item.onClick}
                   onMouseEnter={() => preloadImage(item.image)}
                   onFocus={() => preloadImage(item.image)}
                   data-nav-card
                   data-selected={isSelected ? true : undefined}
                   className={cn(
-                    'group relative block h-12 w-full text-left text-text-primary',
+                    'group relative h-12 w-full text-left text-text-primary',
                     'border-b border-border-subtle-00',
                     'focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus',
                     'hover:z-10',
@@ -123,7 +127,7 @@ export function LeftPanel({
                       </span>
                     )}
                   </span>
-                </Link>
+                </button>
               </li>
             )
           })}

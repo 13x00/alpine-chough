@@ -33,6 +33,5 @@ export interface ProjectListItem {
   category?: string
   year?: string
   image: string
-  href: string
   onClick: () => void
 }

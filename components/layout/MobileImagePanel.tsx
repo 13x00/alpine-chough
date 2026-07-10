@@ -1,6 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useLayoutEffect, useRef, useState } from 'react'
+import { isImageCached } from '@/lib/image-preload'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { scrubStepsFromDelta } from '@/lib/mobile-scrub'
@@ -41,8 +42,12 @@ export function MobileImagePanel({
   const pointerIdRef = useRef<number | null>(null)
   const didDragRef = useRef(false)
 
-  useEffect(() => {
-    setLoaded(false)
+  useLayoutEffect(() => {
+    if (!isApiImage(imageSrc)) {
+      setLoaded(false)
+      return
+    }
+    setLoaded(isImageCached(imageSrc))
   }, [imageSrc])
 
   const resetDrag = useCallback(() => {

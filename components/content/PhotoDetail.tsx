@@ -1,6 +1,7 @@
 'use client'
 
 import { useLayoutEffect, useRef, useState } from 'react'
+import { isImageCached } from '@/lib/image-preload'
 import { Typography } from '@/components/ui/Typography'
 import Image from 'next/image'
 import { Photo } from '@/types/content'
@@ -22,12 +23,18 @@ export function PhotoDetail({ photo, className }: PhotoDetailProps) {
   const apiImgRef = useRef<HTMLImageElement | null>(null)
 
   useLayoutEffect(() => {
-    setLoaded(false)
-    if (!isApiImage(photo.image)) return
+    if (!isApiImage(photo.image)) {
+      setLoaded(false)
+      return
+    }
+
     const el = apiImgRef.current
     if (el?.complete && el.naturalWidth > 0) {
       setLoaded(true)
+      return
     }
+
+    setLoaded(isImageCached(photo.image))
   }, [photo.id, photo.image])
 
   return (

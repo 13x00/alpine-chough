@@ -3,14 +3,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SplitLayout } from '@/components/layout/SplitLayout'
 import { PageLoader } from '@/components/transition/PageLoader'
-import { contentHref, useContent } from '@/hooks/useContent'
+import { useContent } from '@/hooks/useContent'
 import { preloadImage } from '@/lib/image-preload'
 import { yearFromDate } from '@/lib/utils'
 import type { Collection, ContentData, ContentItem, Photo } from '@/types/content'
 
-const INITIAL_PRELOAD_COUNT = 8
-const FORWARD_PRELOAD_COUNT = 12
-const BACKWARD_PRELOAD_COUNT = 4
+const KEYBOARD_PRELOAD_AHEAD = 8
 
 function itemImage(item: ContentItem): string {
   return item.type === 'photo' ? item.image : item.coverImage
@@ -74,7 +72,6 @@ export function ArchiveApp() {
         title: item.title,
         view: item.type,
         item: item.type === 'photo' ? (item as Photo) : (item as Collection),
-        href: contentHref(item),
         image: itemImage(item),
       })) ?? [],
     [contentData]
@@ -85,36 +82,6 @@ export function ArchiveApp() {
       ? allEntries.findIndex((entry) => entry.id === selectedItem.id)
       : -1
   }, [allEntries, selectedItem])
-
-  useEffect(() => {
-    if (allEntries.length === 0) return
-
-    const selectedIndex = selectedItem
-      ? allEntries.findIndex((entry) => entry.id === selectedItem.id)
-      : -1
-    const indexes = new Set<number>()
-
-    if (selectedIndex === -1) {
-      for (let index = 0; index < Math.min(INITIAL_PRELOAD_COUNT, allEntries.length); index++) {
-        indexes.add(index)
-      }
-    } else {
-      indexes.add(selectedIndex)
-      const ahead = detailDirection === 'forward' ? FORWARD_PRELOAD_COUNT : BACKWARD_PRELOAD_COUNT
-      const behind = detailDirection === 'forward' ? BACKWARD_PRELOAD_COUNT : FORWARD_PRELOAD_COUNT
-      for (let offset = 1; offset <= ahead; offset++) indexes.add(selectedIndex + offset)
-      for (let offset = 1; offset <= behind; offset++) indexes.add(selectedIndex - offset)
-    }
-
-    const timer = window.setTimeout(() => {
-      indexes.forEach((index) => {
-        const entry = allEntries[index]
-        if (entry) preloadImage(entry.image)
-      })
-    }, 0)
-
-    return () => window.clearTimeout(timer)
-  }, [allEntries, detailDirection, selectedItem])
 
   const navigateAdjacent = useCallback(
     (delta: -1 | 1) => {
@@ -133,28 +100,39 @@ export function ArchiveApp() {
       const nextEntry = allEntries[nextIndex]
       navigationIndexRef.current = nextIndex
       setDetailDirection(delta > 0 ? 'forward' : 'backward')
-      setView(nextEntry.view, nextEntry.item)
+
+      preloadImage(nextEntry.image)
+      for (let offset = 1; offset <= KEYBOARD_PRELOAD_AHEAD; offset++) {
+        const ahead = allEntries[nextIndex + offset * delta]
+        if (ahead) preloadImage(ahead.image)
+      }
+
+      setView(nextEntry.view, nextEntry.item, { deferUrl: true })
     },
     [allEntries, selectedItem, setView]
   )
 
-  const projectItems = allEntries.map((entry, nextIndex) => ({
-    id: entry.id,
-    title: entry.title,
-    category: entry.view === 'photo' ? 'Photo' : 'Collection',
-    year: entry.view === 'photo' ? yearFromDate((entry.item as Photo).date) : undefined,
-    image: entry.image,
-    href: entry.href,
-    onClick: () => {
-      const currentIndex = selectedItem
-        ? allEntries.findIndex((candidate) => candidate.id === selectedItem.id)
-        : -1
-      setDetailDirection(
-        currentIndex !== -1 && nextIndex < currentIndex ? 'backward' : 'forward'
-      )
-      navigationIndexRef.current = nextIndex
-    },
-  }))
+  const projectItems = useMemo(
+    () =>
+      allEntries.map((entry, nextIndex) => ({
+        id: entry.id,
+        title: entry.title,
+        category: entry.view === 'photo' ? 'Photo' : 'Collection',
+        year: entry.view === 'photo' ? yearFromDate((entry.item as Photo).date) : undefined,
+        image: entry.image,
+        onClick: () => {
+          const currentIndex = selectedItem
+            ? allEntries.findIndex((candidate) => candidate.id === selectedItem.id)
+            : -1
+          setDetailDirection(
+            currentIndex !== -1 && nextIndex < currentIndex ? 'backward' : 'forward'
+          )
+          navigationIndexRef.current = nextIndex
+          setView(entry.view, entry.item, { history: 'push' })
+        },
+      })),
+    [allEntries, selectedItem, setView]
+  )
 
   return (
     <>
