@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import { Folder, Image as ImageIcon } from '@carbon/icons-react'
 import { AboutSection } from '@/components/content/AboutSection'
 import { FooterCard } from '@/components/layout/FooterCard'
-import { preloadImage } from '@/lib/image-preload'
+import { preloadImage, preloadListImages } from '@/lib/image-preload'
 import { cn } from '@/lib/utils'
 import type { ProjectListItem } from '@/types/content'
 
@@ -33,9 +33,7 @@ export function LeftPanel({
   const listRef = useRef<HTMLUListElement>(null)
 
   useEffect(() => {
-    projectItems.forEach((item) => {
-      preloadImage(item.image)
-    })
+    preloadListImages(projectItems.map((item) => item.image))
   }, [projectItems])
 
   useEffect(() => {

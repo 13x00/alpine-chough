@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  async rewrites() {
+    return [
+      { source: '/p/:title', destination: '/' },
+      { source: '/c/:slug', destination: '/' },
+    ]
+  },
   images: {
     // Images are pre-compressed by scripts/compress-images.mjs
     // Keep unoptimized: true to serve WebP directly without runtime processing
