@@ -1,10 +1,10 @@
 -- Neon Postgres schema for alpine_chough
 -- Run this in the Neon SQL Editor (or via psql) against database alpine_chough
 
--- Images: binary data and metadata
+-- Images: metadata and Cloudflare R2 object URL
 CREATE TABLE IF NOT EXISTS images (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  data BYTEA NOT NULL,
+  blob_url TEXT NOT NULL,
   content_type TEXT NOT NULL,
   filename TEXT
 );

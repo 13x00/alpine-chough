@@ -233,7 +233,7 @@ Files are automatically:
 - **Resized** to max 3840px (longest edge)
 - **Converted**: WebP stays WebP, others → JPEG
 - **Stripped** of all metadata (EXIF, GPS, ICC)
-- **Stored** in the database as binary data
+- **Uploaded** to Cloudflare R2; only the public URL is stored in the database
 
 **Supported formats:**
 - JPEG (`.jpg`, `.jpeg`)
@@ -310,7 +310,7 @@ psql $DATABASE_URL -f scripts/schema.sql
 
 ## Database Tables Used
 
-- **`images`**: Binary image storage
+- **`images`**: Image metadata and Cloudflare R2 URL (binary data stored in R2, not the database)
 - **`photos`**: Individual photo metadata
 - **`collections`**: Collection metadata
 - **`collection_images`**: Gallery images (many-to-many)

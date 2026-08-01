@@ -1,11 +1,7 @@
 'use client'
 
 import { Typography } from '@/components/ui/Typography'
-import Image from 'next/image'
 import { Collection } from '@/types/content'
-
-// API-served images use native img to avoid Next.js Image config for /api/* URLs
-const isApiImage = (src: string) => src.startsWith('/api/')
 
 interface CollectionDetailProps {
   collection: Collection
@@ -18,22 +14,11 @@ export function CollectionDetail({ collection, className }: CollectionDetailProp
     <div className={`relative space-y-6 p-6 md:p-8 ${className || ''}`}>
 
       <div className="relative w-full aspect-[16/10] overflow-hidden rounded-lg bg-layer-01">
-        {isApiImage(collection.coverImage) ? (
-          <img
-            src={collection.coverImage}
-            alt={collection.title}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <Image
-            src={collection.coverImage}
-            alt={collection.title}
-            width={1200}
-            height={750}
-            className="w-full h-full object-cover"
-            sizes="(max-width: 768px) 100vw, 50vw"
-          />
-        )}
+        <img
+          src={collection.coverImage}
+          alt={collection.title}
+          className="w-full h-full object-cover"
+        />
       </div>
 
       <div className="space-y-4">
@@ -52,21 +37,12 @@ export function CollectionDetail({ collection, className }: CollectionDetailProp
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
           {collection.images.map((src, i) => (
             <div key={i} className="relative aspect-[4/3] overflow-hidden rounded-lg bg-layer-01">
-              {isApiImage(src) ? (
-                <img
-                  src={src}
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <Image
-                  src={src}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 100vw, 50vw"
-                />
-              )}
+              <img
+                key={i}
+                src={src}
+                alt=""
+                className="w-full h-full object-cover"
+              />
             </div>
           ))}
         </div>

@@ -16,6 +16,7 @@
 import sharp from 'sharp'
 import { neon } from '@neondatabase/serverless'
 import type { NeonQueryFunction } from '@neondatabase/serverless'
+import { uploadToR2 } from './r2'
 import {
   getDriveClient,
   listFolder,
@@ -120,9 +121,11 @@ async function ensureImageInDb(
   `) as { id: string }[]
   if (existing[0]) return existing[0].id
 
+  const blobUrl = await uploadToR2(buffer, contentType, filename)
+
   const rows = (await sql`
-    INSERT INTO images (data, content_type, filename)
-    VALUES (${buffer}, ${contentType}, ${filename})
+    INSERT INTO images (blob_url, content_type, filename)
+    VALUES (${blobUrl}, ${contentType}, ${filename})
     RETURNING id
   `) as { id: string }[]
   return rows[0].id

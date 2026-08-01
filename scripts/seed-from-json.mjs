@@ -2,12 +2,14 @@
 /**
  * seed-from-json.mjs
  *
- * Reads a content JSON file (default public/content.json) and public image files, inserts into Neon Postgres
+ * Reads a content JSON file (default public/content.json) and public image files,
+ * uploads images to Cloudflare R2, then inserts metadata into Neon Postgres
  * (images, photos, collections, collection_images, content_items).
  *
  * Idempotent / append-friendly:
- * - images: reuse row by filename (same path as stored in DB); no re-read if found.
- *   If the file on disk changes but the path is unchanged, the DB blob is not updated.
+ * - images: reuse row by filename (same path as stored in DB); no re-upload if found.
+ *   If the file on disk changes but the path is unchanged, the existing R2 object and
+ *   DB row are reused.
  * - photos: reuse row by title; skips insert if title exists (keeps existing image_id/metadata).
  * - collections: reuse row by slug; skips insert if slug exists; gallery rows are replaced
  *   from JSON (DELETE collection_images for that id, then INSERT).
@@ -17,10 +19,12 @@
  * Prereqs:
  *   1. Run scripts/schema.sql in Neon (SQL Editor) for database alpine_chough.
  *   2. DATABASE_URL: loaded from .env.local at project root (via dotenv), or export in the shell.
+ *   3. R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, R2_PUBLIC_URL
+ *      must be set (loaded from .env.local).
  *   Optional: ENABLE_COLLECTIONS=true seeds collection entries (default skips them).
  *
  * Usage: node scripts/seed-from-json.mjs [path-to-content.json]
- *        (from project root; DATABASE_URL must be set)
+ *        (from project root; DATABASE_URL and R2_* vars must be set)
  *
  * Content file:
  *   - Omit argument → public/content.json
@@ -36,6 +40,7 @@ import { isAbsolute, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import dotenv from 'dotenv'
 import { neon } from '@neondatabase/serverless'
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const root = join(__dirname, '..')
@@ -74,7 +79,21 @@ function resolvePublicPath(jsonPath) {
   return join(publicDir, relative)
 }
 
-async function ensureImage(sql, jsonPath) {
+function getR2Client() {
+  const accountId = process.env.R2_ACCOUNT_ID
+  const accessKeyId = process.env.R2_ACCESS_KEY_ID
+  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY
+  if (!accountId || !accessKeyId || !secretAccessKey) {
+    throw new Error('R2_ACCOUNT_ID, R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY must be set')
+  }
+  return new S3Client({
+    region: 'auto',
+    endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+    credentials: { accessKeyId, secretAccessKey },
+  })
+}
+
+async function ensureImage(sql, r2, jsonPath) {
   const filename = jsonPathToFilename(jsonPath)
   const existing = await sql`
     SELECT id FROM images WHERE filename = ${filename} LIMIT 1
@@ -88,10 +107,29 @@ async function ensureImage(sql, jsonPath) {
   } catch (err) {
     throw new Error(`Cannot read image ${jsonPath} at ${filePath}: ${err.message}`)
   }
+
+  const bucketName = process.env.R2_BUCKET_NAME
+  const publicUrl = process.env.R2_PUBLIC_URL
+  if (!bucketName || !publicUrl) {
+    throw new Error('R2_BUCKET_NAME and R2_PUBLIC_URL must be set')
+  }
+
   const content_type = contentTypeFromPath(filePath)
+
+  await r2.send(
+    new PutObjectCommand({
+      Bucket: bucketName,
+      Key: filename,
+      Body: data,
+      ContentType: content_type,
+    })
+  )
+
+  const blobUrl = `${publicUrl.replace(/\/$/, '')}/${filename}`
+
   const rows = await sql`
-    INSERT INTO images (data, content_type, filename)
-    VALUES (${data}, ${content_type}, ${filename})
+    INSERT INTO images (blob_url, content_type, filename)
+    VALUES (${blobUrl}, ${content_type}, ${filename})
     RETURNING id
   `
   return rows[0].id
@@ -148,7 +186,15 @@ npm run db:seed -- content-collection.json`)
     process.exit(1)
   }
 
+  const r2Required = ['R2_ACCOUNT_ID', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY', 'R2_BUCKET_NAME', 'R2_PUBLIC_URL']
+  const r2Missing = r2Required.filter((k) => !process.env[k])
+  if (r2Missing.length > 0) {
+    console.error(`Missing required R2 environment variables: ${r2Missing.join(', ')}`)
+    process.exit(1)
+  }
+
   const sql = neon(databaseUrl)
+  const r2 = getR2Client()
 
   let content
   try {
@@ -188,7 +234,7 @@ npm run db:seed -- content-collection.json`)
       if (photoId) {
         console.log(`  Photo exists (by title), skip insert: ${item.title}`)
       } else {
-        const imageId = await ensureImage(sql, item.image)
+        const imageId = await ensureImage(sql, r2, item.image)
         const photoRows = await sql`
           INSERT INTO photos (title, image_id, description, date, tags)
           VALUES (
@@ -220,7 +266,7 @@ npm run db:seed -- content-collection.json`)
       if (collectionId) {
         console.log(`  Collection exists (by slug), skip insert: ${item.slug}`)
       } else {
-        const coverImageId = await ensureImage(sql, item.coverImage)
+        const coverImageId = await ensureImage(sql, r2, item.coverImage)
         const collectionRows = await sql`
           INSERT INTO collections (title, slug, description, cover_image_id)
           VALUES (
@@ -245,7 +291,7 @@ npm run db:seed -- content-collection.json`)
           console.warn(`    Skipping invalid gallery entry in ${item.slug}`)
           continue
         }
-        const imgId = await ensureImage(sql, imgPath)
+        const imgId = await ensureImage(sql, r2, imgPath)
         imageIds.push(imgId)
       }
       for (let j = 0; j < imageIds.length; j++) {

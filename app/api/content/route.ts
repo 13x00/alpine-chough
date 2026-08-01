@@ -3,10 +3,6 @@ import { collectionsEnabled } from '@/lib/features'
 import { getSql } from '@/lib/db'
 import type { ContentData, ContentItem } from '@/types/content'
 
-function imageUrl(imageId: string): string {
-  return `/api/images/${imageId}`
-}
-
 export async function GET() {
   const sql = getSql()
   if (!sql) {
@@ -19,11 +15,15 @@ export async function GET() {
   try {
     const rows = await sql`
       SELECT ci.sort_order, ci.item_type, ci.photo_id, ci.collection_id,
-        p.id AS p_id, p.title AS p_title, p.image_id AS p_image_id, p.description AS p_desc, p.date AS p_date, p.tags AS p_tags,
-        c.id AS c_id, c.title AS c_title, c.slug AS c_slug, c.description AS c_desc, c.cover_image_id AS c_cover_id
+        p.id AS p_id, p.title AS p_title, p.description AS p_desc, p.date AS p_date, p.tags AS p_tags,
+        img_p.blob_url AS p_image_url,
+        c.id AS c_id, c.title AS c_title, c.slug AS c_slug, c.description AS c_desc,
+        img_c.blob_url AS c_cover_url
       FROM content_items ci
       LEFT JOIN photos p ON ci.photo_id = p.id
+      LEFT JOIN images img_p ON p.image_id = img_p.id
       LEFT JOIN collections c ON ci.collection_id = c.id
+      LEFT JOIN images img_c ON c.cover_image_id = img_c.id
       WHERE (${collectionsEnabled} OR ci.item_type = 'photo')
       ORDER BY ci.sort_order ASC
     `
@@ -36,20 +36,21 @@ export async function GET() {
       ),
     ]
 
-    let collectionImages: { collection_id: string; image_id: string; sort_order: number }[] = []
+    let collectionImages: { collection_id: string; blob_url: string; sort_order: number }[] = []
     if (collectionsEnabled && collectionIds.length > 0) {
       const ciRows = await sql`
-        SELECT collection_id, image_id, sort_order
-        FROM collection_images
-        WHERE collection_id IN (
+        SELECT ci.collection_id, img.blob_url, ci.sort_order
+        FROM collection_images ci
+        JOIN images img ON ci.image_id = img.id
+        WHERE ci.collection_id IN (
           SELECT collection_id FROM content_items WHERE item_type = 'collection'
         )
-        ORDER BY collection_id, sort_order ASC
+        ORDER BY ci.collection_id, ci.sort_order ASC
       `
-      collectionImages = (ciRows as { collection_id: string; image_id: string; sort_order: number }[]).map(
+      collectionImages = (ciRows as { collection_id: string; blob_url: string; sort_order: number }[]).map(
         (r) => ({
           collection_id: r.collection_id,
-          image_id: r.image_id,
+          blob_url: r.blob_url,
           sort_order: Number(r.sort_order),
         })
       )
@@ -58,7 +59,7 @@ export async function GET() {
     const collectionImagesByCollection = new Map<string, string[]>()
     for (const row of collectionImages) {
       const list = collectionImagesByCollection.get(row.collection_id) ?? []
-      list.push(imageUrl(row.image_id))
+      list.push(row.blob_url)
       collectionImagesByCollection.set(row.collection_id, list)
     }
 
@@ -68,7 +69,7 @@ export async function GET() {
           type: 'photo' as const,
           id: r.p_id,
           title: r.p_title,
-          image: imageUrl(r.p_image_id),
+          image: r.p_image_url,
           description: r.p_desc ?? undefined,
           date: r.p_date ? new Date(r.p_date).toISOString().slice(0, 10) : undefined,
           tags: r.p_tags ?? undefined,
@@ -81,7 +82,7 @@ export async function GET() {
           title: r.c_title,
           slug: r.c_slug,
           description: r.c_desc ?? undefined,
-          coverImage: imageUrl(r.c_cover_id),
+          coverImage: r.c_cover_url,
           images: collectionImagesByCollection.get(r.c_id) ?? [],
         }
       }

@@ -21,6 +21,7 @@
     "drive:stop-channel": "node scripts/drive-stop-channel.mjs"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1101.0",
     "@carbon/colors": "^11.47.0",
     "@carbon/icons-react": "^11.75.0",
     "@carbon/themes": "^11.68.0",
